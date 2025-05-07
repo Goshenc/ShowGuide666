@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- 合并所有内容到一个 LinearLayout 中 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 第一部分：日期、地点、天气 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/diaryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:hint="日期"
+                android:paddingTop="8dp" />
+
+            <!-- 日记地点 -->
+            <TextView
+                android:id="@+id/diaryPlace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:hint="地点"
+                android:paddingTop="8dp" />
+
+            <!-- 天气信息 -->
+            <TextView
+                android:id="@+id/diaryWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:hint="天气"
+                android:paddingTop="8dp" />
+
+
+        </LinearLayout>
+
+        <!-- 第二部分：标题、内容、分割线、图片等 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 日记标题 -->
+            <TextView
+                android:id="@+id/diaryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+
+                android:textColor="@color/black"
+                android:textAlignment="center"
+                android:hint="标题"
+                android:paddingBottom="8dp" />
+
+            <!-- 分割线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginBottom="8dp" />
+
+            <!-- 日记内容 -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:overScrollMode="never">
+                <TextView
+                    android:id="@+id/diaryArticle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:hint="内容"
+                    android:minHeight="150dp"
+                    android:padding="12dp"
+                    android:gravity="top|start"
+                    android:background="@android:color/darker_gray" />
+            </ScrollView>
+
+            <!-- 分割线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- 日记图片 -->
+            <ImageView
+                android:id="@+id/diaryImage"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:layout_marginTop="16dp" />
+            <!--not done-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

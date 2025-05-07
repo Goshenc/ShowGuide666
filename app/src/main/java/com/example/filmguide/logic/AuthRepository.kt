@@ -1,6 +1,7 @@
 package com.example.filmguide.logic
 
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import com.example.filmguide.logic.model.User
 
 class AuthRepository(context: Context) {
@@ -9,9 +10,11 @@ class AuthRepository(context: Context) {
     /** 注册：返回 true=成功，false=账号·已存在 */
     suspend fun register(account: String, pwd: String): Boolean {
         return try {
-            userDao.insert(User(account, pwd))
+            val user = User(account, pwd)
+            userDao.insert(user)
             true
-        } catch (e: Exception) {
+        } catch (e: SQLiteConstraintException) {
+            // 主键冲突（同邮箱已注册）
             false
         }
     }

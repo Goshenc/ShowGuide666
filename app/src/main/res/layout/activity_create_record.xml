@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/locationTextView"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="地点"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:padding="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/weatherTextView"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="天气"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:padding="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <!-- 标题输入框 -->
+        <EditText
+            android:id="@+id/titleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="日记标题"
+            android:textColor="@android:color/black"
+            android:inputType="textCapSentences"
+            android:maxLines="3"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginTop="12dp"/>
+
+        <!-- 日记内容输入框 -->
+        <EditText
+            android:id="@+id/articleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="日记内容"
+            android:minLines="12"
+            android:maxLines="18"
+            android:inputType="textMultiLine"
+            android:padding="8dp"
+            android:gravity="top"
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="12dp"/>
+        <TextView
+            android:id="@+id/longtitudeandlatitudeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="经纬度"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center" />
+        <!-- 刷新地址与天气 -->
+        <Button
+            android:id="@+id/refreshWeatherLocationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="刷新地址与天气"
+            android:layout_marginTop="12dp"/>
+        <!-- 选择本地图片 -->
+        <Button
+            android:id="@+id/selectImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="添加本地图片"
+            android:layout_marginTop="12dp" />
+
+        <!-- 输入URL后点击添加 -->
+        <Button
+            android:id="@+id/selectNetworkImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="添加网络图片"
+            android:layout_marginTop="12dp" />
+        <Button
+            android:id="@+id/takePhotoButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用相机拍照"
+            android:layout_marginTop="12dp" />
+
+
+
+
+        <!-- 保存日记 -->
+        <Button
+            android:id="@+id/saveDiaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存日记"
+            android:layout_marginTop="16dp" />
+        <!-- 图片显示区域 -->
+        <ImageView
+            android:id="@+id/selectedImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:layout_marginTop="12dp" />
+        <!--not done-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/imagesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"/>
+    </LinearLayout>
+</ScrollView>

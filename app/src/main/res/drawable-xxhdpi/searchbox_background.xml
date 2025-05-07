@@ -1,0 +1,6 @@
+<!-- res/drawable/searchbox_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/white"/> <!-- 背景颜色 -->
+    <corners android:radius="18dp"/> <!-- 圆角半径 -->
+    <stroke android:width="2dp" android:color="#B0B0B0"/> <!-- 边框宽度和颜色 -->
+</shape>

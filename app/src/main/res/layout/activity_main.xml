@@ -11,7 +11,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@color/white"
-        android:translationZ="1dp"
+        android:translationZ="100dp"
         app:layout_constraintTop_toTopOf="parent"
 
         app:layout_constraintStart_toStartOf="@id/guideline_left"
@@ -53,6 +53,7 @@
 
     <ImageView
         android:id="@+id/blank"
+
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@android:color/white"
