@@ -1,19 +1,17 @@
 package com.example.filmguide.ui
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.filmguide.logic.AuthRepository
 
-
-class AuthViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+/**
+ * 因为 AuthViewModel 现在是无参构造，所以 Factory 直接返回它的实例，无需传入 AuthRepository
+ */
+class AuthViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
-            // 创建仓库并传入 ViewModel
-            val repository = AuthRepository(context)
-            return AuthViewModel(repository) as T
+            return AuthViewModel() as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class: \$modelClass")
+        throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
     }
 }

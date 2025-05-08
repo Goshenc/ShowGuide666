@@ -8,13 +8,15 @@
     tools:context=".MainActivity"
     android:background="@color/white">
     <ImageView
-        android:layout_width="100dp"
+        android:id="@+id/cover"
+        android:layout_width="150dp"
         android:layout_height="100dp"
         android:src="@color/white"
         android:translationZ="100dp"
+
         app:layout_constraintTop_toTopOf="parent"
 
-        app:layout_constraintStart_toStartOf="@id/guideline_left"
+        app:layout_constraintStart_toStartOf="parent"
 
         />
 <ImageView
@@ -139,6 +141,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:translationY="-3dp"/>
+<com.google.android.material.button.MaterialButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:text="test"
+    android:id="@+id/test"/>
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/test"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="testcity"
+        android:id="@+id/testcity"/>
 
 
 

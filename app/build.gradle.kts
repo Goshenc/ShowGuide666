@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
-
+    id ("kotlin-parcelize")
 
 }
 
@@ -91,6 +91,9 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.tbuonomo:dotsindicator:4.3")
     implementation ("androidx.security:security-crypto:1.1.0-alpha03")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
 
 

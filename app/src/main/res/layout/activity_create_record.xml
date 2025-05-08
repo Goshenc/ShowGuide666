@@ -1,134 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:padding="16dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- 1. 地点 & 天气：水平链 -->
+        <TextView
+            android:id="@+id/locationTextView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="地点"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/weatherTextView"
+            app:layout_constraintHorizontal_weight="1"/>
 
-            <TextView
-                android:id="@+id/locationTextView"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="地点"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:padding="8dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"/>
+        <TextView
+            android:id="@+id/weatherTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="天气"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/locationTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"/>
 
-            <TextView
-                android:id="@+id/weatherTextView"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="天气"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:padding="8dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"/>
-
-        </LinearLayout>
-
-        <!-- 标题输入框 -->
+        <!-- 2. 标题输入框 -->
         <EditText
             android:id="@+id/titleEditText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="日记标题"
-            android:textColor="@android:color/black"
+            android:hint="标题"
             android:inputType="textCapSentences"
             android:maxLines="3"
             android:padding="8dp"
             android:background="@android:drawable/edit_text"
-            android:layout_marginTop="12dp"/>
+            android:textColor="@android:color/black"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/locationTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- 日记内容输入框 -->
+        <!-- 3. 日记内容输入框 -->
         <EditText
             android:id="@+id/articleEditText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="日记内容"
+            android:hint="内容"
+            android:inputType="textMultiLine"
             android:minLines="12"
             android:maxLines="18"
-            android:inputType="textMultiLine"
-            android:padding="8dp"
             android:gravity="top"
+            android:padding="8dp"
             android:background="@android:drawable/edit_text"
             android:textColor="@android:color/black"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/titleEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 4. 经纬度 TextView -->
         <TextView
             android:id="@+id/longtitudeandlatitudeTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="经纬度"
             android:textSize="16sp"
             android:textColor="@android:color/darker_gray"
+            android:gravity="center"
             android:padding="8dp"
             android:layout_marginTop="8dp"
-            android:gravity="center" />
-        <!-- 刷新地址与天气 -->
+            app:layout_constraintTop_toBottomOf="@id/articleEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 5. 刷新地址与天气 按钮 -->
         <Button
             android:id="@+id/refreshWeatherLocationButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="刷新地址与天气"
-            android:layout_marginTop="12dp"/>
-        <!-- 选择本地图片 -->
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/longtitudeandlatitudeTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 6. 添加本地图片 按钮 -->
         <Button
             android:id="@+id/selectImageButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="添加本地图片"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/refreshWeatherLocationButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- 输入URL后点击添加 -->
+        <!-- 7. 添加网络图片 按钮 -->
         <Button
             android:id="@+id/selectNetworkImageButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="添加网络图片"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/selectImageButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 8. 使用相机拍照 按钮 -->
         <Button
             android:id="@+id/takePhotoButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="使用相机拍照"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/selectNetworkImageButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-
-
-
-        <!-- 保存日记 -->
+        <!-- 9. 保存日记 按钮 -->
         <Button
             android:id="@+id/saveDiaryButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="保存日记"
-            android:layout_marginTop="16dp" />
-        <!-- 图片显示区域 -->
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/takePhotoButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 10. 图片显示区域（自适应宽高） -->
         <ImageView
             android:id="@+id/selectedImageView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:visibility="gone"
-            android:layout_marginTop="12dp" />
-        <!--not done-->
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/saveDiaryButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 11. Not done -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/imagesRecyclerView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"/>
-    </LinearLayout>
-</ScrollView>
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/selectedImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

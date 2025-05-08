@@ -15,7 +15,7 @@ import com.example.filmguide.utils.ToastUtil
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
-    private val viewModel: AuthViewModel by viewModels { AuthViewModelFactory(this) }
+    private val viewModel: AuthViewModel by viewModels { AuthViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +38,7 @@ class RegisterActivity : AppCompatActivity() {
             val account = binding.accountEditText.text.toString().trim()
             val pwd = binding.passwordEditText.text.toString()
             val confirm = binding.confirmEditText.text.toString()
+            val email="666@example.com"
 
             // 非空校验
             if (account.isEmpty() || pwd.isEmpty() || confirm.isEmpty()) {
@@ -52,7 +53,7 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             // 调用注册逻辑
-            viewModel.register(account, pwd)
+            viewModel.register(account, pwd, email)
         }
 
         // 观察注册结果

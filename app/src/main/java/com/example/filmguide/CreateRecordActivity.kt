@@ -171,8 +171,6 @@ class CreateRecordActivity : AppCompatActivity() {
                     Glide.with(this)
                         .load(url)
 
-                        .apply(RequestOptions.circleCropTransform())
-
                         .into(binding.selectedImageView)
                     binding.selectedImageView.visibility = View.VISIBLE
                 } else {
