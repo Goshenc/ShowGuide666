@@ -16,6 +16,7 @@ import com.example.filmguide.databinding.ActivityRecordsBinding
 import com.example.filmguide.logic.recordroom.RecordEntity
 import com.example.filmguide.ui.RecordAdapter
 import com.example.filmguide.ui.RecordViewModel
+import com.example.filmguide.utils.ToastUtil
 
 class RecordsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecordsBinding
@@ -69,7 +70,7 @@ class RecordsActivity : AppCompatActivity() {
     private fun deleteDiary() {
         val diaries = diaryAdapter.getCurrentDiaries()
         if (diaries.isEmpty()) {
-            Toast.makeText(this, "当前没有日记可删除", Toast.LENGTH_SHORT).show()
+            ToastUtil.show(this, "当前没有日记可删除", R.drawable.icon)
             return
         }
 

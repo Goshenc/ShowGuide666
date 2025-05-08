@@ -1,7 +1,10 @@
 package com.example.filmguide
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -14,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import com.example.filmguide.databinding.ActivityHomeBinding
+import com.example.filmguide.logic.network.city.City
 
 class HomeActivity : AppCompatActivity() {
     lateinit var binding:ActivityHomeBinding
@@ -77,6 +81,26 @@ binding.navDiary.setOnClickListener(){
     val intent=Intent(this,RecordsActivity::class.java)
     startActivity(intent)
 }
+binding.imgLocation.setOnClickListener(){
+    val intent=Intent(this,CityActivity::class.java)
+    startActivity(intent)
+}
+        binding.navClock.setOnClickListener(){
+            val intent=Intent(this,ReminderActivity::class.java)
+            startActivity(intent)
+        }
+        // Application 或者 MainActivity 中
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "default",
+                "提醒通知",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "提醒时间到达时的通知"
+            }
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nm.createNotificationChannel(channel)
+        }
 
 
     }//onCreate end

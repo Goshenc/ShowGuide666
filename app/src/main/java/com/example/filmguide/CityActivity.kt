@@ -1,6 +1,7 @@
 package com.example.filmguide
 
 // CityActivity.kt
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,13 +11,19 @@ import com.example.filmguide.databinding.ActivityCityBinding
 import com.example.filmguide.logic.network.city.ApiClient
 import com.example.filmguide.logic.network.city.City
 import com.example.filmguide.ui.CityAdapter
+import com.example.filmguide.utils.ToastUtil
 
 import kotlinx.coroutines.launch
 
 class CityActivity : AppCompatActivity() {
     lateinit var binding:ActivityCityBinding
 
-    private val adapter = CityAdapter()
+    private val adapter = CityAdapter { cityId ->
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.putExtra("cityId", cityId)
+        startActivity(intent)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +44,8 @@ class CityActivity : AppCompatActivity() {
                 adapter.submitList(cityList)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this@CityActivity, "加载失败：${e.message}", Toast.LENGTH_SHORT).show()
+
+                ToastUtil.show(this@CityActivity,"加载失败：${e.message}",R.drawable.icon)
             }
         }
     }

@@ -1,5 +1,5 @@
 package com.example.filmguide.ui
-// CityAdapter.kt
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +9,23 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filmguide.logic.network.city.City
 
-class CityAdapter : ListAdapter<City, CityAdapter.CityVH>(DiffCallback()) {
+class CityAdapter(
+    private val onItemClick: (City) -> Unit
+) : ListAdapter<City, CityAdapter.CityVH>(CityVH.DiffCallback()) {
 
     class CityVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvName: TextView = itemView.findViewById(android.R.id.text1)
-        fun bind(city: City) {
-            tvName.text = "${city.name} (${city.pinyin})"
+        fun bind(city: City, onItemClick: (City) -> Unit) {
+            tvName.text = city.name
+            itemView.setOnClickListener {
+                onItemClick(city)
+            }
         }
-    }
 
-    class DiffCallback : DiffUtil.ItemCallback<City>() {
-        override fun areItemsTheSame(old: City, new: City) = old.id == new.id
-        override fun areContentsTheSame(old: City, new: City) = old == new
+        class DiffCallback : DiffUtil.ItemCallback<City>() {
+            override fun areItemsTheSame(oldItem: City, newItem: City) = oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: City, newItem: City) = oldItem == newItem
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityVH {
@@ -30,6 +35,6 @@ class CityAdapter : ListAdapter<City, CityAdapter.CityVH>(DiffCallback()) {
     }
 
     override fun onBindViewHolder(holder: CityVH, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onItemClick)
     }
 }

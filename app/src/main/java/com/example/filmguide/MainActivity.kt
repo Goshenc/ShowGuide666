@@ -1,6 +1,10 @@
 package com.example.filmguide
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -89,6 +93,21 @@ class MainActivity : AppCompatActivity() {
             val intent=Intent(this,CityActivity::class.java)
             startActivity(intent)
         }
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "默认提醒"
+            val descriptionText = "用于提醒的通知渠道"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("default", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
 
     }//onCreate end
 

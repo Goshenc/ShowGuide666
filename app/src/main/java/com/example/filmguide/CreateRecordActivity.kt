@@ -28,6 +28,7 @@ import com.example.filmguide.logic.network.weather.RetrofitBuilder
 import com.example.filmguide.logic.network.weather.WeatherService
 import com.example.filmguide.logic.recordroom.RecordDatabase
 import com.example.filmguide.logic.recordroom.RecordEntity
+import com.example.filmguide.utils.ToastUtil
 import com.example.filmguide.utils.Utils_Date_Location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,7 +72,9 @@ class CreateRecordActivity : AppCompatActivity() {
 
         binding.saveDiaryButton.setOnClickListener { saveDiary() }
 
-        binding.refreshWeatherLocationButton.setOnClickListener { getLocation() }
+        binding.refreshWeatherLocationButton.setOnClickListener { getLocation()
+            if (binding.weatherTextView.text!=null)
+        ToastUtil.show(this,"刷新成功!",R.drawable.icon)}
 
         val permissionsToRequest = mutableListOf<String>()
         if (!hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -120,7 +123,8 @@ class CreateRecordActivity : AppCompatActivity() {
                 startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
             }
         } else {
-            Toast.makeText(this, "没有可用的相机应用", Toast.LENGTH_SHORT).show()
+
+            ToastUtil.show(this,"没有可用的相机应用",R.drawable.icon)
         }
     }
 
@@ -198,7 +202,8 @@ class CreateRecordActivity : AppCompatActivity() {
                 }
             } else {
                 runOnUiThread {
-                    Toast.makeText(this, "无法获取当前位置", Toast.LENGTH_SHORT).show()
+
+                    ToastUtil.show(this,"无法获取当前位置",R.drawable.icon)
                 }
             }
         }
@@ -262,7 +267,10 @@ class CreateRecordActivity : AppCompatActivity() {
 
 
     private fun showToast(message: String) {
-        runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
+        runOnUiThread {
+
+            ToastUtil.show(this,message,R.drawable.icon)
+             }
     }
 
     private fun saveDiary() {
@@ -286,7 +294,8 @@ class CreateRecordActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {//在 IO线程 中启动一个协程，因为数据库操作是耗时任务，不适合在主线程中执行。
             diaryDatabase.recordDao().insertRecord(diaryEntity)
             withContext(Dispatchers.Main) {
-                Toast.makeText(this@CreateRecordActivity, "保存成功", Toast.LENGTH_SHORT).show()
+
+                ToastUtil.show(this@CreateRecordActivity,"保存成功",R.drawable.icon)
                 val intent = Intent("SAVED")
                 sendBroadcast(intent)
                 finish()
