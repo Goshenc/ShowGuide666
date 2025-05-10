@@ -22,11 +22,12 @@ class CityActivity : AppCompatActivity() {
     lateinit var binding:ActivityCityBinding
 
     private val adapter = CityAdapter { city ->
-        val intent = Intent(this, HotMovieActivity::class.java)
-        intent.putExtra("cityId", city.id)
-        intent.putExtra("cityName",city.name)
+        PrefsManager.saveCityInfo(this, city.id, city.name)
+
+        val intent = Intent(this, HomeActivity::class.java)
+
         startActivity(intent)
-        Log.d("zxy","cityId: " + city.id)
+        finish()
     }
 
 
