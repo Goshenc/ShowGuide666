@@ -6,6 +6,6 @@ import retrofit2.http.Query
 interface HotMovieApi {
 
     // 假设API的URL是以 cityId 作为查询参数获取热映电影列表
-    @GET("path/to/your/api/endpoint")
+    @GET("movie/hot")
     suspend fun getHotMovies(@Query("cityId") cityId: Int): HotMoviesResponse
 }

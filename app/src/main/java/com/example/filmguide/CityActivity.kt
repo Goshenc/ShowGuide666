@@ -3,7 +3,6 @@ package com.example.filmguide
 // CityActivity.kt
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,8 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmguide.databinding.ActivityCityBinding
-import com.example.filmguide.logic.network.city.ApiClient
-import com.example.filmguide.logic.network.city.City
+import com.example.filmguide.logic.network.city.CityClient
 import com.example.filmguide.ui.CityAdapter
 import com.example.filmguide.utils.ToastUtil
 
@@ -48,7 +46,7 @@ class CityActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Retrofit + Gson 已经把 JSON 转成 CityResponse
-                val response = ApiClient.cityApi.getCities()
+                val response = CityClient.cityApi.getCities()
                 // 拿到真正的 List<City>
                 val cityList = response.data.cts
                 // 切回主线程，提交给 RecyclerView
