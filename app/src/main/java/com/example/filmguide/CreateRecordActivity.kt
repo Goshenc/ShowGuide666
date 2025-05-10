@@ -1,6 +1,5 @@
 package com.example.filmguide
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -9,10 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,8 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
@@ -42,151 +38,155 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class CreateRecordActivity : AppCompatActivity() {
+    companion object {
+        private const val PICK_IMAGE_REQUEST_CODE = 1
+        private const val CAMERA_REQUEST_CODE    = 2
+    }
+
     private lateinit var locationUtils: Utils_Date_Location.LocationHelper
     private lateinit var binding: ActivityCreateRecordBinding
     private lateinit var diaryDatabase: RecordDatabase
-    private val PERMISSION_REQUEST_CODE = 1
-    private val CAMERA_REQUEST_CODE = 2
-    private var selectedLocalImageUri: Uri? = null
-    private var networkImageLink: String? = null
-    private var currentPhotoUri: Uri? = null
-    private val apiKey = "670ca929136a456992608cd2e794df24"
 
-    private fun hasPermission(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-    }
+    private var selectedLocalImageUri: Uri? = null
+    private var networkImageLink: String?    = null
+    private var currentPhotoUri: Uri?        = null
+
+    private val apiKey = "670ca929136a456992608cd2e794df24"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateRecordBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
-        // 只给状态栏留 inset
+
+        // 状态栏 inset
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val statusInset = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             v.setPadding(statusInset.left, statusInset.top, statusInset.right, 0)
             insets
         }
-
-        // 关闭框架自动 fitsSystemWindows
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        // bottomRow 单独处理导航栏 inset
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
             val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
             view.updatePadding(bottom = navBarInset)
             insets
         }
-
-        // 导航栏白底黑字
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.white)
         WindowInsetsControllerCompat(window, window.decorView)
             .isAppearanceLightNavigationBars = true
 
-
-
-
         diaryDatabase = RecordDatabase.getInstance(this)
         locationUtils = Utils_Date_Location.LocationHelper(this)
 
-
+        // 点击选择本地图片
         binding.navDiary.setOnClickListener { selectLocalImage() }
-
-        binding.navClock.setOnClickListener { openCamera() }
-
+        // 点击拍照
+        binding.navClock.setOnClickListener  { openCamera() }
+        // 点击输入网络图 URL
         binding.navCreate.setOnClickListener { showUrlInputDialog() }
-
+        // 点击保存
         binding.navManage.setOnClickListener { saveDiary() }
+        // 刷新定位和天气
+        binding.navHome.setOnClickListener {
+            getLocation()
+            ToastUtil.show(this, "刷新成功!", R.drawable.icon)
+        }
 
-        binding.navHome.setOnClickListener { getLocation()
-            if (binding.weatherTextView.text!=null)
-        ToastUtil.show(this,"刷新成功!",R.drawable.icon)}
+        // 请求必要权限
+        requestPermissionsIfNeeded()
+    }
 
-        val permissionsToRequest = mutableListOf<String>()
-        if (!hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            permissionsToRequest.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    private fun requestPermissionsIfNeeded() {
+        val perms = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            perms += android.Manifest.permission.ACCESS_FINE_LOCATION
         }
-        if (!hasPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            permissionsToRequest.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            perms += android.Manifest.permission.READ_EXTERNAL_STORAGE
         }
-        if (!hasPermission(android.Manifest.permission.CAMERA)) {
-            permissionsToRequest.add(android.Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            perms += android.Manifest.permission.CAMERA
         }
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                permissionsToRequest.toTypedArray(),
-                PERMISSION_REQUEST_CODE
-            )
+        if (perms.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, perms.toTypedArray(), PICK_IMAGE_REQUEST_CODE)
         } else {
             getLocation()
         }
     }
 
+    /** 方案一：用 ACTION_OPEN_DOCUMENT + 持久权限 来选图库图片 */
     private fun selectLocalImage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, 1)
+        Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "image/*"
+            addFlags(
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+            )
+        }.also { startActivityForResult(it, PICK_IMAGE_REQUEST_CODE) }
     }
 
     private fun openCamera() {
-
-        if (!hasPermission(android.Manifest.permission.CAMERA)) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.CAMERA),
-                PERMISSION_REQUEST_CODE
+                CAMERA_REQUEST_CODE
             )
             return
         }
-        //创建一个 Intent 对象，并指定动作为 MediaStore.ACTION_IMAGE_CAPTURE，即启动相机拍照。
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (cameraIntent.resolveActivity(packageManager) != null) {
-            // 创建用于保存照片的文件
-            val photoFile = createImageFile()
-            photoFile?.also {
-                currentPhotoUri = FileProvider.getUriForFile(this, "$packageName.provider", it)
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
-                startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
-            }
-        } else {
-
-            ToastUtil.show(this,"没有可用的相机应用",R.drawable.icon)
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { cameraIntent ->
+            cameraIntent.resolveActivity(packageManager)?.let {
+                createImageFile()?.also { file ->
+                    currentPhotoUri = FileProvider.getUriForFile(
+                        this, "$packageName.provider", file
+                    )
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
+                }
+            } ?: ToastUtil.show(this, "没有可用的相机应用", R.drawable.icon)
         }
     }
 
-    // 创建用于存储拍照图片的临时文件
-    private fun createImageFile(): File? {
-        return try {
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val imageFileName = "JPEG_${timeStamp}_"
-            val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            File.createTempFile(imageFileName, ".jpg", storageDir)
-        } catch (ex: Exception) {
-            Log.e("AddDiaryActivity", "创建图片文件失败", ex)
-            null
-        }
+    private fun createImageFile(): File? = try {
+        val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+            .format(Date())
+        val name = "JPEG_${ts}_"
+        val dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        File.createTempFile(name, ".jpg", dir)
+    } catch (e: Exception) {
+        Log.e("CreateRecord", "创建图片文件失败", e)
+        null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when {
-            requestCode == 1 && resultCode == RESULT_OK && data != null -> {
-                selectedLocalImageUri = data.data//当用户选择一张图片后，图库应用会自动将该图片的 URI 填充到返回的 Intent 的 data 属性中，也就是 data.data
+        when (requestCode) {
+            PICK_IMAGE_REQUEST_CODE -> if (resultCode == RESULT_OK && data?.data != null) {
+                val uri = data.data!!
+                // 拿持久化读权限
+                val takeFlags = data.flags and
+                        (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
+
+                selectedLocalImageUri = uri
                 Glide.with(this)
-                    .load(selectedLocalImageUri)
+                    .load(uri)
                     .into(binding.selectedImageView)
                 binding.selectedImageView.visibility = View.VISIBLE
             }
-            requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK -> {
-                // 拍照成功，使用 currentPhotoUri 保存的图片
+
+            CAMERA_REQUEST_CODE -> if (resultCode == RESULT_OK) {
                 selectedLocalImageUri = currentPhotoUri
                 Glide.with(this)
-                    .load(selectedLocalImageUri)
+                    .load(currentPhotoUri)
                     .into(binding.selectedImageView)
                 binding.selectedImageView.visibility = View.VISIBLE
             }
@@ -194,224 +194,112 @@ class CreateRecordActivity : AppCompatActivity() {
     }
 
     private fun showUrlInputDialog() {
-        val input = EditText(this)//使用 EditText(this) 创建了一个输入框，让用户在弹出对话框中输入文本。
-        input.hint = "请输入有效的图片链接"
+        val input = EditText(this).apply { hint = "请输入有效的图片链接" }
         AlertDialog.Builder(this)
             .setTitle("输入图片URL")
             .setView(input)
             .setPositiveButton("确定") { _, _ ->
                 val url = input.text.toString().trim()
                 if (url.isNotBlank()) {
-                    networkImageLink= url
+                    networkImageLink = url
                     Glide.with(this)
                         .load(url)
-
                         .into(binding.selectedImageView)
                     binding.selectedImageView.visibility = View.VISIBLE
                 } else {
-                    showToast("请输入有效的图片链接")
+                    ToastUtil.show(this, "请输入有效的图片链接", R.drawable.icon)
                     binding.selectedImageView.visibility = View.GONE
                 }
             }
-            .setNegativeButton("取消") { dialog, _ ->
-                dialog.cancel()
-            }
+            .setNegativeButton("取消", null)
             .show()
     }
 
     private fun getLocation() {
-        locationUtils.getLocation { location ->//这里的location是由 Utils_Date_Location.LocationHelper.getLocation 方法传递的 Location 对象。
+        locationUtils.getLocation { location ->
             if (location != null) {
-                val latitude = location.latitude
-                val longitude = location.longitude
-                Log.d("AddDiaryActivity", "获取到的经纬度: 纬度 $latitude, 经度 $longitude")
-                binding.longtitudeandlatitudeTextView.text="经纬度:($latitude,$longitude)"
-                val loc = String.format("%.2f,%.2f", location.longitude, location.latitude)
-                // 使用协程调用 suspend 函数获取城市信息和天气
-                lifecycleScope.launch {
-                    getCityIdSuspend(loc)
-                }
+                val (lat, lng) = location.latitude to location.longitude
+                binding.longtitudeandlatitudeTextView.text = "经纬度:($lng,$lat)"
+                lifecycleScope.launch { getCityIdSuspend("$lng,$lat") }
             } else {
-                runOnUiThread {
-
-                    ToastUtil.show(this,"无法获取当前位置",R.drawable.icon)
-                }
+                ToastUtil.show(this, "无法获取当前位置", R.drawable.icon)
             }
         }
     }
 
-    // suspend 函数用于获取城市信息
     private suspend fun getCityIdSuspend(cityName: String) {
         try {
-            val weatherService = RetrofitBuilder.getCityInstance.create(WeatherService::class.java)
-            val response: Response<CityItem> = withContext(Dispatchers.IO) {////response.body() 获取 服务器返回的 JSON 数据，并转换成 CityItem 对象
-                weatherService.getCity(apiKey, cityName)
-            }
-            if (response.isSuccessful && response.body()?.code == "200") {
-                val cityLocation = response.body()?.location?.firstOrNull()
-                if (cityLocation != null) {
-                    // 更新 UI 必须在主线程
+            val service = RetrofitBuilder.getCityInstance.create(WeatherService::class.java)
+            val resp = withContext(Dispatchers.IO) { service.getCity(apiKey, cityName) }
+            if (resp.isSuccessful && resp.body()?.code == "200") {
+                resp.body()?.location?.firstOrNull()?.let { loc ->
                     withContext(Dispatchers.Main) {
-                        binding.locationTextView.text = cityLocation.name
+                        binding.locationTextView.text = loc.name
                     }
-                    // 调用 suspend 函数获取天气信息
-                    getWeatherInfoSuspend(cityLocation.id)
-                } else {
-                    showToast("获取城市 ID 失败")
-                }
+                    getWeatherInfoSuspend(loc.id)
+                } ?: showToast("获取城市 ID 失败")
             } else {
-                Log.e("AddDiaryActivity", "获取城市 ID 失败: ${response.message()}, code: ${response.code()}, error: ${response.errorBody()?.string()}")
                 showToast("获取城市 ID 失败")
             }
         } catch (e: Exception) {
-            Log.e("AddDiaryActivity", "获取城市 ID 网络请求失败: ${e.message}", e)
             showToast("获取城市 ID 网络请求失败")
         }
     }
 
-    // suspend 函数用于获取天气信息
     private suspend fun getWeatherInfoSuspend(cityId: String) {
         try {
-            val weatherService = RetrofitBuilder.getWeatherInstance.create(WeatherService::class.java)
-            val response: Response<WeatherItem> = withContext(Dispatchers.IO) {
-                weatherService.getWeather(apiKey, cityId)
-            }
-            if (response.isSuccessful && response.body()?.code == "200") {//response.body() 获取 服务器返回的 JSON 数据，并转换成 WeatherItem 对象
-                val today = Utils_Date_Location.formatDate(Calendar.getInstance().time)//使用 Calendar.getInstance().time 获取当前时间。
-                val todayWeather = response.body()?.daily?.firstOrNull { it.fxDate == today }
-                if (todayWeather != null) {
-                    withContext(Dispatchers.Main) {
-                        binding.weatherTextView.text = todayWeather.textDay
-                    }
-                } else {
-                    showToast("获取天气信息失败")
+            val service = RetrofitBuilder.getWeatherInstance.create(WeatherService::class.java)
+            val resp = withContext(Dispatchers.IO) { service.getWeather(apiKey, cityId) }
+            if (resp.isSuccessful && resp.body()?.code == "200") {
+                val today = Utils_Date_Location.formatDate(Calendar.getInstance().time)
+                val todayWeather = resp.body()?.daily?.firstOrNull { it.fxDate == today }
+                withContext(Dispatchers.Main) {
+                    binding.weatherTextView.text = todayWeather?.textDay ?: "—"
                 }
             } else {
-                Log.e("AddDiaryActivity", "获取天气信息失败: ${response.message()}, code: ${response.code()}, error: ${response.errorBody()?.string()}")
                 showToast("获取天气信息失败")
             }
         } catch (e: Exception) {
-            Log.e("AddDiaryActivity", "获取天气信息网络请求失败: ${e.message}", e)
             showToast("获取天气信息网络请求失败")
         }
     }
 
-
-    private fun showToast(message: String) {
-        runOnUiThread {
-
-            ToastUtil.show(this,message,R.drawable.icon)
-             }
-    }
-
     private fun saveDiary() {
-        val title = binding.titleEditText.text.toString()
-        val article = binding.articleEditText.text.toString()
-        val localImagePath = selectedLocalImageUri?.toString()
-        val date = Utils_Date_Location.formatDate(Calendar.getInstance().time)
-        val weather = binding.weatherTextView.text.toString()
-        val location = binding.locationTextView.text.toString()
+        val title          = binding.titleEditText.text.toString().trim()
+        if (title.isEmpty()) {
+            // 标题不能为空
+            ToastUtil.show(this, "标题不能为空", R.drawable.icon)
+            return
+        }
+        val article        = binding.articleEditText.text.toString()
+        val localPath      = selectedLocalImageUri?.toString()
+        val date           = Utils_Date_Location.formatDate(Calendar.getInstance().time)
+        val weather        = binding.weatherTextView.text.toString()
+        val location       = binding.locationTextView.text.toString()
+        val rating         = binding.rating.rating
 
-        val diaryEntity = RecordEntity(
-            title = title,
-            article = article,
-            localImagePath = localImagePath,
+        val entity = RecordEntity(
+            title            = title,
+            article          = article,
+            localImagePath   = localPath,
             networkImageLink = networkImageLink,
-            date = date,
-            weather = weather,
-            location = location
+            date             = date,
+            weather          = weather,
+            location         = location,
+            rating           = rating
         )
 
-        lifecycleScope.launch(Dispatchers.IO) {//在 IO线程 中启动一个协程，因为数据库操作是耗时任务，不适合在主线程中执行。
-            diaryDatabase.recordDao().insertRecord(diaryEntity)
+        lifecycleScope.launch(Dispatchers.IO) {
+            diaryDatabase.recordDao().insertRecord(entity)
             withContext(Dispatchers.Main) {
-
-                ToastUtil.show(this@CreateRecordActivity,"保存成功",R.drawable.icon)
-                val intent = Intent("SAVED")
-                sendBroadcast(intent)
+                ToastUtil.show(this@CreateRecordActivity, "保存成功", R.drawable.icon)
+                sendBroadcast(Intent("SAVED"))
                 finish()
             }
         }
     }
+
+    private fun showToast(msg: String) {
+        ToastUtil.show(this, msg, R.drawable.icon)
+    }
 }
-
-/* //enqueue回调方法，需要恢复weatherService的代码再使用,对比书上P454
-    // 修改后的获取城市信息方法（不再是 suspend 函数）
-    private fun getCityId(cityName: String) {
-        val weatherService = RetrofitBuilder.getCityInstance.create(WeatherService::class.java)
-        weatherService.getCity(apiKey, cityName).enqueue(object : Callback<CityItem> {
-            override fun onResponse(call: Call<CityItem>, response: Response<CityItem>) {
-                if (response.isSuccessful && response.body()?.code == "200") {
-                    val cityLocation = response.body()?.location?.firstOrNull()
-                    if (cityLocation != null) {
-                        // 更新 UI 必须在主线程
-                        runOnUiThread { binding.locationTextView.text = cityLocation.name }
-                        // 请求天气信息
-                        getWeatherInfo(cityLocation.id)
-                    } else {
-                        showToast("获取城市 ID 失败")
-                    }
-                } else {
-                    Log.e(
-                        "AddDiaryActivity",
-                        "获取城市 ID 失败: ${response.message()}, code: ${response.code()}, error: ${response.errorBody()?.string()}"
-                    )
-                    showToast("获取城市 ID 失败")
-                }
-            }
-
-            override fun onFailure(call: Call<CityItem>, t: Throwable) {
-                Log.e("AddDiaryActivity", "获取城市 ID 网络请求失败: ${t.message}", t)
-                showToast("获取城市 ID 网络请求失败")
-            }
-        })
-    }
-
-    // 修改后的获取天气信息方法
-    private fun getWeatherInfo(cityId: String) {
-        val weatherService = RetrofitBuilder.getWeatherInstance.create(WeatherService::class.java)
-        weatherService.getWeather(apiKey, cityId).enqueue(object : Callback<WeatherItem> {
-            override fun onResponse(call: Call<WeatherItem>, response: Response<WeatherItem>) {
-                if (response.isSuccessful && response.body()?.code == "200") {
-                    val today = Utils.formatDate(Calendar.getInstance().time)
-                    val todayWeather = response.body()?.daily?.firstOrNull { it.fxDate == today }
-                    if (todayWeather != null) {
-                        runOnUiThread { binding.weatherTextView.text = todayWeather.textDay }
-                    } else {
-                        showToast("获取天气信息失败")
-                    }
-                } else {
-                    Log.e(
-                        "AddDiaryActivity",
-                        "获取天气信息失败: ${response.message()}, code: ${response.code()}, error: ${response.errorBody()?.string()}"
-                    )
-                    showToast("获取天气信息失败")
-                }
-            }
-
-            override fun onFailure(call: Call<WeatherItem>, t: Throwable) {
-                Log.e("AddDiaryActivity", "获取天气信息网络请求失败: ${t.message}", t)
-                showToast("获取天气信息网络请求失败")
-            }
-        })
-    }
-
-    // 修改 getLocation 方法，去掉协程调用，直接调用新的 getCityId 方法
-    private fun getLocation() {
-        locationUtils.getLocation { location ->
-            if (location != null) {
-                val latitude = location.latitude
-                val longitude = location.longitude
-                Log.d("AddDiaryActivity", "获取到的经纬度: 纬度 $latitude, 经度 $longitude")
-                val loc = String.format("%.2f,%.2f", location.longitude, location.latitude)
-                runOnUiThread { binding.locationTextView.text = loc }
-                // 直接调用非 suspend 的 getCityId 方法
-                getCityId(loc)
-            } else {
-                runOnUiThread {
-                    Toast.makeText(this, "无法获取当前位置", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-*/

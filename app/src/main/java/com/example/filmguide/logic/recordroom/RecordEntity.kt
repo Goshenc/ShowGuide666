@@ -12,6 +12,7 @@ data class RecordEntity(
     val networkImageLink: String?,
     val date: String,
     val weather: String,
-    val location: String
+    val location: String,
+    val rating: Float,
 
     )

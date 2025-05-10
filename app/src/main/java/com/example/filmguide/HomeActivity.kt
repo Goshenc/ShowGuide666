@@ -16,10 +16,21 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import com.example.filmguide.databinding.ActivityHomeBinding
 import com.example.filmguide.logic.network.city.City
+import com.example.filmguide.logic.network.weather.RetrofitBuilder
+import com.example.filmguide.logic.network.weather.WeatherService
+import com.example.filmguide.utils.ToastUtil
+import com.example.filmguide.utils.Utils_Date_Location
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class HomeActivity : AppCompatActivity() {
+    private val apiKey = "670ca929136a456992608cd2e794df24"
+    private lateinit var locationUtils: Utils_Date_Location.LocationHelper
     lateinit var binding:ActivityHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,7 +112,61 @@ binding.imgLocation.setOnClickListener(){
             val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nm.createNotificationChannel(channel)
         }
-
-
+        locationUtils = Utils_Date_Location.LocationHelper(this)
+        getLocation()
     }//onCreate end
+
+
+
+    private fun getLocation() {
+        locationUtils.getLocation { location ->
+            if (location != null) {
+                val (lat, lng) = location.latitude to location.longitude
+
+                lifecycleScope.launch { getCityIdSuspend("$lng,$lat") }
+            } else {
+                ToastUtil.show(this, "无法获取当前位置", R.drawable.icon)
+            }
+        }
+    }
+    private suspend fun getCityIdSuspend(cityName: String) {
+        try {
+            val service = RetrofitBuilder.getCityInstance.create(WeatherService::class.java)
+            val resp = withContext(Dispatchers.IO) { service.getCity(apiKey, cityName) }
+            if (resp.isSuccessful && resp.body()?.code == "200") {
+                resp.body()?.location?.firstOrNull()?.let { loc ->
+                    withContext(Dispatchers.Main) {
+                        binding.textLocation.text = loc.name
+                    }
+                    getWeatherInfoSuspend(loc.id)
+                } ?: ToastUtil.show(this,"获取城市 ID 失败")
+            } else {
+                ToastUtil.show(this,"获取城市 ID 失败")
+            }
+        } catch (e: Exception) {
+            ToastUtil.show(this,"获取城市 ID 网络请求失败")
+        }
+    }
+
+    private suspend fun getWeatherInfoSuspend(cityId: String) {
+        try {
+            val service = RetrofitBuilder.getWeatherInstance.create(WeatherService::class.java)
+            val resp = withContext(Dispatchers.IO) { service.getWeather(apiKey, cityId) }
+            if (resp.isSuccessful && resp.body()?.code == "200") {
+                val today = Utils_Date_Location.formatDate(Calendar.getInstance().time)
+                val todayWeather = resp.body()?.daily?.firstOrNull { it.fxDate == today }
+                withContext(Dispatchers.Main) {
+
+                }
+            } else {
+                ToastUtil.show(this,"获取天气信息失败")
+            }
+        } catch (e: Exception) {
+            ToastUtil.show(this,"获取天气信息网络请求失败")
+        }
+    }
+
+
+
+
 }

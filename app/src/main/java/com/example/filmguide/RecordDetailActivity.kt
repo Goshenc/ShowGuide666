@@ -1,7 +1,9 @@
 package com.example.filmguide
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -42,26 +44,39 @@ class RecordDetailActivity : AppCompatActivity() {
 
         // 观察 LiveData 并更新 UI
         viewModel.diaryEntity.observe(this) { diary ->
-            if (diary != null) {
-                binding.diaryTitle.text = diary.title
-                binding.diaryArticle.text = diary.article
-                binding.diaryDate.text = diary.date
-                binding.diaryPlace.text = diary.location
-                binding.diaryWeather.text = diary.weather
+            diary?.let {
+                binding.diaryTitle.text   = it.title
+                binding.diaryArticle.text = it.article
+                binding.diaryDate.text    = it.date
+                binding.diaryPlace.text   = it.location
+                binding.diaryWeather.text = it.weather
+                binding.ratingBar.apply {
+                    rating = it.rating
 
+                }
                 Log.d("DiaryDetailActivity", "加载日记 ID: $diaryId")
-                Log.d("DiaryDetailActivity", "本地图片路径: ${diary.localImagePath}")
-                Log.d("DiaryDetailActivity", "网络图片路径: ${diary.networkImageLink}")
+                Log.d("DiaryDetailActivity", "本地图片路径: ${it.localImagePath}")
+                Log.d("DiaryDetailActivity", "网络图片路径: ${it.networkImageLink}")
 
-                val imagePath = diary.localImagePath ?: diary.networkImageLink
+                // 先隐藏，下面有图片时再显示
+                binding.diaryImage.visibility = View.GONE
 
-
-                binding.diaryImage.visibility = android.view.View.VISIBLE
-
-                if (!imagePath.isNullOrEmpty()) {
+                // 优先尝试本地 Uri
+                it.localImagePath?.takeIf { path -> path.isNotBlank() }?.let { localPath ->
+                    val localUri = Uri.parse(localPath)
+                    binding.diaryImage.visibility = View.VISIBLE
                     Glide.with(this)
-                        .load(imagePath)
+                        .load(localUri)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(binding.diaryImage)
+                    return@observe
+                }
 
+                // 再尝试网络 URL
+                it.networkImageLink?.takeIf { url -> url.isNotBlank() }?.let { url ->
+                    binding.diaryImage.visibility = View.VISIBLE
+                    Glide.with(this)
+                        .load(url)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(binding.diaryImage)
                 }
