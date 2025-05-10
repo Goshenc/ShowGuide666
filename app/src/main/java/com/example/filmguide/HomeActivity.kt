@@ -39,24 +39,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val display = (this@HomeActivity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).currentWindowMetrics
-            val screenHeight = display.bounds.height()
 
-            // 判断是否存在物理导航键
-            val hasPhysicalNav = (systemBars.bottom > 0 &&
-                    systemBars.bottom != ViewCompat.getRootWindowInsets(view)?.getInsets(WindowInsetsCompat.Type.displayCutout())?.bottom)
-
-            if (hasPhysicalNav) {
-                // 物理导航键设备：添加底部内边距
-                view.updatePadding(bottom = systemBars.bottom)
-            } else {
-                // 手势导航设备：不添加内边距（或自定义手势条高度）
-                view.updatePadding(bottom = 0)
-            }
-            insets
-        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
             // 只取导航栏的高度
             val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom

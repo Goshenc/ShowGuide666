@@ -130,6 +130,16 @@
             android:contentDescription="分享"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/back_blue"
+            android:contentDescription="返回"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView

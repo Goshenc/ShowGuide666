@@ -3,6 +3,7 @@ package com.example.filmguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +72,21 @@ class RecordDetailActivity : AppCompatActivity() {
                     article = diary.article
                 )
             }
+
+            binding.imgBack.setOnClickListener {
+                if (isTaskRoot) {
+                    // 如果当前 Activity 是任务栈中的第一个（即没有其他 Activity）
+                    // 退出应用
+                    finishAffinity()  // 结束所有活动并退出
+                    // 或者使用以下方式
+                    // System.exit(0)  // 直接退出应用
+                } else {
+                    // 如果当前不是栈顶的 Activity，返回到上一个 Activity
+                    finish()
+                }
+            }
+
+
         }
     }
 
