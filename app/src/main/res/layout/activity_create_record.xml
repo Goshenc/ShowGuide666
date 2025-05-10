@@ -5,7 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray">
-
+<RatingBar
+    android:id="@+id/rating"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:translationZ="10dp"
+   app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginTop="5dp"
+    />
     <!-- 1. 可滚动的内容区域 -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
@@ -15,10 +24,10 @@
 
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
-        android:paddingTop="16dp"
+
 
         android:background="@color/light_gray"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rating"
         app:layout_constraintBottom_toTopOf="@+id/bottomRow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -72,7 +81,8 @@
                 android:textColor="@android:color/black"
                 app:layout_constraintTop_toBottomOf="@id/locationTextView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="18sp"/>
 
             <!-- 日记内容输入框 -->
             <EditText
@@ -85,6 +95,7 @@
                 android:maxLines="30"
                 android:gravity="top"
                 android:padding="8dp"
+                android:textSize="16sp"
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
@@ -120,6 +131,7 @@
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 android:layout_marginTop="12dp"
+
                 app:layout_constraintTop_toBottomOf="@id/longtitudeandlatitudeTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>

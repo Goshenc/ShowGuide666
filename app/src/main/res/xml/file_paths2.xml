@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 允许 shareRecord 中传入的 File 位于 cacheDir -->
+    <cache-path name="cache" path="."/>
+    <!-- 如果你是把图片存在 externalCacheDir，则也允许 -->
+    <external-cache-path name="ext_cache" path="."/>
+</paths>
