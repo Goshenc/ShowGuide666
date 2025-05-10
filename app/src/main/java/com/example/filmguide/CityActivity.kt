@@ -3,7 +3,7 @@ package com.example.filmguide
 // CityActivity.kt
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,20 +11,22 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmguide.databinding.ActivityCityBinding
-import com.example.filmguide.logic.network.city.ApiClient
-import com.example.filmguide.logic.network.city.City
+import com.example.filmguide.logic.network.city.CityClient
 import com.example.filmguide.ui.CityAdapter
 import com.example.filmguide.utils.ToastUtil
 
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class CityActivity : AppCompatActivity() {
     lateinit var binding:ActivityCityBinding
 
-    private val adapter = CityAdapter { cityId ->
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra("cityId", cityId)
+    private val adapter = CityAdapter { city ->
+        val intent = Intent(this, HotMovieActivity::class.java)
+        intent.putExtra("cityId", city.id)
+        intent.putExtra("cityName",city.name)
         startActivity(intent)
+        Log.d("zxy","cityId: " + city.id)
     }
 
 
@@ -48,7 +50,7 @@ class CityActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Retrofit + Gson 已经把 JSON 转成 CityResponse
-                val response = ApiClient.cityApi.getCities()
+                val response = CityClient.cityApi.getCities()
                 // 拿到真正的 List<City>
                 val cityList = response.data.cts
                 // 切回主线程，提交给 RecyclerView
