@@ -12,44 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-        <TextView
-            android:id="@+id/diaryDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="日期"
-            android:textColor="@color/black"
-            android:paddingTop="8dp"
-            android:layout_marginStart="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- 地点 -->
-        <TextView
-            android:id="@+id/diaryPlace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="地点"
-            android:textColor="@color/black"
-            android:paddingTop="4dp"
-            android:layout_marginStart="10dp"
-            app:layout_constraintTop_toBottomOf="@id/diaryDate"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- 天气 -->
-        <TextView
-            android:id="@+id/diaryWeather"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="天气"
-            android:textColor="@color/black"
-            android:paddingTop="4dp"
-            android:layout_marginStart="10dp"
-            app:layout_constraintTop_toBottomOf="@id/diaryPlace"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+        <!-- RatingBar 顶部居中 -->
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
@@ -57,27 +20,67 @@
             android:numStars="5"
             android:stepSize="0.5"
             android:isIndicator="true"
-            app:layout_constraintTop_toBottomOf="@+id/diaryWeather"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 日期 -->
+        <TextView
+            android:id="@+id/diaryDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="日期"
+            android:textColor="@color/gray"
+            android:textSize="15sp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/ratingBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/diaryPlace"
+           />
+
+        <!-- 地点 -->
+        <TextView
+            android:id="@+id/diaryPlace"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="地点"
+            android:textColor="@color/gray"
+            android:textSize="15sp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/ratingBar"
+            app:layout_constraintStart_toEndOf="@id/diaryDate"
+            app:layout_constraintEnd_toStartOf="@+id/diaryWeather"
             />
 
-        <!-- 第二部分：标题 -->
+        <!-- 天气 -->
+        <TextView
+            android:id="@+id/diaryWeather"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="天气"
+            android:textColor="@color/gray"
+            android:textSize="15sp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/ratingBar"
+            app:layout_constraintStart_toEndOf="@id/diaryPlace"
+            app:layout_constraintEnd_toEndOf="parent"
+          />
+
+        <!-- 标题 -->
         <TextView
             android:id="@+id/diaryTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@android:drawable/edit_text"
             android:textSize="18sp"
-
             android:textColor="@android:color/black"
             android:textAlignment="center"
             android:paddingTop="10dp"
             android:paddingBottom="8dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-
-            app:layout_constraintTop_toBottomOf="@id/ratingBar"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            app:layout_constraintTop_toBottomOf="@id/diaryDate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -93,12 +96,13 @@
             android:maxHeight="600dp"
             android:gravity="top|start"
             android:layout_marginTop="8dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:textSize="16sp"
+
             app:layout_constraintTop_toBottomOf="@id/diaryTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
 
         <!-- 日记图片 -->
         <ImageView
@@ -109,19 +113,23 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:layout_marginTop="16dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
             app:layout_constraintTop_toBottomOf="@id/diaryArticle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- 分享图标 -->
         <ImageView
             android:id="@+id/img_share"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
             android:src="@drawable/share"
             android:contentDescription="分享"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
