@@ -2,21 +2,31 @@ package com.example.filmguide
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.example.filmguide.databinding.ActivityMainBinding
 import com.example.filmguide.ui.AuthViewModel
 import com.example.filmguide.ui.AuthViewModelFactory
 import com.example.filmguide.utils.ToastUtil
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -41,7 +51,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 1. 预填账号和密码（保留上次登录信息，但不跳转）
+        // 请求自启动设置（仅首次打开）
+        val appPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        if (!appPrefs.getBoolean("asked_autostart", false)) {
+            showAutoStartDialog()
+            appPrefs.edit().putBoolean("asked_autostart", true).apply()
+        }
+
+        // 预填账号和密码
         val savedEmail = prefs.getString("saved_email", "")
         val savedPwd = prefs.getString("saved_pwd", "")
         if (!savedEmail.isNullOrEmpty() && !savedPwd.isNullOrEmpty()) {
@@ -49,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             binding.passwordEditText.setText(savedPwd)
         }
 
-        // 2. 点击登录
+        // 点击登录
         binding.loginBottom.setOnClickListener {
             val user = binding.accountEditText.text.toString().trim()
             val pwd = binding.passwordEditText.text.toString()
@@ -60,10 +77,9 @@ class MainActivity : AppCompatActivity() {
             viewModel.login(user, pwd)
         }
 
-        // 3. 观察登录结果
+        // 观察登录结果
         viewModel.loginSuccess.observe(this) { success ->
             if (success) {
-                // 登录成功，保存凭证
                 prefs.edit()
                     .putString("saved_email", binding.accountEditText.text.toString())
                     .putString("saved_pwd", binding.passwordEditText.text.toString())
@@ -77,25 +93,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.registerImage.setOnClickListener(){
-            val intent=Intent(this,RegisterActivity::class.java)
-            startActivity(intent)
+        binding.registerImage.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
+
         binding.test.setOnClickListener {
-            Log.d("MainActivity",">> test clicked")
-            Toast.makeText(this,"test 点击", Toast.LENGTH_SHORT).show()
+            Log.d("MainActivity", ">> test clicked")
+            Toast.makeText(this, "test 点击", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, HomeActivity::class.java))
         }
-
-
-
-        binding.testcity.setOnClickListener(){
-            val intent=Intent(this,CityActivity::class.java)
-            startActivity(intent)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.test) { view, insets ->
+            val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                bottomMargin = navBarInset
+            }.also { view.layoutParams = it }
+            insets
         }
 
+        binding.testcity.setOnClickListener {
+            startActivity(Intent(this, CityActivity::class.java))
+        }
 
-
+        // 创建通知渠道
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "默认提醒"
             val descriptionText = "用于提醒的通知渠道"
@@ -107,9 +126,57 @@ class MainActivity : AppCompatActivity() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
 
+    /** 弹出自启动设置引导对话框 */
+    private fun showAutoStartDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("开启自启动")
+            .setMessage("为了保证提醒能在后台准时触发，请允许应用自启动。")
+            .setPositiveButton("去设置") { _, _ -> openAutoStartSettings() }
+            .setNegativeButton("取消", null)
+            .show()
+    }
 
-    }//onCreate end
-
-
+    /** 跳转到厂商自启动管理页 */
+    private fun openAutoStartSettings() {
+        val manufacturer = Build.MANUFACTURER.lowercase()
+        try {
+            val intent = when {
+                manufacturer.contains("xiaomi") -> Intent().apply {
+                    component = ComponentName(
+                        "com.miui.securitycenter",
+                        "com.miui.permcenter.autostart.AutoStartManagementActivity"
+                    )
+                }
+                manufacturer.contains("oppo") -> Intent().apply {
+                    component = ComponentName(
+                        "com.coloros.safecenter",
+                        "com.coloros.safecenter.permission.startup.StartupAppListActivity"
+                    )
+                }
+                manufacturer.contains("vivo") -> Intent().apply {
+                    component = ComponentName(
+                        "com.iqoo.secure",
+                        "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager"
+                    )
+                }
+                manufacturer.contains("huawei") || manufacturer.contains("honor") -> Intent().apply {
+                    component = ComponentName(
+                        "com.huawei.systemmanager",
+                        "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity"
+                    )
+                }
+                else -> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:$packageName")
+                }
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            startActivity(
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .apply { data = Uri.parse("package:$packageName") }
+            )
+        }
+    }
 }

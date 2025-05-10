@@ -30,6 +30,7 @@ class RegisterActivity : AppCompatActivity() {
             insets
         }
 
+
         // 获取 SharedPreferences 实例
         val prefs = getSharedPreferences("session_prefs", MODE_PRIVATE)
 

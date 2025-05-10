@@ -1,5 +1,6 @@
 package com.example.filmguide
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -8,6 +9,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -17,7 +20,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -59,20 +65,45 @@ class CreateRecordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateRecordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+        // 只给状态栏留 inset
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val statusInset = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.setPadding(statusInset.left, statusInset.top, statusInset.right, 0)
+            insets
+        }
+
+        // 关闭框架自动 fitsSystemWindows
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // bottomRow 单独处理导航栏 inset
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
+            val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            view.updatePadding(bottom = navBarInset)
+            insets
+        }
+
+        // 导航栏白底黑字
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.white)
+        WindowInsetsControllerCompat(window, window.decorView)
+            .isAppearanceLightNavigationBars = true
+
+
+
 
         diaryDatabase = RecordDatabase.getInstance(this)
         locationUtils = Utils_Date_Location.LocationHelper(this)
 
 
-        binding.selectImageButton.setOnClickListener { selectLocalImage() }
+        binding.navDiary.setOnClickListener { selectLocalImage() }
 
-        binding.takePhotoButton.setOnClickListener { openCamera() }
+        binding.navClock.setOnClickListener { openCamera() }
 
-        binding.selectNetworkImageButton.setOnClickListener { showUrlInputDialog() }
+        binding.navCreate.setOnClickListener { showUrlInputDialog() }
 
-        binding.saveDiaryButton.setOnClickListener { saveDiary() }
+        binding.navManage.setOnClickListener { saveDiary() }
 
-        binding.refreshWeatherLocationButton.setOnClickListener { getLocation()
+        binding.navHome.setOnClickListener { getLocation()
             if (binding.weatherTextView.text!=null)
         ToastUtil.show(this,"刷新成功!",R.drawable.icon)}
 

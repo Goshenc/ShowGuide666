@@ -128,7 +128,7 @@
         android:background="@color/white"
         android:layout_gravity="bottom"
         android:fitsSystemWindows="true"
-        android:paddingTop="5dp">
+        >
 
         <!-- 第1项：必须 Start_toStartOf parent, End_toStartOf 第2项，并声明 chainStyle -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -143,7 +143,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintHorizontal_weight="1">
+            app:layout_constraintHorizontal_weight="1"
+            android:background="@color/light_gray">
 
             <!-- 图标 -->
             <ImageView
@@ -153,13 +154,16 @@
                 android:src="@drawable/home"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"/>
             <!-- 文本 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="首页"
                 android:textSize="10sp"
+
+
                 app:layout_constraintTop_toBottomOf="@id/img_home"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -186,11 +190,12 @@
                 android:src="@drawable/diary"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="日记"
+                android:text="记录"
                 android:textSize="10sp"
                 app:layout_constraintTop_toBottomOf="@id/img_diary"
                 app:layout_constraintStart_toStartOf="parent"
@@ -218,7 +223,8 @@
                 android:src="@drawable/register"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -250,11 +256,12 @@
                 android:src="@drawable/clock"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="计时"
+                android:text="闹钟"
                 android:textSize="10sp"
                 app:layout_constraintTop_toBottomOf="@id/img_clock"
                 app:layout_constraintStart_toStartOf="parent"
@@ -282,7 +289,8 @@
                 android:src="@drawable/manage"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

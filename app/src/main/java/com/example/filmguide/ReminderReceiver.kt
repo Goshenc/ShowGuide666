@@ -8,6 +8,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.filmguide.R
 import com.example.filmguide.logic.model.Reminder
@@ -21,19 +23,36 @@ class ReminderReceiver : BroadcastReceiver() {
 
         // —— 1. 发通知 ——
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        // 1. 创建／更新渠道（仅首次安装有效）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val chan = NotificationChannel(
                 "default", "提醒通知", NotificationManager.IMPORTANCE_HIGH
             ).apply { description = "闹钟时间到" }
             nm.createNotificationChannel(chan)
         }
-        val notif = NotificationCompat.Builder(context, "default")
-            .setSmallIcon(R.drawable.clock)      // 替换为你自己的图标
-            .setContentTitle("提醒")
+
+// 2. 构建通知
+        val largeBitmap = BitmapFactory.decodeResource(
+            context.resources,
+            R.drawable.icon1   // 你的彩色通知大图标资源
+        )
+        val builder = NotificationCompat.Builder(context, "default")
+            .setSmallIcon(R.drawable.icon1)
+            .setLargeIcon(largeBitmap)
+            .setContentTitle("ShowGuide")
             .setContentText("您设置的闹钟已到时间！")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)        // Android 7.1 及以下
+            .setDefaults(NotificationCompat.DEFAULT_ALL)          // 声音、振动、指示灯
             .setAutoCancel(true)
-            .build()
-        nm.notify(id, notif)
+
+// （可选）点击跳转
+        val clickIntent = Intent(context, MainActivity::class.java)
+        val clickPi = PendingIntent.getActivity(context, id, clickIntent, PendingIntent.FLAG_IMMUTABLE)
+        builder.setContentIntent(clickPi)
+
+// 3. 发送
+        nm.notify(id, builder.build())
+
 
         // —— 2. 从 SharedPreferences 删除这条提醒 ——
         val prefs: SharedPreferences =

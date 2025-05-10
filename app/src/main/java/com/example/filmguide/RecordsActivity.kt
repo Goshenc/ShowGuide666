@@ -29,6 +29,19 @@ class RecordsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRecordsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+
+
+
+
+
+
 
         setupRecyclerView()
         setupObservers()
