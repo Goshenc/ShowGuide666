@@ -1,4 +1,3 @@
-
 package com.example.filmguide
 
 import android.app.AlarmManager
@@ -111,7 +110,13 @@ class ReminderActivity : AppCompatActivity() {
         saveList()
         val am = getSystemService(ALARM_SERVICE) as AlarmManager
         val i = Intent(this, ReminderReceiver::class.java).apply { putExtra("reminderId", r.id) }
-        val pi = PendingIntent.getBroadcast(this, r.id, i, PendingIntent.FLAG_IMMUTABLE)
+        // 加上 FLAG_UPDATE_CURRENT，合并已有 PendingIntent
+        val pi = PendingIntent.getBroadcast(
+            this,
+            r.id,
+            i,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         am.cancel(pi)
         adapter.notifyDataSetChanged()
     }
@@ -125,7 +130,13 @@ class ReminderActivity : AppCompatActivity() {
         }
         val am = getSystemService(ALARM_SERVICE) as AlarmManager
         val i = Intent(this, ReminderReceiver::class.java).apply { putExtra("reminderId", r.id) }
-        val pi = PendingIntent.getBroadcast(this, r.id, i, PendingIntent.FLAG_IMMUTABLE)
+        // 使用 FLAG_UPDATE_CURRENT，确保更新意图
+        val pi = PendingIntent.getBroadcast(
+            this,
+            r.id,
+            i,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pi)
     }
 
@@ -140,13 +151,11 @@ class ReminderActivity : AppCompatActivity() {
                 binding.root.post { askIgnoreBatteryOptimizationsOnce() }
             }
             .setNegativeButton("取消") { _, _ ->
-                // 不授权也询问省电优化
                 askIgnoreBatteryOptimizationsOnce()
             }
             .show()
     }
 
-    /** 跳转到悬浮窗权限设置 */
     private fun openOverlaySettings() {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -155,7 +164,6 @@ class ReminderActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    /** 仅首次询问忽略电池优化 */
     private fun askIgnoreBatteryOptimizationsOnce() {
         val askedBattery = batteryPrefs.getBoolean("asked_battery", false)
         if (!askedBattery) {
@@ -164,7 +172,6 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    /** 弹出忽略电池优化对话框 */
     private fun askIgnoreBatteryOptimizations() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val pm = getSystemService(POWER_SERVICE) as PowerManager
@@ -182,4 +189,3 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 }
-

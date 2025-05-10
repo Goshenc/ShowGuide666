@@ -39,8 +39,6 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val display = (this@HomeActivity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).currentWindowMetrics
