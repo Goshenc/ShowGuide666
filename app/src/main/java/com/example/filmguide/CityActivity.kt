@@ -3,6 +3,7 @@ package com.example.filmguide
 // CityActivity.kt
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,14 +16,17 @@ import com.example.filmguide.ui.CityAdapter
 import com.example.filmguide.utils.ToastUtil
 
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class CityActivity : AppCompatActivity() {
     lateinit var binding:ActivityCityBinding
 
-    private val adapter = CityAdapter { cityId ->
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra("cityId", cityId)
+    private val adapter = CityAdapter { city ->
+        val intent = Intent(this, HotMovieActivity::class.java)
+        intent.putExtra("cityId", city.id)
+        intent.putExtra("cityName",city.name)
         startActivity(intent)
+        Log.d("zxy","cityId: " + city.id)
     }
 
 

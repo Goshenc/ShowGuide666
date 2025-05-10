@@ -1,6 +1,7 @@
 package com.example.filmguide
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,8 @@ class HotMovieActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val cityId = intent.getIntExtra("cityId", -1)
+        val cityName : String = intent.getStringExtra("cityName").toString()
+        Log.d("zxy",cityName);
         if (cityId == -1) {
             ToastUtil.show(this, "无效城市 ID",R.drawable.icon)
             finish()
@@ -48,9 +51,10 @@ class HotMovieActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // 使用 HotMovieApi 获取热映电影
-                val response = HotMovieClient.hotMovieApi.getHotMovies(cityId)
-                val movieList = response.outerData.innerData.hot
+                val response = HotMovieClient.hotMoviesApi.getHotMovies(cityId, cityName)
+                val movieList = response.data?.data?.hotMovies ?: emptyList()
                 adapter.submitList(movieList)
+                Log.d("zxy",response.toString())
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(this@HotMovieActivity, "加载失败：${e.message}",R.drawable.icon)
