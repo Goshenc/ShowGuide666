@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import com.example.filmguide.databinding.ActivityHomeBinding
 import com.example.filmguide.logic.network.city.City
+import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeActivity : AppCompatActivity() {
     lateinit var binding:ActivityHomeBinding
@@ -116,8 +117,15 @@ binding.imgLocation.setOnClickListener(){
         val cityId = PrefsManager.getCityId(this)
         val cityName = PrefsManager.getCityName(this)
 
-
         binding.viewPager.adapter = HomeViewPagerAdapter(this, cityId, cityName)
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = "正在热映"
+                1 -> tab.text = "即将上映"
+                2 -> tab.text = "明星"
+            }
+        }.attach()
 
     }//onCreate end
 }

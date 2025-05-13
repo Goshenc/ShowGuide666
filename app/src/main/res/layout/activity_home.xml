@@ -18,6 +18,9 @@
         android:translationZ="2dp"
         android:outlineProvider="none">
 
+
+
+
         <!-- CollapsingToolbarLayout 控制 toprow 的折叠效果 -->
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -87,17 +90,23 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginEnd="5dp"/>
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- 主内容区 -->
+
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
+
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -108,9 +117,20 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:weightSum="1"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:id="@+id/tabLayout"
+                    app:tabGravity="fill"
+                    app:tabMode="scrollable"
+                    app:tabTextColor="@color/black">
+
+                </com.google.android.material.tabs.TabLayout>
+
+
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:layout_width="match_parent"

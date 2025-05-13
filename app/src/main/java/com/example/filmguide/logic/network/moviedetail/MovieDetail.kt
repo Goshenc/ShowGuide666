@@ -5,7 +5,7 @@ import java.io.Serializable
 
 data class MovieDetailResponse(
     @SerializedName("data") val data: MovieDetailData,
-    @SerializedName("cookie") val cookie: CookieInfo,
+    @SerializedName("cookie") val cookie: CookieData,
     @SerializedName("code") val code: Int,
     @SerializedName("message") val message: String
 )
@@ -19,90 +19,102 @@ data class DetailMovie(
     @SerializedName("awardUrl") val awardUrl: String,
     @SerializedName("backgroundColor") val backgroundColor: String,
     @SerializedName("bingeWatch") val bingeWatch: Int,
-    @SerializedName("bingeWatchst") val bingeWatchStatus: Int,
-    @SerializedName("cat") val categories: String,
-    @SerializedName("comScorePersona") val communityScorePersona: Boolean,
-    @SerializedName("commented") val isCommented: Boolean,
-    @SerializedName("dir") val director: String,
-    @SerializedName("distributions") val scoreDistributions: List<ScoreDistribution>,
-    @SerializedName("dra") val description: String,
-    @SerializedName("dur") val duration: Int,
-    @SerializedName("egg") val hasEgg: Boolean,
-    @SerializedName("enm") val englishName: String,
-    @SerializedName("episodeDur") val episodeDuration: Int,
+    @SerializedName("bingeWatchst") val bingeWatchst: Int,
+    @SerializedName("cat") val cat: String,
+    @SerializedName("comScorePersona") val comScorePersona: Boolean,
+    @SerializedName("commented") val commented: Boolean,
+    @SerializedName("dir") val dir: String,
+    @SerializedName("distributions") val distributions: List<Distribution>,
+    @SerializedName("dra") val dra: String,
+    @SerializedName("dur") val dur: Int,
+    @SerializedName("egg") val egg: Boolean,
+    @SerializedName("enm") val enm: String,
+    @SerializedName("episodeDur") val episodeDur: Int,
     @SerializedName("episodes") val episodes: Int,
-    @SerializedName("fra") val franchise: String,
-    @SerializedName("frt") val franchiseReleaseTime: String,
-    @SerializedName("globalReleased") val isGlobalReleased: Boolean,
+    @SerializedName("globalReleased") val globalReleased: Boolean,
     @SerializedName("guideToWish") val guideToWish: Boolean,
     @SerializedName("id") val id: Int,
     @SerializedName("img") val imageUrl: String,
     @SerializedName("latestEpisode") val latestEpisode: Int,
-    @SerializedName("modcsSt") val modcsStatus: Boolean,
+    @SerializedName("modcsSt") val modcsSt: Boolean,
+    @SerializedName("movieExtraVO") val movieExtraVO: MovieExtraVO,
     @SerializedName("movieType") val movieType: Int,
-    @SerializedName("multiPub") val isMultiPub: Boolean,
-    @SerializedName("musicName") val musicName: String,
-    @SerializedName("musicNum") val musicCount: Int,
-    @SerializedName("musicStar") val musicStars: String,
+    @SerializedName("multiPub") val multiPub: Boolean,
+    @SerializedName("musicNum") val musicNum: Int,
     @SerializedName("nm") val name: String,
-    @SerializedName("onSale") val isOnSale: Boolean,
-    @SerializedName("onlinePlay") val isOnlinePlay: Boolean,
-    @SerializedName("orderSt") val orderStatus: Int,
-    @SerializedName("oriLang") val originalLanguage: String,
+    @SerializedName("onSale") val onSale: Boolean,
+    @SerializedName("onlinePlay") val onlinePlay: Boolean,
+    @SerializedName("orderSt") val orderSt: Int,
+    @SerializedName("oriLang") val oriLang: String,
     @SerializedName("photos") val photos: List<String>,
     @SerializedName("pn") val pn: Int,
     @SerializedName("preScorePersona") val preScorePersona: Boolean,
-    @SerializedName("proScore") val professionalScore: Double,
-    @SerializedName("proScoreNum") val professionalScoreCount: Int,
-    @SerializedName("pubDate") val publishDate: Long,
-    @SerializedName("pubDesc") val publishDescription: String,
-    @SerializedName("rt") val releaseDate: String,
-    @SerializedName("sc") val score: Double,
-    @SerializedName("scm") val scoreComment: String,
+    @SerializedName("proScore") val proScore: Int,
+    @SerializedName("proScoreNum") val proScoreNum: Int,
+    @SerializedName("pubDate") val pubDate: Long,
+    @SerializedName("pubDesc") val pubDesc: String,
+    @SerializedName("rt") val rt: String,
+    @SerializedName("sc") val sc: Int,
+    @SerializedName("scm") val scm: String,
     @SerializedName("scoreLabel") val scoreLabel: String,
     @SerializedName("shareInfo") val shareInfo: ShareInfo,
-    @SerializedName("showst") val showStatus: Int,
-    @SerializedName("snum") val scoreNumber: Int,
-    @SerializedName("src") val source: String,
-    @SerializedName("star") val starring: String,
+    @SerializedName("shortComment") val shortComment: ShortComment,
+    @SerializedName("showst") val showst: Int,
+    @SerializedName("snum") val snum: Int,
+    @SerializedName("src") val src: String,
+    @SerializedName("star") val star: String,
     @SerializedName("trailerStyle") val trailerStyle: Int,
     @SerializedName("type") val type: Int,
-    @SerializedName("typeDesc") val typeDescription: String,
-    @SerializedName("vd") val videoUrl: String,
-    @SerializedName("ver") val versions: String,
-    @SerializedName("videoImg") val videoImageUrl: String,
+    @SerializedName("typeDesc") val typeDesc: String,
+    @SerializedName("vd") val vd: String,
+    @SerializedName("ver") val ver: String,
+    @SerializedName("videoImg") val videoImg: String,
     @SerializedName("videoName") val videoName: String,
-    @SerializedName("videourl") val videoPlayUrl: String,
-    @SerializedName("viewedSt") val viewedStatus: Int,
-    @SerializedName("vnum") val videoCount: Int,
-    @SerializedName("vodFreeSt") val vodFreeStatus: Int,
-    @SerializedName("vodPlay") val isVodPlay: Boolean,
-    @SerializedName("vodSt") val vodStatus: Int,
-    @SerializedName("watched") val watchedCount: Int,
-    @SerializedName("wish") val wishCount: Int,
-    @SerializedName("wishst") val wishStatus: Int,
+    @SerializedName("videourl") val videourl: String,
+    @SerializedName("viewedSt") val viewedSt: Int,
+    @SerializedName("vnum") val vnum: Int,
+    @SerializedName("vodFreeSt") val vodFreeSt: Int,
+    @SerializedName("vodPlay") val vodPlay: Boolean,
+    @SerializedName("vodSt") val vodSt: Int,
+    @SerializedName("watched") val watched: Int,
+    @SerializedName("wish") val wish: Int,
+    @SerializedName("wishst") val wishst: Int,
     @SerializedName("version") val version: String
-): Serializable
+) : Serializable
 
-data class ScoreDistribution(
-    @SerializedName("movieScoreLevel") val scoreLevel: String,
+data class Distribution(
+    @SerializedName("movieScoreLevel") val movieScoreLevel: String,
     @SerializedName("proportion") val proportion: String
-): Serializable
+)
+
+data class MovieExtraVO(
+    @SerializedName("envelope") val envelope: Envelope
+)
+
+data class Envelope(
+    @SerializedName("buttonContent") val buttonContent: String,
+    @SerializedName("schemaUrl") val schemaUrl: String
+)
 
 data class ShareInfo(
     @SerializedName("channel") val channel: Int,
     @SerializedName("content") val content: String,
-    @SerializedName("img") val imageUrl: String,
+    @SerializedName("img") val img: String,
     @SerializedName("title") val title: String,
     @SerializedName("url") val url: String
-): Serializable
+)
 
-data class CookieInfo(
+data class ShortComment(
+    @SerializedName("content") val content: String,
+    @SerializedName("location") val location: Int
+)
+
+data class CookieData(
     @SerializedName("from") val from: String,
     @SerializedName("uuid_n_v") val uuidNV: String,
     @SerializedName("iuuid") val iuuid: String,
     @SerializedName("h5guardOpen") val h5guardOpen: String,
     @SerializedName("webp") val webp: String,
-    @SerializedName("ci") val cityInfo: String,
-    @SerializedName("featrues") val features: String
-): Serializable
+    @SerializedName("ci") val ci: String,
+    @SerializedName("featrues") val featrues: String
+)

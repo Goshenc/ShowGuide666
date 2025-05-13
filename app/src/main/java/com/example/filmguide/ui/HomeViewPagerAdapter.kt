@@ -11,11 +11,12 @@ class HomeViewPagerAdapter(
     private val cityName: String
 ) : FragmentStateAdapter(fragmentActivity) {
 
-    override fun getItemCount(): Int = 1 // 后续可扩展
+    override fun getItemCount(): Int = 2 // 后续可扩展
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> HotMovieFragment.newInstance(cityId, cityName)
+            1 -> ExpectedMovieFragment.newInstance(cityId,cityName)
             else -> throw IllegalArgumentException("Invalid position: $position")
         }
     }
