@@ -1,7 +1,9 @@
 package com.example.filmguide
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -9,13 +11,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 import com.example.filmguide.databinding.ActivityRecordDetailBinding
 import com.example.filmguide.ui.RecordDetailViewModel
 
 class RecordDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecordDetailBinding
-    private val viewModel: RecordDetailViewModel by viewModels() // 使用 ViewModel
+    private val viewModel: RecordDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,49 +24,95 @@ class RecordDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(sysBars.left, sysBars.top, sysBars.right, sysBars.bottom)
             insets
         }
 
-
-
-
-
-
         val diaryId = intent.getIntExtra("diaryId", -1)
-        if (diaryId != -1) {
-            viewModel.loadDiaryDetails(diaryId)
-        } else {
+        if (diaryId == -1) {
             finish()
+            return
         }
+        viewModel.loadDiaryDetails(diaryId)
 
-        // 观察 LiveData 并更新 UI
         viewModel.diaryEntity.observe(this) { diary ->
-            if (diary != null) {
-                binding.diaryTitle.text = diary.title
-                binding.diaryArticle.text = diary.article
-                binding.diaryDate.text = diary.date
-                binding.diaryPlace.text = diary.location
-                binding.diaryWeather.text = diary.weather
+            if (diary == null) return@observe
 
-                Log.d("DiaryDetailActivity", "加载日记 ID: $diaryId")
-                Log.d("DiaryDetailActivity", "本地图片路径: ${diary.localImagePath}")
-                Log.d("DiaryDetailActivity", "网络图片路径: ${diary.networkImageLink}")
+            binding.diaryTitle.text = diary.title
+            binding.diaryArticle.text = diary.article
+            binding.diaryDate.text = diary.date
+            binding.diaryPlace.text = diary.location
+            binding.diaryWeather.text = diary.weather
+            binding.ratingBar.rating = diary.rating
 
-                val imagePath = diary.localImagePath ?: diary.networkImageLink
+            // 图片展示：保留展示逻辑
+            binding.diaryImage.visibility = View.GONE
+            diary.localImagePath?.takeIf { it.isNotBlank() }?.let { path ->
+                binding.diaryImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(path)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.diaryImage)
+            } ?: diary.networkImageLink?.takeIf { it.isNotBlank() }?.let { url ->
+                binding.diaryImage.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(url)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.diaryImage)
+            }
 
+            // 分享按钮点击：仅分享文字，不包括图片Uri
+            binding.imgShare.setOnClickListener {
+                shareRecord(
+                    title = diary.title,
+                    date = diary.date,
+                    location = diary.location,
+                    rating = diary.rating,
+                    article = diary.article
+                )
+            }
 
-                binding.diaryImage.visibility = android.view.View.VISIBLE
-
-                if (!imagePath.isNullOrEmpty()) {
-                    Glide.with(this)
-                        .load(imagePath)
-
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(binding.diaryImage)
+            binding.imgBack.setOnClickListener {
+                if (isTaskRoot) {
+                    // 如果当前 Activity 是任务栈中的第一个（即没有其他 Activity）
+                    // 退出应用
+                    finishAffinity()  // 结束所有活动并退出
+                    // 或者使用以下方式
+                    // System.exit(0)  // 直接退出应用
+                } else {
+                    // 如果当前不是栈顶的 Activity，返回到上一个 Activity
+                    finish()
                 }
             }
+
+
         }
+    }
+
+    /**
+     * 分享逻辑：仅文字分享，不携带图片流
+     */
+    private fun shareRecord(
+        title: String,
+        date: String,
+        location: String,
+        rating: Float,
+        article: String
+    ) {
+        val shareText = buildString {
+            append("【观演记】").append(title).append("\n")
+            append("📅 时间: ").append(date).append("\n")
+            append("📍 地点: ").append(location).append("\n")
+            append("⭐️ 评分: ").append(rating).append("\n\n")
+            append(article).append("\n\n")
+            append("—— 来自 FilmGuide App")
+        }
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, "分享到"))
     }
 }

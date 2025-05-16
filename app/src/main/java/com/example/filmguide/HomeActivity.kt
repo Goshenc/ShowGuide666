@@ -16,11 +16,22 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import com.example.filmguide.databinding.ActivityHomeBinding
 import com.example.filmguide.logic.network.city.City
 import com.google.android.material.tabs.TabLayoutMediator
+import com.example.filmguide.logic.network.weather.RetrofitBuilder
+import com.example.filmguide.logic.network.weather.WeatherService
+import com.example.filmguide.utils.ToastUtil
+import com.example.filmguide.utils.Utils_Date_Location
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class HomeActivity : AppCompatActivity() {
+    private val apiKey = "670ca929136a456992608cd2e794df24"
+    private lateinit var locationUtils: Utils_Date_Location.LocationHelper
     lateinit var binding:ActivityHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,25 +45,6 @@ class HomeActivity : AppCompatActivity() {
             return
         }
 
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val display = (this@HomeActivity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).currentWindowMetrics
-            val screenHeight = display.bounds.height()
-
-            // 判断是否存在物理导航键
-            val hasPhysicalNav = (systemBars.bottom > 0 &&
-                    systemBars.bottom != ViewCompat.getRootWindowInsets(view)?.getInsets(WindowInsetsCompat.Type.displayCutout())?.bottom)
-
-            if (hasPhysicalNav) {
-                // 物理导航键设备：添加底部内边距
-                view.updatePadding(bottom = systemBars.bottom)
-            } else {
-                // 手势导航设备：不添加内边距（或自定义手势条高度）
-                view.updatePadding(bottom = 0)
-            }
-            insets
-        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
             // 只取导航栏的高度
             val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
@@ -126,6 +118,65 @@ binding.imgLocation.setOnClickListener(){
                 2 -> tab.text = "明星"
             }
         }.attach()
-
+        locationUtils = Utils_Date_Location.LocationHelper(this)
+        getLocation()
     }//onCreate end
+    private fun getLocation() {
+        locationUtils.getLocation { location ->
+            if (location != null) {
+                val (lat, lng) = location.latitude to location.longitude
+
+                lifecycleScope.launch { getCityIdSuspend("$lng,$lat") }
+            } else {
+                ToastUtil.show(this, "无法获取当前位置", R.drawable.icon)
+            }
+        }
+    }
+    private suspend fun getCityIdSuspend(cityName: String) {
+        try {
+            val service = RetrofitBuilder.getCityInstance.create(WeatherService::class.java)
+            val resp = withContext(Dispatchers.IO) { service.getCity(apiKey, cityName) }
+            if (resp.isSuccessful && resp.body()?.code == "200") {
+                resp.body()?.location?.firstOrNull()?.let { loc ->
+                    withContext(Dispatchers.Main) {
+                        binding.textLocation.text = loc.name
+                    }
+                    getWeatherInfoSuspend(loc.id)
+                } ?: ToastUtil.show(this,"获取城市 ID 失败")
+            } else {
+                ToastUtil.show(this,"获取城市 ID 失败")
+            }
+        } catch (e: Exception) {
+            ToastUtil.show(this,"获取城市 ID 网络请求失败")
+        }
+    }
+
+    private suspend fun getWeatherInfoSuspend(cityId: String) {
+        try {
+            val service = RetrofitBuilder.getWeatherInstance.create(WeatherService::class.java)
+            val resp = withContext(Dispatchers.IO) { service.getWeather(apiKey, cityId) }
+            if (resp.isSuccessful && resp.body()?.code == "200") {
+                val today = Utils_Date_Location.formatDate(Calendar.getInstance().time)
+                val todayWeather = resp.body()?.daily?.firstOrNull { it.fxDate == today }
+                withContext(Dispatchers.Main) {
+
+                }
+            } else {
+                ToastUtil.show(this,"获取天气信息失败")
+            }
+        } catch (e: Exception) {
+            ToastUtil.show(this,"获取天气信息网络请求失败")
+        }
+    }
+
+
+
+    ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+        insets
+    }
+
+
+
 }

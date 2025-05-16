@@ -63,26 +63,29 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     app:layout_constraintStart_toEndOf="@id/avatar"
-                    app:layout_constraintEnd_toStartOf="@id/icongame"
+                    app:layout_constraintEnd_toStartOf="@id/text_location"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="5dp"/>
+                    android:layout_marginEnd="10dp"/>
 
-                <ImageView
-                    android:id="@+id/icongame"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/game"
+                <TextView
+                    android:id="@+id/text_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+
+                    android:textSize="16sp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toStartOf="@id/img_location"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="5dp"/>
+                    android:layout_marginEnd="10dp"/>
+
 
                 <ImageView
                     android:id="@+id/img_location"
                     android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_height="35dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/location"
                     app:layout_constraintEnd_toEndOf="parent"

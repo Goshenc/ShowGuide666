@@ -11,9 +11,7 @@ import android.widget.TextView
 
 
 class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
-
     private val movieList = mutableListOf<HotMovie>()
-
     fun submitList(list: List<HotMovie>) {
         movieList.clear()
         movieList.addAll(list)
