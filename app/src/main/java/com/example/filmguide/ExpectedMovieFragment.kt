@@ -67,6 +67,7 @@ class ExpectedMovieFragment : Fragment() {
                 val movieList = response.data.comingMovies
                 adapter.submitList(movieList)
                 Log.d("zxy", response.toString())
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(requireContext(), "加载失败：${e.message}", R.drawable.icon)
