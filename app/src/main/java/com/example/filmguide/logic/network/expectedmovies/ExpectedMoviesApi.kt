@@ -9,7 +9,7 @@ interface ExpectedMoviesApi {
     suspend fun getExpectedMovies(
         @Query("ci") cityId: Int,
         @Query("ct") cityName: String,
-        @Query("limit") limit: Int = 30,
+        @Query("limit") limit: Int = 100,
         @Query("offset") offset: Int = 0
     ): ExpectedMoviesResponse
 }

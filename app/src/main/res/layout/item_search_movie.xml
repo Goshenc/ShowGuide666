@@ -42,11 +42,10 @@
             android:text="评分" />
 
         <TextView
-            android:id="@+id/tvComment"
+            android:id="@+id/tvCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        android:text="一句话评价"
-        android:maxLines="2"
-        android:ellipsize="end" />
+            android:maxLines="2"
+            android:ellipsize="end" />
     </LinearLayout>
 </LinearLayout>

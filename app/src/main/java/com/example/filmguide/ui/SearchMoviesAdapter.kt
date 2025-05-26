@@ -5,20 +5,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.filmguide.R
-import com.example.filmguide.logic.network.hotmovie.HotMovie
+import com.example.filmguide.logic.network.searchmovies.Movie
 import android.widget.ImageView
 import android.widget.TextView
 
 
-class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
-    private val movieList = mutableListOf<HotMovie>()
+class SearchMoviesAdapter : RecyclerView.Adapter<SearchMoviesAdapter.ViewHolder>() {
+    private val movieList = mutableListOf<Movie>()
     private var onItemClickListener: ((Int) -> Unit)? = null
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClickListener = listener
     }
 
-    fun submitList(list: List<HotMovie>) {
+    fun submitList(list: List<Movie>) {
         movieList.clear()
         movieList.addAll(list)
         notifyDataSetChanged()
@@ -29,13 +29,17 @@ class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
         val tvName: TextView = itemView.findViewById(R.id.tvName)
         val tvStar: TextView = itemView.findViewById(R.id.tvStar)
         val tvScore: TextView = itemView.findViewById(R.id.tvScore)
-        val tvComment: TextView = itemView.findViewById(R.id.tvComment)
+        val tvCategory: TextView = itemView.findViewById(R.id.tvCategory)
 
-        fun bind(movie: HotMovie) {
+        fun bind(movie: Movie) {
             tvName.text = movie.name
-            tvStar.text = "主演：${movie.starring}"
+            if (movie.starring == null){
+                tvStar.text = "主演： 暂无信息"
+            } else {
+                tvStar.text = "主演：${movie.starring}"
+            }
             tvScore.text = "评分：${movie.score}"
-            tvComment.text = movie.scoreComment
+            tvCategory.text = "类型：${movie.category}"
             Glide.with(ivPoster.context)
                 .load(movie.imageUrl)
                 .into(ivPoster)
@@ -45,16 +49,15 @@ class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemClickListener?.invoke(movieList[position].id)
+                    onItemClickListener?.invoke(movieList[position].movieId)
                 }
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_hot_movie, parent, false)
+            .inflate(R.layout.item_search_movie, parent, false)
         return ViewHolder(itemView)
     }
 
@@ -63,4 +66,6 @@ class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(movieList[position])
     }
+
+
 }

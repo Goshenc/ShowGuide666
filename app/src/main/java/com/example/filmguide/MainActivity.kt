@@ -21,12 +21,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.filmguide.databinding.ActivityMainBinding
 import com.example.filmguide.ui.AuthViewModel
 import com.example.filmguide.ui.AuthViewModelFactory
 import com.example.filmguide.utils.ToastUtil
+import com.example.filmguide.logic.network.searchperformance.SearchPerformanceClient
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -101,6 +104,23 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", ">> test clicked")
             Toast.makeText(this, "test 点击", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, HomeActivity::class.java))
+
+                    lifecycleScope.launch {
+                        try {
+                            val response = SearchPerformanceClient.searchPerformanceApi.searchPerformances(
+                                keyword = "王心凌"
+                            )
+
+                            if (response.code == 200) {
+                                val performances = response.data.performanceList
+                                Log.d("zxy",performances.toString())
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
+
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.test) { view, insets ->
             val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom

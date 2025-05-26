@@ -1,4 +1,3 @@
-// HotMovieFragment.kt
 package com.example.filmguide
 
 import android.content.Intent
@@ -10,25 +9,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.filmguide.databinding.FragmentHotMovieBinding
-import com.example.filmguide.logic.network.hotmovie.HotMovieClient
-import com.example.filmguide.ui.HotMovieAdapter
+import com.example.filmguide.databinding.FragmentSearchMoviesBinding
+import com.example.filmguide.logic.network.searchmovies.SearchMovieClient
 import com.example.filmguide.ui.MovieDetailActivity
+import com.example.filmguide.ui.SearchMoviesAdapter
 import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
 
-class HotMovieFragment : Fragment() {
-    private var _binding: FragmentHotMovieBinding? = null
+class SearchMovieFragment : Fragment() {
+    private var _binding: FragmentSearchMoviesBinding? = null
     private val binding get() = _binding!!
-    private val adapter = HotMovieAdapter()
+    private val adapter = SearchMoviesAdapter()
 
     companion object {
-        fun newInstance(cityId: Int, cityName: String): HotMovieFragment {
+        fun newInstance(cityId: Int, keyword: String): SearchMovieFragment {
             val args = Bundle().apply {
                 putInt("cityId", cityId)
-                putString("cityName", cityName)
+                putString("keyword", keyword)
             }
-            return HotMovieFragment().apply { arguments = args }
+            return SearchMovieFragment().apply { arguments = args }
         }
     }
 
@@ -37,7 +37,7 @@ class HotMovieFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHotMovieBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchMoviesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,20 +53,32 @@ class HotMovieFragment : Fragment() {
         }
 
         val cityId = arguments?.getInt("cityId", -1) ?: -1
-        val cityName = arguments?.getString("cityName") ?: ""
+        val rawKeyword = arguments?.getString("keyword") ?: ""
+        val keyword = URLEncoder.encode(rawKeyword, "UTF-8")
 
-        if (cityId == -1) {
-            ToastUtil.show(requireContext(), "无效城市 ID", R.drawable.icon)
+        if (cityId == -1 || keyword.isEmpty()) {
+            ToastUtil.show(requireContext(), "无效城市 ID 或关键词", R.drawable.icon)
             parentFragmentManager.popBackStack()
             return
         }
 
+        loadMovies(cityId, keyword)
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun loadMovies( cityId: Int,keyword: String){
         lifecycleScope.launch {
             try {
-                val response = HotMovieClient.hotMoviesApi.getHotMovies(cityId, cityName)
-                val movieList = response.data?.data?.hotMovies ?: emptyList()
-                adapter.submitList(movieList)
-                Log.d("zxy", response.toString())
+                val response = SearchMovieClient.searchMovieApi.searchMovies(cityId, keyword)
+                val movieList = response.data.movies
+
+                val listToSubmit = movieList ?: emptyList()
+                adapter.submitList(listToSubmit)
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(requireContext(), "加载失败：${e.message}", R.drawable.icon)
@@ -74,8 +86,4 @@ class HotMovieFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

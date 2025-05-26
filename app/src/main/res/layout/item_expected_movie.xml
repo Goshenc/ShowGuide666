@@ -5,7 +5,8 @@
             android:orientation="horizontal"
             android:padding="12dp"
             android:layout_margin="8dp"
-            android:elevation="4dp">
+            android:elevation="4dp"
+            android:background="@color/white">
     <ImageView
         android:id="@+id/ivPoster"
         android:layout_width="100dp"

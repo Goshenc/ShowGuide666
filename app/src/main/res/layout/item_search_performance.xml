@@ -27,26 +27,25 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:text="电影名" />
+            android:text="演唱会名称" />
 
         <TextView
             android:id="@+id/tvStar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="主演" />
+            android:text="明星" />
 
         <TextView
-            android:id="@+id/tvScore"
+            android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="评分" />
+            android:text="价格" />
 
         <TextView
-            android:id="@+id/tvComment"
+            android:id="@+id/tvVenue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        android:text="一句话评价"
-        android:maxLines="2"
-        android:ellipsize="end" />
+            android:maxLines="2"
+            android:ellipsize="end" />
     </LinearLayout>
 </LinearLayout>

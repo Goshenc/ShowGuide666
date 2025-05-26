@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,10 +15,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.example.filmguide.databinding.ActivityHomeBinding
-import com.example.filmguide.logic.network.city.City
 import com.google.android.material.tabs.TabLayoutMediator
 import com.example.filmguide.logic.network.weather.RetrofitBuilder
 import com.example.filmguide.logic.network.weather.WeatherService
@@ -30,6 +29,7 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class HomeActivity : AppCompatActivity() {
+    private var currentPagePosition = 0
     private val apiKey = "670ca929136a456992608cd2e794df24"
     private lateinit var locationUtils: Utils_Date_Location.LocationHelper
     lateinit var binding:ActivityHomeBinding
@@ -105,11 +105,47 @@ binding.imgLocation.setOnClickListener(){
             insets
         }
 
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = true
+            val cityId = PrefsManager.getCityId(this)
+
+            currentPagePosition = binding.viewPager.currentItem
+            Log.d("zxy", currentPagePosition.toString())
+
+            val cityName = PrefsManager.getCityName(this)
+
+            binding.viewPager.adapter = HomeViewPagerAdapter(this, cityId, cityName)
+
+            TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+                when (position) {
+                    0 -> tab.text = "正在热映"
+                    1 -> tab.text = "即将上映"
+                    2 -> tab.text = "明星"
+                }
+            }.attach()
+
+            binding.viewPager.setCurrentItem(currentPagePosition,false)
+
+            lifecycleScope.launch {
+                kotlinx.coroutines.delay(1000)
+                withContext(Dispatchers.Main) {
+                    binding.swipeRefresh.isRefreshing = false
+                    Log.d("zxy", currentPagePosition.toString())
+                }
+            }
+        }
+
 
         val cityId = PrefsManager.getCityId(this)
         val cityName = PrefsManager.getCityName(this)
 
         binding.viewPager.adapter = HomeViewPagerAdapter(this, cityId, cityName)
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                currentPagePosition = position
+            }
+        })
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
@@ -120,6 +156,19 @@ binding.imgLocation.setOnClickListener(){
         }.attach()
         locationUtils = Utils_Date_Location.LocationHelper(this)
         getLocation()
+
+        binding.search.setOnClickListener {
+            val keyword = binding.searchBox.text.toString().trim()
+            if (keyword.isNotEmpty()) {
+                startActivity(Intent(this, SearchActivity::class.java).apply {
+                    putExtra("keyword", keyword)
+                    putExtra("cityId",cityId)
+                })
+            } else {
+                ToastUtil.show(this, "请输入搜索内容", R.drawable.icon)
+            }
+        }
+
     }//onCreate end
     private fun getLocation() {
         locationUtils.getLocation { location ->
@@ -167,14 +216,6 @@ binding.imgLocation.setOnClickListener(){
         } catch (e: Exception) {
             ToastUtil.show(this,"获取天气信息网络请求失败")
         }
-    }
-
-
-
-    ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-        insets
     }
 
 

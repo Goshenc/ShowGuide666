@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -54,19 +55,32 @@
                     android:id="@+id/searchBox"
                     android:layout_width="0dp"
                     android:layout_height="35dp"
-                    android:hint="影视/音乐会/话剧"
-                    android:textColorHint="@color/gray_darker"
-                    android:textSize="15sp"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/searchbox_background"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:hint="影视/音乐会/话剧"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    app:layout_constraintStart_toEndOf="@id/avatar"
-                    app:layout_constraintEnd_toStartOf="@id/text_location"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:textColorHint="@color/gray_darker"
+                    android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="10dp"/>
+                    app:layout_constraintEnd_toStartOf="@id/text_location"
+                    app:layout_constraintStart_toEndOf="@id/avatar"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.533" />
+
+                <ImageView
+                    android:id="@+id/search"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/baseline_search_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/searchBox"
+                    app:layout_constraintEnd_toStartOf="@+id/text_location"
+                    app:layout_constraintHorizontal_bias="0.934"
+                    app:layout_constraintStart_toEndOf="@+id/avatar"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
 
                 <TextView
                     android:id="@+id/text_location"
@@ -124,21 +138,22 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.tabs.TabLayout
+                    android:background="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:id="@+id/tabLayout"
                     app:tabGravity="fill"
                     app:tabMode="scrollable"
-                    app:tabTextColor="@color/black">
+                    app:tabTextColor="@color/black"
+                    app:tabIndicatorColor="@color/black">
 
                 </com.google.android.material.tabs.TabLayout>
 
 
-
                 <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/viewPager"/>
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.core.widget.NestedScrollView>
