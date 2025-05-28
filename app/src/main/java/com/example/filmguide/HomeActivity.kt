@@ -38,6 +38,11 @@ class HomeActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding=ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         if (PrefsManager.isFirstSelection(this)) {
             startActivity(Intent(this, CityActivity::class.java))
@@ -45,21 +50,7 @@ class HomeActivity : AppCompatActivity() {
             return
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomRow) { view, insets ->
-            // 只取导航栏的高度
-            val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
-            // 通过修改 margin 把整个 View 往上推
-            (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                bottomMargin = navBarInset
-            }.also { view.layoutParams = it }
-
-            // 方法 B：或者更直接地用 translationY
-            // view.translationY = -navBarInset.toFloat()
-
-            // 一定要返回 insets
-            insets
-        }
 
         //把底部手势栏背景颜色改成白色
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.white)
@@ -99,11 +90,7 @@ binding.imgLocation.setOnClickListener(){
             nm.createNotificationChannel(channel)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+
 
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = true
@@ -118,9 +105,9 @@ binding.imgLocation.setOnClickListener(){
 
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 when (position) {
-                    0 -> tab.text = "正在热映"
-                    1 -> tab.text = "即将上映"
-                    2 -> tab.text = "明星"
+                    0 -> tab.text = "演出"
+                    1 -> tab.text = "正在热映"
+                    2 -> tab.text = "即将上映"
                 }
             }.attach()
 
@@ -149,9 +136,9 @@ binding.imgLocation.setOnClickListener(){
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "正在热映"
-                1 -> tab.text = "即将上映"
-                2 -> tab.text = "明星"
+                0 -> tab.text = "演出"
+                1 -> tab.text = "正在热映"
+                2 -> tab.text = "即将上映"
             }
         }.attach()
         locationUtils = Utils_Date_Location.LocationHelper(this)

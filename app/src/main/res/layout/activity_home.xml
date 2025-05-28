@@ -143,7 +143,6 @@
                     android:layout_height="30dp"
                     android:id="@+id/tabLayout"
                     app:tabGravity="fill"
-                    app:tabMode="scrollable"
                     app:tabTextColor="@color/black"
                     app:tabIndicatorColor="@color/black">
 
@@ -160,13 +159,13 @@
 
     <!-- 底部导航：水平 Chain 实现五等分 -->
     <!-- 底部导航：只有这段 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/bottomRow"
         android:layout_width="match_parent"
         android:layout_height="63dp"
         android:background="@color/white"
         android:layout_gravity="bottom"
-        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
         >
 
         <!-- 第1项：必须 Start_toStartOf parent, End_toStartOf 第2项，并声明 chainStyle -->
@@ -177,12 +176,7 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/nav_diary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintHorizontal_weight="1"
+            android:layout_weight="1"
             android:background="@color/light_gray">
 
             <!-- 图标 -->
@@ -216,11 +210,7 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintStart_toEndOf="@id/nav_home"
-            app:layout_constraintEnd_toStartOf="@+id/nav_create"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/img_diary"
@@ -249,11 +239,7 @@
             android:clickable="true"
             android:focusable="true"
 
-            app:layout_constraintStart_toEndOf="@id/nav_diary"
-            app:layout_constraintEnd_toStartOf="@+id/nav_clock"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/img_create"
@@ -282,11 +268,7 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintStart_toEndOf="@id/nav_create"
-            app:layout_constraintEnd_toStartOf="@+id/nav_manage"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/img_clock"
@@ -315,11 +297,7 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintStart_toEndOf="@id/nav_clock"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_weight="1">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/img_manage"
@@ -340,7 +318,7 @@
                 app:layout_constraintEnd_toEndOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 
 

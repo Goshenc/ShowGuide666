@@ -21,22 +21,17 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="演唱会名称" />
+            android:text="演唱会名称"
+            android:gravity="start|top"
+            android:paddingTop="4dp"/>
 
-        <TextView
-            android:id="@+id/tvStar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:text="明星" />
 
         <TextView
             android:id="@+id/tvVenue"
@@ -45,8 +40,8 @@
             android:textColor="@color/gray"
             android:ellipsize="end"
             android:textSize="12sp"
-            android:layout_marginTop="4dp"/>
-
+            android:layout_marginTop="8dp"
+            android:gravity="start|center_vertical"/>
 
 
         <TextView
@@ -59,11 +54,5 @@
             android:textSize="16sp"
             android:text="价格"
             />
-
-
-
-
-
-
     </LinearLayout>
 </LinearLayout>

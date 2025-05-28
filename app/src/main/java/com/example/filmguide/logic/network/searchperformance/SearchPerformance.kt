@@ -1,6 +1,7 @@
 package com.example.filmguide.logic.network.searchperformance
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class SearchPerformance(
     val code: Int,
@@ -9,28 +10,38 @@ data class SearchPerformance(
     val paging: Paging,
     @SerializedName("attrMaps") val attrMaps: AttrMaps,
     val success: Boolean
-) {
-    // 增强方法：关联明星信息到演出
-    fun getEnhancedPerformances(): List<EnhancedPerformance> {
-        val celebrityMap = data.celebrityList?.associateBy { it.celebrityId } ?: emptyMap()
+) : Serializable {
+
+    fun getAllCelebrities(): List<Celebrity> = data.celebrityBasicDTOList ?: emptyList()
+
+    fun getEnhancedPerformancesWithAllCelebrities(): List<EnhancedPerformance> {
+        val allCelebrities = data.celebrityBasicDTOList.orEmpty()
         return data.performanceList.map { performance ->
-            EnhancedPerformance.from(performance, celebrityMap)
+            EnhancedPerformance(performance, allCelebrities)
         }
     }
 }
 
+
 data class PerformanceData(
-    @SerializedName("celebrityBasicDTOList") val celebrityList: List<Celebrity>? = null,
+    @SerializedName("celebrityBasicDTOList") val celebrityBasicDTOList: List<Celebrity>? = null ,
     @SerializedName("performanceVOList") val performanceList: List<Performance>
-)
+) : Serializable
+
 
 data class Celebrity(
-    val id: Int,
+    @SerializedName("id") val id: Int,
     @SerializedName("celebrityId") val celebrityId: Long,
-    @SerializedName("celebrityName") val name: String,
-    @SerializedName("headUrl") val avatarUrl: String,
-    @SerializedName("aliasName") val alias: String
-)
+    @SerializedName("celebrityName") val celebrityName: String,
+    @SerializedName("headUrl") val headUrl: String,
+    @SerializedName("aliasName") val aliasName: String,
+    @SerializedName("categoryIds") val categoryIds: List<Int>? = null,
+    @SerializedName("type") val type: Int? = null,
+    @SerializedName("status") val status: Int? = null,
+    @SerializedName("backgroundUrl") val backgroundUrl: String? = null,
+
+) : Serializable
+
 
 data class Performance(
     @SerializedName("performanceId") val id: Long,
@@ -43,32 +54,40 @@ data class Performance(
     @SerializedName("lowestPrice") val lowestPrice: Double,
     @SerializedName("stockOut") val isSoldOut: Boolean,
     @SerializedName("shareLink") val detailLink: String,
-    // 原始API可能没有的字段，用于关联明星
-    @SerializedName("celebrityIds") val celebrityIds: List<Long>? = null
-)
+    @SerializedName("celebrityRelationVOS") val celebrityRelations: List<CelebrityRelation> = emptyList()
+) : Serializable
 
-// 新增：增强版的演出数据类（包含明星信息）
+
+data class CelebrityRelation(
+    @SerializedName("celebrityId") val celebrityId: Long
+) : Serializable
+
+
 data class EnhancedPerformance(
     val performance: Performance,
     val celebrities: List<Celebrity>
-) {
+) : Serializable {
     companion object {
-        fun from(performance: Performance, celebrityMap: Map<Long, Celebrity>): EnhancedPerformance {
-            val relatedCelebrities = performance.celebrityIds?.mapNotNull {
-                celebrityMap[it]
-            } ?: emptyList()
+        fun from(
+            performance: Performance,
+            celebrityMap: Map<Long, Celebrity>
+        ): EnhancedPerformance {
+            val celebrityIds = performance.celebrityRelations.map { it.celebrityId }
+            val relatedCelebrities = celebrityIds.mapNotNull { celebrityMap[it] }
             return EnhancedPerformance(performance, relatedCelebrities)
         }
     }
 }
 
+// 分页信息类
 data class Paging(
     val pageNo: Int,
     val pageSize: Int,
     val totalHits: Int,
     val hasMore: Boolean
-)
+) : Serializable
 
+// 属性映射类
 data class AttrMaps(
     @SerializedName("serverTime") val serverTime: Long
-)
+) : Serializable

@@ -58,7 +58,7 @@ class SearchActivity : AppCompatActivity() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = "影视"
-                1 -> tab.text = "演唱会"
+                1 -> tab.text = "演出"
             }
         }.attach()
 

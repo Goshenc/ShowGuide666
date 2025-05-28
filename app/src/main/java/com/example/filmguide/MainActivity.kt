@@ -25,10 +25,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.filmguide.databinding.ActivityMainBinding
+import com.example.filmguide.logic.network.searchperformance.PerformanceData
 import com.example.filmguide.ui.AuthViewModel
 import com.example.filmguide.ui.AuthViewModelFactory
 import com.example.filmguide.utils.ToastUtil
 import com.example.filmguide.logic.network.searchperformance.SearchPerformanceClient
+import com.example.filmguide.ui.MovieDetailActivity
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -103,22 +106,37 @@ class MainActivity : AppCompatActivity() {
         binding.test.setOnClickListener {
             Log.d("MainActivity", ">> test clicked")
             Toast.makeText(this, "test 点击", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, HomeActivity::class.java))
+            //startActivity(Intent(this, HomeActivity::class.java))
 
-                    lifecycleScope.launch {
-                        try {
-                            val response = SearchPerformanceClient.searchPerformanceApi.searchPerformances(
-                                keyword = "王心凌"
-                            )
-
-                            if (response.code == 200) {
-                                val performances = response.data.performanceList
-                                Log.d("zxy",performances.toString())
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
+            val json = """
+    {
+      "celebrityBasicDTOList": [
+        {
+          "id": 458,
+          "celebrityId": 365614,
+          "celebrityName": "\u738B\u5FC3\u51CC",
+          "categoryIds": [1, 10],
+          "type": 0,
+          "status": 1,
+          "backgroundUrl": "https://p1.meituan.net/scarlett/5b8fef5ad66febf0f783f2decbfa283b120523.png",
+          "creator": "zhangdonglian",
+          "updater": "yangchenghong",
+          "updateTime": 1748270424000,
+          "headUrl": "https://p1.meituan.net/movie/b28fc2844d3243fea910862680fc104320330.jpg",
+          "aliasName": "\u738B\u541B\u5982",
+          "videoUpdateTime": null,
+          "updateType": 0,
+          "recommendTag": "\u53BB\u770B\u6700\u8FD1\u52A8\u6001",
+          "projectCount": null,
+          "tourWishSwitch": 0,
+          "otherAliasName": ""
+        }
+      ]
+    }
+""".trimIndent()
+            val gson = Gson()
+            val performanceData = gson.fromJson(json, PerformanceData::class.java)
+            ToastUtil.show(this@MainActivity, " " + performanceData.celebrityBasicDTOList?.size, R.drawable.icon) // 应输出 1，非 null
 
 
         }

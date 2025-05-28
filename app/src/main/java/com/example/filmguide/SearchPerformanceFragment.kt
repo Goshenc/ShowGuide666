@@ -11,11 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmguide.databinding.FragmentSearchPerformanceBinding
+import com.example.filmguide.logic.network.searchperformance.Celebrity
+import com.example.filmguide.logic.network.searchperformance.EnhancedPerformance
 import com.example.filmguide.logic.network.searchperformance.SearchPerformanceClient
 import com.example.filmguide.ui.SearchPerformanceAdapter
 import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
+import java.io.Serializable
 
 class SearchPerformanceFragment : Fragment() {
     private var _binding: FragmentSearchPerformanceBinding? = null
@@ -37,6 +40,7 @@ class SearchPerformanceFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchPerformanceBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -45,11 +49,12 @@ class SearchPerformanceFragment : Fragment() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
-//        adapter.setOnItemClickListener { performanceId ->
-//            val intent = Intent(requireContext(), PerformanceDetailActivity::class.java)
-//            intent.putExtra("performanceId", performanceId)
-//            startActivity(intent)
-//        }
+        adapter.setOnItemClickListener(object : SearchPerformanceAdapter.OnItemClickListener {
+            override fun onItemClick(enhancedPerformance: EnhancedPerformance,celebrityList: List<Celebrity>) {
+                handleItemClick(enhancedPerformance,celebrityList)
+            }
+        })
+
 
         val rawKeyword = arguments?.getString("keyword") ?: ""
         val keyword = URLEncoder.encode(rawKeyword, "UTF-8")
@@ -60,7 +65,17 @@ class SearchPerformanceFragment : Fragment() {
             return
         }
 
-        loadPerformances(keyword)
+        loadPerformances(rawKeyword)
+    }
+
+    private fun handleItemClick(enhancedPerformance: EnhancedPerformance,celebrityList: List<Celebrity>) {
+
+        val intent = Intent(requireContext(), PerformanceDetailActivity::class.java)
+        intent.putExtra("key_data", enhancedPerformance)
+        intent.putExtra("key_celebrity",celebrityList as Serializable)
+        startActivity(intent)
+
+
     }
 
     override fun onDestroyView() {
@@ -72,10 +87,16 @@ class SearchPerformanceFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val response = SearchPerformanceClient.searchPerformanceApi.searchPerformances(keyword = keyword)
-                val performanceList = response.getEnhancedPerformances()
+                val performanceList = response.getEnhancedPerformancesWithAllCelebrities()
+                val celebrity = response.getAllCelebrities()
+                Log.d("zxy",response.toString())
                 Log.d("zxy",performanceList.toString())
+                Log.d("zxy",celebrity.toString())
                 val listToSubmit = performanceList ?: emptyList()
-                adapter.submitList(listToSubmit)
+                adapter.submitList(listToSubmit,celebrity)
+                if (!performanceList.isEmpty()){
+                    binding.textView.visibility = View.GONE
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(requireContext(), "加载失败：${e.message}", R.drawable.icon)

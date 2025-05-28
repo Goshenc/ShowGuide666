@@ -5,7 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -23,8 +26,14 @@ class MovieDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityMovieDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         val movieId = intent.getIntExtra("movieId", -1)
         Log.d("zxy", "Video URL: " + movieId)
@@ -46,12 +55,16 @@ class MovieDetailActivity : AppCompatActivity() {
             }
 
         }
+
+
     }
     private fun showMovieDetail(movie: com.example.filmguide.logic.network.moviedetail.DetailMovie) {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@MovieDetailActivity)
-            adapter = DetailMovieAdapter(movie)
+            adapter = DetailMovieAdapter(this@MovieDetailActivity,movie)
         }
     }
+
+
 
 }
