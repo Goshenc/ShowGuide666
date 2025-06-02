@@ -51,10 +51,10 @@ class HotMovieActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // 使用 HotMovieApi 获取热映电影
-                val response = HotMovieClient.hotMoviesApi.getHotMovies(cityId, cityName)
-                val movieList = response.data?.data?.hotMovies ?: emptyList()
-                adapter.submitList(movieList)
-                Log.d("zxy",response.toString())
+//                val response = HotMovieClient.hotMoviesApi.getHotMovies(4, cityId,cityName)
+//                val movieList = response.data?.data?.hotMovies ?: emptyList()
+//                adapter.submitList(movieList)
+//                Log.d("zxy",response.toString())
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(this@HotMovieActivity, "加载失败：${e.message}",R.drawable.icon)

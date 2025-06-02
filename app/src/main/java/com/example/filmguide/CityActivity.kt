@@ -53,7 +53,7 @@ class CityActivity : AppCompatActivity() {
                 // Retrofit + Gson 已经把 JSON 转成 CityResponse
                 val response = CityClient.cityApi.getCities()
                 // 拿到真正的 List<City>
-                val cityList = response.data.cts
+                val cityList = response.cts
                 // 切回主线程，提交给 RecyclerView
                 adapter.submitList(cityList)
             } catch (e: Exception) {

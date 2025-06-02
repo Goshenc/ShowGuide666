@@ -3,12 +3,6 @@ package com.example.filmguide.logic.network.moviedetail
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class MovieDetailResponse(
-    @SerializedName("data") val data: MovieDetailData,
-    @SerializedName("cookie") val cookie: CookieData,
-    @SerializedName("code") val code: Int,
-    @SerializedName("message") val message: String
-)
 
 data class MovieDetailData(
     @SerializedName("detailMovie") val detailMovie: DetailMovie
@@ -36,8 +30,6 @@ data class DetailMovie(
     @SerializedName("id") val id: Int = 0,
     @SerializedName("img") val imageUrl: String = "",
     @SerializedName("latestEpisode") val latestEpisode: Int = 0,
-    @SerializedName("modcsSt") val modcsSt: Boolean = false,
-    @SerializedName("movieExtraVO") val movieExtraVO: MovieExtraVO? = null,
     @SerializedName("movieType") val movieType: Int = 0,
     @SerializedName("multiPub") val multiPub: Boolean = false,
     @SerializedName("musicNum") val musicNum: Int = 0,
@@ -54,11 +46,10 @@ data class DetailMovie(
     @SerializedName("pubDate") val pubDate: Long = 0,
     @SerializedName("pubDesc") val pubDesc: String = "",
     @SerializedName("rt") val rt: String = "",
-    @SerializedName("sc") val sc: Double = 0.0, // 注意：第二个数据中sc为0，第一个为9.6，改为Double
+    @SerializedName("sc") val sc: Double = 0.0,
     @SerializedName("scm") val scm: String = "",
     @SerializedName("scoreLabel") val scoreLabel: String = "",
     @SerializedName("shareInfo") val shareInfo: ShareInfo? = null,
-    @SerializedName("shortComment") val shortComment: ShortComment? = null,
     @SerializedName("showst") val showst: Int = 0,
     @SerializedName("snum") val snum: Int = 0,
     @SerializedName("src") val src: String = "",
@@ -79,22 +70,12 @@ data class DetailMovie(
     @SerializedName("watched") val watched: Int = 0,
     @SerializedName("wish") val wish: Int = 0,
     @SerializedName("wishst") val wishst: Int = 0,
-    @SerializedName("version") val version: String = "",
-    @SerializedName("shootingCty") val shootingCty: String? = null
+    @SerializedName("version") val version: String = ""
 ) : Serializable
 
 data class Distribution(
     @SerializedName("movieScoreLevel") val movieScoreLevel: String = "",
     @SerializedName("proportion") val proportion: String = ""
-)
-
-data class MovieExtraVO(
-    @SerializedName("envelope") val envelope: Envelope? = null
-)
-
-data class Envelope(
-    @SerializedName("buttonContent") val buttonContent: String = "",
-    @SerializedName("schemaUrl") val schemaUrl: String = ""
 )
 
 data class ShareInfo(
@@ -103,19 +84,4 @@ data class ShareInfo(
     @SerializedName("img") val img: String = "",
     @SerializedName("title") val title: String = "",
     @SerializedName("url") val url: String = ""
-)
-
-data class ShortComment(
-    @SerializedName("content") val content: String = "",
-    @SerializedName("location") val location: Int = 0
-)
-
-data class CookieData(
-    @SerializedName("from") val from: String = "",
-    @SerializedName("uuid_n_v") val uuidNV: String = "",
-    @SerializedName("iuuid") val iuuid: String = "",
-    @SerializedName("h5guardOpen") val h5guardOpen: String = "",
-    @SerializedName("webp") val webp: String = "",
-    @SerializedName("ci") val ci: String = "",
-    @SerializedName("featrues") val featrues: String = ""
 )

@@ -33,7 +33,7 @@ class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
 
         fun bind(movie: HotMovie) {
             tvName.text = movie.name
-            tvStar.text = "主演：${movie.starring}"
+            tvStar.text = "主演：${movie.stars}"
             tvScore.text = "评分：${movie.score}"
             tvComment.text = movie.scoreComment
             Glide.with(ivPoster.context)

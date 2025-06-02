@@ -4,10 +4,9 @@ import com.example.filmguide.logic.network.Url
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 object HotMovieClient {
     private val retrofit = Retrofit.Builder()
-        .baseUrl(Url.BASE_URL)
+        .baseUrl("https://i.maoyan.com/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

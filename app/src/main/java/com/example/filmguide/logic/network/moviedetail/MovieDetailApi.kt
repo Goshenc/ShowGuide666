@@ -4,8 +4,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface MovieDetailApi {
-    @GET("movie/detail")
+    @GET("ajax/detailmovie")
     suspend fun getMovieDetail(
         @Query("movieId") movieId: Int
-    ): MovieDetailResponse
+    ): MovieDetailData
 }

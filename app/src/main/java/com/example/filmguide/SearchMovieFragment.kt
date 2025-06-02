@@ -62,7 +62,7 @@ class SearchMovieFragment : Fragment() {
             return
         }
 
-        loadMovies(cityId, keyword)
+        loadMovies(cityId, rawKeyword)
 
     }
 
@@ -75,7 +75,8 @@ class SearchMovieFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val response = SearchMovieClient.searchMovieApi.searchMovies(cityId, keyword)
-                val movieList = response.data.movies
+                Log.d("zxy4",response.toString())
+                val movieList = response.movies
 
                 val listToSubmit = movieList ?: emptyList()
                 adapter.submitList(listToSubmit)

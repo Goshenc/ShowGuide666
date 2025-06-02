@@ -63,9 +63,11 @@ class HotMovieFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                val response = HotMovieClient.hotMoviesApi.getHotMovies(cityId, cityName)
-                val movieList = response.data?.data?.hotMovies ?: emptyList()
-                adapter.submitList(movieList)
+                val response = HotMovieClient.hotMoviesApi.getHotMovies(4, cityId,cityName)
+                val movieList = response.data.hotMovies
+                movieList?.let { nonNullMovieList ->
+                    adapter.submitList(nonNullMovieList)
+                }
                 Log.d("zxy", response.toString())
             } catch (e: Exception) {
                 e.printStackTrace()

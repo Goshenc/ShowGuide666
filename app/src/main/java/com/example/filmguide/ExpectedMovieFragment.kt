@@ -63,8 +63,8 @@ class ExpectedMovieFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                val response = ExpectedMoviesClient.expectedMoviesApi.getExpectedMovies(cityId, cityName)
-                val movieList = response.data.comingMovies
+                val response = ExpectedMoviesClient.expectedMoviesApi.getExpectedMovies()
+                val movieList = response.comingMovies
                 adapter.submitList(movieList)
                 Log.d("zxy", response.toString())
 

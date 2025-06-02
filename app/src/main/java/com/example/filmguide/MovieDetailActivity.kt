@@ -45,10 +45,11 @@ class MovieDetailActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val response = MovieDetailClient.movieDetailApi.getMovieDetail(movieId)
-                val movie = response.data.detailMovie
+                Log.d("zxy4", response.toString())
+                val movie = response.detailMovie
                 showMovieDetail(movie)
                 Log.d("zxy", "Video URL: " + movie.toString())
-                Log.d("MovieDetailActivity", "Video URL: ${movie.videourl}")
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(this@MovieDetailActivity, "加载失败：${e.message}", R.drawable.icon)

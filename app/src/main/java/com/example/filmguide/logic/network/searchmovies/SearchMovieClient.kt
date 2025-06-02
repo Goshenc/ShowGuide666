@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object SearchMovieClient {
     private val retrofit = Retrofit.Builder()
-        .baseUrl(Url.BASE_URL)
+        .baseUrl("https://m.maoyan.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
