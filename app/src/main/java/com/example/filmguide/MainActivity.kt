@@ -104,41 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.test.setOnClickListener {
-            Log.d("MainActivity", ">> test clicked")
-            Toast.makeText(this, "test 点击", Toast.LENGTH_SHORT).show()
-            //startActivity(Intent(this, HomeActivity::class.java))
-
-            val json = """
-    {
-      "celebrityBasicDTOList": [
-        {
-          "id": 458,
-          "celebrityId": 365614,
-          "celebrityName": "\u738B\u5FC3\u51CC",
-          "categoryIds": [1, 10],
-          "type": 0,
-          "status": 1,
-          "backgroundUrl": "https://p1.meituan.net/scarlett/5b8fef5ad66febf0f783f2decbfa283b120523.png",
-          "creator": "zhangdonglian",
-          "updater": "yangchenghong",
-          "updateTime": 1748270424000,
-          "headUrl": "https://p1.meituan.net/movie/b28fc2844d3243fea910862680fc104320330.jpg",
-          "aliasName": "\u738B\u541B\u5982",
-          "videoUpdateTime": null,
-          "updateType": 0,
-          "recommendTag": "\u53BB\u770B\u6700\u8FD1\u52A8\u6001",
-          "projectCount": null,
-          "tourWishSwitch": 0,
-          "otherAliasName": ""
-        }
-      ]
-    }
-""".trimIndent()
-            val gson = Gson()
-            val performanceData = gson.fromJson(json, PerformanceData::class.java)
-            ToastUtil.show(this@MainActivity, " " + performanceData.celebrityBasicDTOList?.size, R.drawable.icon) // 应输出 1，非 null
-
-
+            startActivity(Intent(this, HomeActivity::class.java))
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.test) { view, insets ->
             val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
@@ -148,9 +114,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.testcity.setOnClickListener {
-            startActivity(Intent(this, CityActivity::class.java))
-        }
+
 
         // 创建通知渠道
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

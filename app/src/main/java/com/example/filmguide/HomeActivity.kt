@@ -77,6 +77,10 @@ binding.imgLocation.setOnClickListener(){
             val intent=Intent(this,ReminderActivity::class.java)
             startActivity(intent)
         }
+        binding.navManage.setOnClickListener(){
+            val intent = Intent(this, ManageActivity::class.java)
+            startActivity(intent)
+        }
         // Application 或者 MainActivity 中
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

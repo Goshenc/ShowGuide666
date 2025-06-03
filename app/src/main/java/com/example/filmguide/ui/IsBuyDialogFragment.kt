@@ -12,6 +12,17 @@ import com.example.filmguide.R
 import com.example.filmguide.ReminderActivity
 
 class IsBuyDialogFragment : DialogFragment() {
+    interface OnConfirmButtonClickListener {
+        fun onConfirmClick() // 可根据需求添加参数
+    }
+
+    // 声明接口变量并提供默认实现（避免空指针）
+    private var onConfirmClickListener: OnConfirmButtonClickListener? = null
+
+    // 允许外部设置回调的方法
+    fun setOnConfirmButtonClickListener(listener: OnConfirmButtonClickListener) {
+        onConfirmClickListener = listener
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view: View = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_dialog_isbuy, null)
@@ -30,6 +41,8 @@ class IsBuyDialogFragment : DialogFragment() {
         }
 
         confirmButton.setOnClickListener {
+
+            onConfirmClickListener?.onConfirmClick()
             val intent = Intent(requireActivity(), ReminderActivity::class.java)
             startActivity(intent)
             dismiss()

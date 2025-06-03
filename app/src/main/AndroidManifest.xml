@@ -39,6 +39,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ManageActivity"
+            android:exported="false" />
+        <activity
             android:name=".PerformanceDetailActivity"
             android:exported="false" />
         <activity

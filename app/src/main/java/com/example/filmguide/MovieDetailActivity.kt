@@ -14,14 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.filmguide.R
 import com.example.filmguide.databinding.ActivityMovieDetailBinding
+import com.example.filmguide.logic.AppDatabase
+import com.example.filmguide.logic.dao.MovieDao
 import com.example.filmguide.logic.network.moviedetail.MovieDetailClient
 import com.example.filmguide.utils.ToastUtil
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.log
 
 
 class MovieDetailActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMovieDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,36 +38,34 @@ class MovieDetailActivity : AppCompatActivity() {
         }
 
         val movieId = intent.getIntExtra("movieId", -1)
-        Log.d("zxy", "Video URL: " + movieId)
         if (movieId == -1) {
             ToastUtil.show(this, "无效的电影 ID", R.drawable.icon)
             finish()
             return
         }
-        lifecycleScope.launch {
+
+        lifecycleScope.launch { // 使用 Activity 的 lifecycleScope
             try {
                 val response = MovieDetailClient.movieDetailApi.getMovieDetail(movieId)
-                Log.d("zxy4", response.toString())
                 val movie = response.detailMovie
-                showMovieDetail(movie)
-                Log.d("zxy", "Video URL: " + movie.toString())
 
+                // 将 lifecycleScope 传递给 Adapter
+                showMovieDetail(movie, lifecycleScope)
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(this@MovieDetailActivity, "加载失败：${e.message}", R.drawable.icon)
             }
-
         }
-
-
     }
-    private fun showMovieDetail(movie: com.example.filmguide.logic.network.moviedetail.DetailMovie) {
+
+    private fun showMovieDetail(
+        movie: com.example.filmguide.logic.network.moviedetail.DetailMovie,
+        scope: CoroutineScope // 接收协程作用域
+    ) {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@MovieDetailActivity)
-            adapter = DetailMovieAdapter(this@MovieDetailActivity,movie)
+            // 将 scope 传递给 Adapter 构造函数
+            adapter = DetailMovieAdapter(this@MovieDetailActivity, movie, scope)
         }
     }
-
-
-
 }

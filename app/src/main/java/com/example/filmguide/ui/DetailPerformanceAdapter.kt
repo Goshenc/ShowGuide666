@@ -15,14 +15,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.example.filmguide.R
+import com.example.filmguide.logic.AppDatabase
 import com.example.filmguide.logic.network.allperformance.AllPerformanceResponse
 import com.example.filmguide.logic.network.performancedetail.PerformanceDetailData
+import com.example.filmguide.logic.network.performancedetail.PerformanceEntity
+import com.example.filmguide.logic.network.performancedetail.convertToPerformanceEntity
 import com.example.filmguide.logic.network.searchperformance.Celebrity
 import com.example.filmguide.logic.network.searchperformance.EnhancedPerformance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
 
-class DetailPerformanceAdapter(private val context: Context,private val performance: EnhancedPerformance?,private val celebrityList : List<Celebrity>?,private val performanceDetailData: PerformanceDetailData?,private val allPerformanceData : AllPerformanceResponse.PerformanceData?) :
+class DetailPerformanceAdapter(private val context: Context,private val performance: EnhancedPerformance?,private val celebrityList : List<Celebrity>?,private val performanceDetailData: PerformanceDetailData?,private val allPerformanceData : AllPerformanceResponse.PerformanceData?,private val coroutineScope: CoroutineScope) :
     RecyclerView.Adapter<DetailPerformanceAdapter.PerformanceViewHolder>() {
 
 
@@ -118,6 +125,21 @@ class DetailPerformanceAdapter(private val context: Context,private val performa
                         val fragmentManager =
                             (context as androidx.fragment.app.FragmentActivity).supportFragmentManager
                         val dialogFragment = IsBuyDialogFragment()
+                        dialogFragment.setOnConfirmButtonClickListener(object : IsBuyDialogFragment.OnConfirmButtonClickListener {
+                            override fun onConfirmClick() {
+                                coroutineScope.launch(Dispatchers.IO) {
+
+                                    val entityPerformance = convertToPerformanceEntity(performance)
+
+                                    val performanceDao = AppDatabase.getInstance(context).performanceDao()
+                                    performanceDao.insertPerformance(entityPerformance)
+
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, "已自动添加到管理", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        })
                         dialogFragment.show(fragmentManager, "CustomDialogFragment")
                         openUrl("https://www.gewara.com/detail/" + performance.performance.id)
                     }
@@ -175,6 +197,21 @@ class DetailPerformanceAdapter(private val context: Context,private val performa
                         val fragmentManager =
                             (context as androidx.fragment.app.FragmentActivity).supportFragmentManager
                         val dialogFragment = IsBuyDialogFragment()
+                        dialogFragment.setOnConfirmButtonClickListener(object : IsBuyDialogFragment.OnConfirmButtonClickListener {
+                            override fun onConfirmClick() {
+                                coroutineScope.launch(Dispatchers.IO) {
+
+                                    val entityPerformance = convertToPerformanceEntity(allPerformanceData)
+
+                                    val performanceDao = AppDatabase.getInstance(context).performanceDao()
+                                    performanceDao.insertPerformance(entityPerformance)
+
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(context, "已自动添加到管理", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        })
                         dialogFragment.show(fragmentManager, "CustomDialogFragment")
                         openUrl("https://www.gewara.com/detail/" + allPerformanceData.performanceId)
                     }

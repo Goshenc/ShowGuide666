@@ -3,6 +3,7 @@ package com.example.filmguide
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,6 +19,7 @@ import com.example.filmguide.logic.network.searchperformance.EnhancedPerformance
 import com.example.filmguide.logic.network.searchperformance.Performance
 import com.example.filmguide.logic.network.searchperformance.PerformanceData
 import com.example.filmguide.ui.DetailPerformanceAdapter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class PerformanceDetailActivity : AppCompatActivity() {
@@ -42,52 +44,68 @@ class PerformanceDetailActivity : AppCompatActivity() {
         val celebrityList = intent.getSerializableExtra("key_celebrity") as? List<Celebrity>
         val performance = intent.getSerializableExtra("performance") as? AllPerformanceResponse.PerformanceData
 
-
         if (enhancedPerformance != null && celebrityList != null) {
             lifecycleScope.launch {
                 try {
                     val response = PerformanceDetailClient.performanceDetailApi.getPerformanceDetail(enhancedPerformance.performance.id)
-
-                        val performanceData = response.data
-                        updateUI(enhancedPerformance, celebrityList,performanceData)
-
+                    val performanceData = response.data
+                    updateUI(enhancedPerformance, celebrityList, performanceData, lifecycleScope)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
-        } else if (performance != null){
+        } else if (performance != null) {
             lifecycleScope.launch {
                 try {
                     val response = PerformanceDetailClient.performanceDetailApi.getPerformanceDetail(performance.performanceId)
-
                     val performanceData = response.data
-                    updateUI(performanceData,performance)
-
+                    updateUI(performanceData, performance, lifecycleScope)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         } else {
-            android.widget.Toast.makeText(this, "数据获取失败", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "数据获取失败", Toast.LENGTH_SHORT).show()
             finish()
         }
-
-
     }
 
-    private fun updateUI(enhancedPerformance: EnhancedPerformance, celebrityList: List<Celebrity>,performanceData: PerformanceDetailData?) {
+    private fun updateUI(
+        enhancedPerformance: EnhancedPerformance,
+        celebrityList: List<Celebrity>,
+        performanceData: PerformanceDetailData?,
+        scope: CoroutineScope // 接收协程作用域
+    ) {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@PerformanceDetailActivity)
-            // 传递完整数据到Adapter
-            adapter = DetailPerformanceAdapter(this@PerformanceDetailActivity,enhancedPerformance, celebrityList,performanceData,null)
+            // 传递 scope 到 Adapter
+            adapter = DetailPerformanceAdapter(
+                this@PerformanceDetailActivity,
+                enhancedPerformance,
+                celebrityList,
+                performanceData,
+                null,
+                scope
+            )
         }
     }
 
-    private fun updateUI(performanceData: PerformanceDetailData?,performance: AllPerformanceResponse.PerformanceData) {
+    private fun updateUI(
+        performanceData: PerformanceDetailData?,
+        performance: AllPerformanceResponse.PerformanceData,
+        scope: CoroutineScope // 接收协程作用域
+    ) {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@PerformanceDetailActivity)
-            // 传递完整数据到Adapter
-            adapter = DetailPerformanceAdapter(this@PerformanceDetailActivity,null, null,performanceData,performance)
+            // 传递 scope 到 Adapter
+            adapter = DetailPerformanceAdapter(
+                this@PerformanceDetailActivity,
+                null,
+                null,
+                performanceData,
+                performance,
+                scope
+            )
         }
     }
 }

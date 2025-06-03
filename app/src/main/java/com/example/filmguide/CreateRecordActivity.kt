@@ -78,6 +78,10 @@ class CreateRecordActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, window.decorView)
             .isAppearanceLightNavigationBars = true
 
+        val imageUrl = intent.getStringExtra("img")
+        val title = intent.getStringExtra("name")
+        imageUrl?.let { loadImageFromManage(it) }
+        title?.let { loadTitleFromManage(it) }
         diaryDatabase = RecordDatabase.getInstance(this)
         locationUtils = Utils_Date_Location.LocationHelper(this)
 
@@ -94,7 +98,6 @@ class CreateRecordActivity : AppCompatActivity() {
             getLocation()
             ToastUtil.show(this, "刷新成功!", R.drawable.icon)
         }
-
         // 请求必要权限
         requestPermissionsIfNeeded()
     }
@@ -301,5 +304,30 @@ class CreateRecordActivity : AppCompatActivity() {
 
     private fun showToast(msg: String) {
         ToastUtil.show(this, msg, R.drawable.icon)
+    }
+    private fun loadImageFromManage(url: String) {
+        val input = EditText(this).apply { hint = "请输入有效的图片链接" }
+        input.setText(url)
+        AlertDialog.Builder(this)
+            .setTitle("输入图片URL")
+            .setView(input)
+            .setPositiveButton("确定") { _, _ ->
+                val url = input.text.toString().trim()
+                if (url.isNotBlank()) {
+                    networkImageLink = url
+                    Glide.with(this)
+                        .load(url)
+                        .into(binding.selectedImageView)
+                    binding.selectedImageView.visibility = View.VISIBLE
+                } else {
+                    ToastUtil.show(this, "请输入有效的图片链接", R.drawable.icon)
+                    binding.selectedImageView.visibility = View.GONE
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+    private fun loadTitleFromManage(title: String) {
+        binding.titleEditText.setText(title + "观影日志")
     }
 }

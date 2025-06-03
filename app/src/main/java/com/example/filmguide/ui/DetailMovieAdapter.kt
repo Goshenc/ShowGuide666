@@ -13,12 +13,22 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.filmguide.R
+import com.example.filmguide.logic.AppDatabase
+
+import com.example.filmguide.logic.network.moviedetail.MovieEntity
+import com.example.filmguide.logic.network.moviedetail.convertDetailMovieToMovieEntity
 import com.example.filmguide.ui.DetailPerformanceAdapter.PerformanceViewHolder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
-class DetailMovieAdapter (private val context: Context,private val movie : DetailMovie)  :
+class DetailMovieAdapter (private val context: Context,private val movie : DetailMovie,private val coroutineScope: CoroutineScope )  :
     RecyclerView.Adapter<DetailMovieAdapter.MovieViewHolder>() {
+
 
         private val ITEM_HEAD = 0
         private val ITEM_SCORE = 1
@@ -136,6 +146,20 @@ class DetailMovieAdapter (private val context: Context,private val movie : Detai
             newHolder.buyButton.setOnClickListener{
                 val fragmentManager = (context as androidx.fragment.app.FragmentActivity).supportFragmentManager
                 val dialogFragment = IsBuyDialogFragment()
+                dialogFragment.setOnConfirmButtonClickListener(object : IsBuyDialogFragment.OnConfirmButtonClickListener {
+                    override fun onConfirmClick() {
+                        coroutineScope.launch(Dispatchers.IO) {
+                            val movieEntity = convertDetailMovieToMovieEntity(movie)
+                            val movieDao = AppDatabase.getInstance(context).movieDao()
+                            movieDao.insert(movieEntity)
+
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "已自动添加到管理", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                })
+
                 dialogFragment.show(fragmentManager, "CustomDialogFragment")
                 openUrl("https://www.maoyan.com/films/" + movie.id)
             }
