@@ -21,18 +21,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.filmguide.databinding.ActivityMainBinding
-import com.example.filmguide.logic.network.searchperformance.PerformanceData
 import com.example.filmguide.ui.AuthViewModel
 import com.example.filmguide.ui.AuthViewModelFactory
 import com.example.filmguide.utils.ToastUtil
-import com.example.filmguide.logic.network.searchperformance.SearchPerformanceClient
-import com.example.filmguide.ui.MovieDetailActivity
-import com.google.gson.Gson
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -56,6 +51,9 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+
 
         // 请求自启动设置（仅首次打开）
         val appPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
@@ -103,17 +101,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 
-        binding.test.setOnClickListener {
+        binding.visitorLoginBottom.setOnClickListener {
+            Log.d("MainActivity", ">> test clicked")
+            ToastUtil.show(this, "游客登录", R.drawable.icon)
             startActivity(Intent(this, HomeActivity::class.java))
         }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.test) { view, insets ->
-            val navBarInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-            (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                bottomMargin = navBarInset
-            }.also { view.layoutParams = it }
-            insets
-        }
-
 
 
         // 创建通知渠道

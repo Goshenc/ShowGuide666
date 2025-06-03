@@ -1,6 +1,7 @@
 package com.example.filmguide
 
 import android.app.AlarmManager
+import android.app.DatePickerDialog
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -37,7 +38,13 @@ class ReminderActivity : AppCompatActivity() {
     private val prefs by lazy { getSharedPreferences("ReminderPrefs", MODE_PRIVATE) }
     private val permPrefs by lazy { getSharedPreferences("overlay_prefs", MODE_PRIVATE) }
     private val batteryPrefs by lazy { getSharedPreferences("battery_prefs", MODE_PRIVATE) }
-
+    private val dateTimeComparator = compareBy<Reminder>(
+        { it.year },
+        { it.month },
+        { it.dayOfMonth },
+        { it.hourOfDay },
+        { it.minute }
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReminderBinding.inflate(layoutInflater)
@@ -72,73 +79,135 @@ class ReminderActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter
 
-        findViewById<ImageView>(R.id.addButton).setOnClickListener { openTimePicker() }
+        findViewById<ImageView>(R.id.addButton).setOnClickListener { openDateTimePicker() }
         loadReminders()
     }
 
-    private fun openTimePicker() {
-        val c = Calendar.getInstance()
-        TimePickerDialog(
+    private fun openDateTimePicker() {
+        // 获取当前日期作为初始值
+        val now = Calendar.getInstance()
+        val currentYear = now.get(Calendar.YEAR)
+        val currentMonth = now.get(Calendar.MONTH)
+        val currentDay = now.get(Calendar.DAY_OF_MONTH)
+
+        // 1. 弹出日期选择框
+        DatePickerDialog(
             this,
-            { _, h, m ->
-                if (list.any { it.hourOfDay == h && it.minute == m }) return@TimePickerDialog
-                val r = Reminder(h, m).apply { id = UUID.randomUUID().hashCode() }
-                list.add(r)
-                saveList()
-                schedule(r)
+            { _, pickYear, pickMonth, pickDayOfMonth ->
+                // 选好“年/月/日”之后，再弹出“时间选择框”
+                val c = Calendar.getInstance()
+                TimePickerDialog(
+                    this,
+                    { _, pickHour, pickMinute ->
+                        // 检查是否已存在相同的日期+时间：
+                        if (list.any {
+                                it.year == pickYear &&
+                                        it.month == pickMonth &&
+                                        it.dayOfMonth == pickDayOfMonth &&
+                                        it.hourOfDay == pickHour &&
+                                        it.minute == pickMinute
+                            }) {
+                            // 如果已经有一项相同的，就直接 return
+                            return@TimePickerDialog
+                        }
+                        // 构造新的 Reminder 对象
+                        val r = Reminder(
+                            year = pickYear,
+                            month = pickMonth,
+                            dayOfMonth = pickDayOfMonth,
+                            hourOfDay = pickHour,
+                            minute = pickMinute
+                        ).apply {
+                            id = UUID.randomUUID().hashCode()
+                        }
+                        list.add(r)
+                        saveList()
+                        schedule(r)
+                    },
+                    c.get(Calendar.HOUR_OF_DAY),
+                    c.get(Calendar.MINUTE),
+                    true
+                ).show()
             },
-            c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true
+            currentYear,
+            currentMonth,
+            currentDay
         ).show()
     }
 
+
     private fun saveList() {
+        // 先给 list 排序
+        list.sortWith(dateTimeComparator)
+
+        // 再序列化存入 SharedPreferences
         prefs.edit().putString("reminders", Gson().toJson(list)).apply()
+
+        // 最后通知 Adapter 刷新
         adapter.notifyDataSetChanged()
     }
+
 
     private fun loadReminders() {
         prefs.getString("reminders", null)?.let {
             val type = object : TypeToken<List<Reminder>>() {}.type
             list.clear()
             list.addAll(Gson().fromJson(it, type))
+            // 加载完毕后，按时间排序
+            list.sortWith(dateTimeComparator)
         }
         adapter.notifyDataSetChanged()
     }
+
 
     private fun deleteReminder(r: Reminder) {
         list.remove(r)
         saveList()
+
         val am = getSystemService(ALARM_SERVICE) as AlarmManager
-        val i = Intent(this, ReminderReceiver::class.java).apply { putExtra("reminderId", r.id) }
-        // 加上 FLAG_UPDATE_CURRENT，合并已有 PendingIntent
-        val pi = PendingIntent.getBroadcast(
+        val intent = Intent(this, ReminderReceiver::class.java).apply {
+            putExtra("reminderId", r.id)
+        }
+        val cancelPi = PendingIntent.getBroadcast(
             this,
             r.id,
-            i,
+            Intent(this, ReminderReceiver::class.java).apply { putExtra("reminderId", r.id) },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        am.cancel(pi)
-        adapter.notifyDataSetChanged()
+        am.cancel(cancelPi)
     }
+
+
 
     private fun schedule(r: Reminder) {
         val cal = Calendar.getInstance().apply {
+            set(Calendar.YEAR, r.year)
+            set(Calendar.MONTH, r.month)
+            set(Calendar.DAY_OF_MONTH, r.dayOfMonth)
             set(Calendar.HOUR_OF_DAY, r.hourOfDay)
             set(Calendar.MINUTE, r.minute)
             set(Calendar.SECOND, 0)
-            if (before(Calendar.getInstance())) add(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.MILLISECOND, 0)
+        }
+        // 如果用户选的“年月日时分”已经过去，就直接不再调度（或根据业务需要提示）
+        if (cal.timeInMillis <= System.currentTimeMillis()) {
+            // 这里可以弹个 Toast 提示“您选的时间已过”，然后不调度。
+            // 也可以让用户重新选择，或者直接 return 掉。
+            return
         }
         val am = getSystemService(ALARM_SERVICE) as AlarmManager
-        val i = Intent(this, ReminderReceiver::class.java).apply { putExtra("reminderId", r.id) }
-        // 使用 FLAG_UPDATE_CURRENT，确保更新意图
+        val intent = Intent(this, ReminderReceiver::class.java).apply {
+            putExtra("reminderId", r.id)
+        }
         val pi = PendingIntent.getBroadcast(
             this,
             r.id,
-            i,
+            Intent(this, ReminderReceiver::class.java).apply { putExtra("reminderId", r.id) },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pi)
     }
+
 
     /** 询问悬浮窗（后台弹出）权限 */
     private fun showOverlayPermissionDialog() {

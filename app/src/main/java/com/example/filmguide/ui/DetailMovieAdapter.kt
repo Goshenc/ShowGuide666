@@ -20,6 +20,7 @@ import com.example.filmguide.logic.AppDatabase
 import com.example.filmguide.logic.network.moviedetail.MovieEntity
 import com.example.filmguide.logic.network.moviedetail.convertDetailMovieToMovieEntity
 import com.example.filmguide.ui.DetailPerformanceAdapter.PerformanceViewHolder
+import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -154,7 +155,8 @@ class DetailMovieAdapter (private val context: Context,private val movie : Detai
                             movieDao.insert(movieEntity)
 
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(context, "已自动添加到管理", Toast.LENGTH_SHORT).show()
+
+                                ToastUtil.show(context, "已自动添加到管理票务页面", R.drawable.icon)
                             }
                         }
                     }

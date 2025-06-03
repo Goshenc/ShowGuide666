@@ -83,10 +83,10 @@
         android:id="@+id/accountEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/edittext_bottom_line"
         android:hint="请输入账号"
-        android:padding="8dp"
-
+        android:background="@drawable/edittext_rounded"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
 
@@ -97,10 +97,10 @@
         android:id="@+id/passwordEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/edittext_bottom_line"
+        android:background="@drawable/edittext_rounded"
         android:hint="请输入密码"
-        android:padding="8dp"
-
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
 
@@ -111,10 +111,10 @@
         android:id="@+id/confirmEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/edittext_bottom_line"
+        android:background="@drawable/edittext_rounded"
         android:hint="请再次输入密码"
-        android:padding="8dp"
-
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
 
@@ -130,6 +130,7 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
         android:text="确定"
+        android:textColor="@color/white"
         android:textSize="18dp"
         android:layout_marginTop="13dp"
         android:backgroundTint="@color/skyblue"

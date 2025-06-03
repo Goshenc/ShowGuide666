@@ -13,35 +13,24 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/addButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:listitem="@layout/item_reminder"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_reminder" />
 
-    <!-- Button to add new reminder -->
-
-    <ImageView
-        android:src="@drawable/register"
+    <!-- 居中显示的圆形悬浮按钮 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:text="Add Reminder"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-        app:layout_constraintBottom_toTopOf="@+id/textCreate"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-
-/>
-    <TextView
-        android:id="@+id/textCreate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="创建闹钟"
-        app:layout_constraintTop_toBottomOf="@+id/addButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="添加闹钟"
+        android:src="@drawable/plus2_round"
+        app:fabSize="normal"
+        app:backgroundTint="@color/skyblue"
+        app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="15dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

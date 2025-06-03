@@ -34,7 +34,9 @@
                 android:drawablePadding="8dp"
                 android:padding="12dp"
                 android:layout_marginBottom="8dp"
-                android:background="@android:color/white"
+                android:background="@drawable/edittext_rounded"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 />
 
             <!-- 添加文章 按钮 -->
@@ -43,16 +45,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="添加观影记录"
+                android:textColor="@color/white"
                 android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/skyblue"/>
+                android:backgroundTint="@color/skyblue"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
 
             <!-- 删除文章 按钮 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteDiaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="删除观影记录"
-                android:backgroundTint="@color/skyblue"/>
+                android:backgroundTint="@color/skyblue"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

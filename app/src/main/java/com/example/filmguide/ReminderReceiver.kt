@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.filmguide.R
 import com.example.filmguide.logic.model.Reminder
@@ -19,6 +20,7 @@ import com.google.gson.reflect.TypeToken
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val id = intent.getIntExtra("reminderId", -1)
+        Log.d("ReminderReceiver", "onReceive() called, reminderId = $id")
         if (id < 0) return
 
         // —— 1. 发通知 ——
@@ -38,7 +40,6 @@ class ReminderReceiver : BroadcastReceiver() {
         )
         val builder = NotificationCompat.Builder(context, "default")
             .setSmallIcon(R.drawable.icon1)
-            .setLargeIcon(largeBitmap)
             .setContentTitle("ShowGuide")
             .setContentText("您设置的闹钟已到时间！")
             .setPriority(NotificationCompat.PRIORITY_HIGH)        // Android 7.1 及以下

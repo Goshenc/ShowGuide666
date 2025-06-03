@@ -22,6 +22,7 @@ import com.example.filmguide.logic.network.performancedetail.PerformanceEntity
 import com.example.filmguide.logic.network.performancedetail.convertToPerformanceEntity
 import com.example.filmguide.logic.network.searchperformance.Celebrity
 import com.example.filmguide.logic.network.searchperformance.EnhancedPerformance
+import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -135,7 +136,7 @@ class DetailPerformanceAdapter(private val context: Context,private val performa
                                     performanceDao.insertPerformance(entityPerformance)
 
                                     withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, "已自动添加到管理", Toast.LENGTH_SHORT).show()
+                                        ToastUtil.show(context, "已自动添加到管理票务页面", R.drawable.icon)
                                     }
                                 }
                             }
@@ -207,7 +208,7 @@ class DetailPerformanceAdapter(private val context: Context,private val performa
                                     performanceDao.insertPerformance(entityPerformance)
 
                                     withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, "已自动添加到管理", Toast.LENGTH_SHORT).show()
+                                        ToastUtil.show(context, "已自动添加到管理票务页面", R.drawable.icon)
                                     }
                                 }
                             }

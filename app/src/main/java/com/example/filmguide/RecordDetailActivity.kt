@@ -101,12 +101,12 @@ class RecordDetailActivity : AppCompatActivity() {
         article: String
     ) {
         val shareText = buildString {
-            append("【观演记】").append(title).append("\n")
+            append("【观演记录】").append(title).append("\n")
             append("📅 时间: ").append(date).append("\n")
             append("📍 地点: ").append(location).append("\n")
-            append("⭐️ 评分: ").append(rating).append("\n\n")
-            append(article).append("\n\n")
-            append("—— 来自 FilmGuide App")
+            append("⭐️ 评分: ").append(rating).append("\n")
+            append(article).append("\n")
+            append("—— 来自 ShowGuide App")
         }
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {

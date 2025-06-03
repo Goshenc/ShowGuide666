@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/light_gray">
+    android:background="@color/white">
 
     <!-- AppBarLayout 包裹整个折叠区域 -->
     <com.google.android.material.appbar.AppBarLayout
@@ -17,7 +17,8 @@
         android:background="@color/white"
         android:fitsSystemWindows="true"
         android:translationZ="2dp"
-        android:outlineProvider="none">
+        android:outlineProvider="none"
+        >
 
 
 
@@ -118,7 +119,22 @@
 
     <!-- 主内容区 -->
 
+    <com.google.android.material.tabs.TabLayout
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:id="@+id/tabLayout"
+        app:tabGravity="fill"
+        app:tabTextColor="@color/black"
+        app:tabIndicatorColor="@color/black"
+        android:translationZ="1dp"
+        android:outlineProvider="none"
+        android:paddingTop="35dp"
+        >
 
+    </com.google.android.material.tabs.TabLayout>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -130,29 +146,22 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.google.android.material.tabs.TabLayout
-                    android:background="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:id="@+id/tabLayout"
-                    app:tabGravity="fill"
-                    app:tabTextColor="@color/black"
-                    app:tabIndicatorColor="@color/black">
 
-                </com.google.android.material.tabs.TabLayout>
 
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/viewPager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"/>
             </LinearLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.core.widget.NestedScrollView>
