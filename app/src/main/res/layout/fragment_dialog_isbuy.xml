@@ -27,8 +27,11 @@
             android:id="@+id/dialog_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="若你已经成功购票，是否需要设置闹钟来提醒你？"
+            android:text="若你已经成功购票，点击确定来保存票务"
             android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_gravity="center"
             android:paddingBottom="20dp"/>
 
@@ -36,7 +39,7 @@
             android:id="@+id/dialog_message_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="提示：点击确认即可前往设置闹钟"
+            android:text="提示：点击确认即可查看票务"
             android:textSize="12sp"
             android:textColor="@color/gray"
             android:layout_gravity="center"

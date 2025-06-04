@@ -13,13 +13,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
-import androidx.core.content.ContentProviderCompat.requireContext
+import com.example.filmguide.IsBuyDialogFragment
 import com.example.filmguide.R
 import com.example.filmguide.logic.AppDatabase
 
-import com.example.filmguide.logic.network.moviedetail.MovieEntity
 import com.example.filmguide.logic.network.moviedetail.convertDetailMovieToMovieEntity
-import com.example.filmguide.ui.DetailPerformanceAdapter.PerformanceViewHolder
 import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

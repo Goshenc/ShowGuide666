@@ -1,15 +1,13 @@
-package com.example.filmguide.ui
+package com.example.filmguide
 
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import android.view.View
 import android.view.LayoutInflater
 import android.widget.Button
-import com.example.filmguide.R
-import com.example.filmguide.ReminderActivity
+import androidx.fragment.app.DialogFragment
 
 class IsBuyDialogFragment : DialogFragment() {
     interface OnConfirmButtonClickListener {
@@ -43,7 +41,7 @@ class IsBuyDialogFragment : DialogFragment() {
         confirmButton.setOnClickListener {
 
             onConfirmClickListener?.onConfirmClick()
-            val intent = Intent(requireActivity(), ReminderActivity::class.java)
+            val intent = Intent(requireActivity(), ManageActivity::class.java)
             startActivity(intent)
             dismiss()
 

@@ -9,16 +9,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.VideoView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
+import com.example.filmguide.IsBuyDialogFragment
 import com.example.filmguide.R
 import com.example.filmguide.logic.AppDatabase
 import com.example.filmguide.logic.network.allperformance.AllPerformanceResponse
 import com.example.filmguide.logic.network.performancedetail.PerformanceDetailData
-import com.example.filmguide.logic.network.performancedetail.PerformanceEntity
 import com.example.filmguide.logic.network.performancedetail.convertToPerformanceEntity
 import com.example.filmguide.logic.network.searchperformance.Celebrity
 import com.example.filmguide.logic.network.searchperformance.EnhancedPerformance
