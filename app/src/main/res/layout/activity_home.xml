@@ -127,12 +127,13 @@
         android:layout_height="57dp"
         android:id="@+id/tabLayout"
         app:tabGravity="fill"
-        app:tabTextColor="@color/black"
-        app:tabIndicatorColor="@color/black"
         android:translationZ="1dp"
         android:outlineProvider="none"
         android:paddingTop="35dp"
-        >
+        app:tabTextColor="@color/gray_darker"
+    app:tabSelectedTextColor="@color/DodgerBlue"
+        app:tabIndicatorColor="@color/DodgerBlue"
+    >
 
     </com.google.android.material.tabs.TabLayout>
     <androidx.core.widget.NestedScrollView
