@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <VideoView
+        <androidx.media3.ui.PlayerView
             android:id="@+id/tvVideo"
             android:layout_margin="8dp"
             android:layout_width="match_parent"
@@ -45,12 +45,6 @@
             android:layout_margin="8dp"
             android:scaleType="centerCrop"/>
 
-        <ImageView
-            android:id="@+id/ivPlayButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/baseline_slow_motion_video_24"
-            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 
