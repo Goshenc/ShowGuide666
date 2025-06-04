@@ -31,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp">
 
                 <!-- 左边的“评分：”文字 -->
                 <TextView
