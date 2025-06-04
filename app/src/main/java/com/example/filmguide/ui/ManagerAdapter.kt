@@ -95,15 +95,7 @@ class ManagerAdapter(
                 }
                 holder.viewedButton.setOnClickListener {
                     onItemClick(item)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        performanceDao.deletePerformanceById(item.performanceId)
-                        performanceItems.remove(item)
-                        allItems.remove(item)
-                        CoroutineScope(Dispatchers.Main).launch {
-                            notifyDataSetChanged()
-                            loadData()
-                        }
-                    }
+
                 }
             }
             is MovieViewHolder -> {
@@ -122,15 +114,7 @@ class ManagerAdapter(
                 }
                 holder.viewedButton.setOnClickListener {
                     onItemClick(item)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        movieDao.deleteMovieByDbId(item.id)
-                        movieItems.remove(item)
-                        allItems.remove(item)
-                        CoroutineScope(Dispatchers.Main).launch {
-                            notifyDataSetChanged()
-                            loadData()
-                        }
-                    }
+
                 }
             }
         }
