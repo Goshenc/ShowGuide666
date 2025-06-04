@@ -67,6 +67,7 @@ class DetailMovieAdapter(
         val tvVideoText: TextView = itemView.findViewById(R.id.tvVideoText)
         val tvVideoImage: ImageView = itemView.findViewById(R.id.tvVideoImage)
         val playerView: PlayerView = itemView.findViewById(R.id.tvVideo)
+        val ivPlayButton: ImageView = itemView.findViewById(R.id.ivPlayButton)
 
         // 每个 Holder 单独维护一个 ExoPlayer
         var exoPlayer: ExoPlayer? = null
@@ -156,7 +157,6 @@ class DetailMovieAdapter(
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         when (holder) {
-
             is HeadViewHolder -> {
                 Glide.with(context).load(movie.imageUrl).into(holder.ivPoster)
                 holder.tvName.text = movie.name
@@ -206,47 +206,56 @@ class DetailMovieAdapter(
             }
 
             is VideoViewHolder -> {
-                // === Step1：UI 初始状态：封面可见，播放器隐藏，“暂无资源”隐藏 ===
+                // === Step1：UI 初始状态：封面可见，播放按钮可见，PlayerView 隐藏，"暂无资源"隐藏 ===
                 Glide.with(context).load(movie.videoImg).into(holder.tvVideoImage)
                 holder.tvVideoText.visibility = View.GONE
                 holder.tvVideoImage.visibility = View.VISIBLE
                 holder.playerView.visibility = View.INVISIBLE
+                holder.ivPlayButton.visibility = View.VISIBLE
 
-                // 有效 videourl 时，自动播放；否则显示“暂无资源”
-                if (!movie.videourl.isNullOrEmpty()) {
-                    holder.initPlayer(context)
+                // 若 videourl 为空，则显示“暂无资源”，隐藏按钮
+                if (movie.videourl.isNullOrEmpty()) {
+                    holder.tvVideoText.visibility = View.VISIBLE
+                    holder.ivPlayButton.visibility = View.GONE
+                } else {
+                    // 点击播放按钮后再初始化并播放
+                    holder.ivPlayButton.setOnClickListener {
+                        // 隐藏播放按钮和封面，显示 PlayerView
+                        holder.ivPlayButton.visibility = View.GONE
+                        holder.tvVideoImage.visibility = View.GONE
+                        holder.playerView.visibility = View.VISIBLE
 
-                    // 构造 MediaItem 并马上播放
-                    val mediaItem = MediaItem.fromUri(Uri.parse(movie.videourl))
-                    holder.exoPlayer?.apply {
-                        setMediaItem(mediaItem)
-                        prepare()
-                        playWhenReady = true
+                        // 初始化播放器并开始播放
+                        holder.initPlayer(context)
+                        val mediaItem = MediaItem.fromUri(Uri.parse(movie.videourl))
+                        holder.exoPlayer?.apply {
+                            setMediaItem(mediaItem)
+                            prepare()
+                            playWhenReady = true
+                        }
+
+                        // 监听实际开始后隐藏封面（保险起见）
+                        holder.exoPlayer?.addListener(object : Player.Listener {
+                            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                                if (isPlaying) {
+                                    holder.tvVideoImage.visibility = View.GONE
+                                }
+                            }
+                        })
                     }
 
-                    // 监听“实际开始播放”事件，一旦播放，就隐藏封面并把 PlayerView 设为可见
-                    holder.exoPlayer?.addListener(object : Player.Listener {
-                        override fun onIsPlayingChanged(isPlaying: Boolean) {
-                            if (isPlaying) {
-                                holder.tvVideoImage.visibility = View.GONE
-                                holder.playerView.visibility = View.VISIBLE
-                            }
-                        }
-                    })
-
-                    // （可选）点击视频可暂停/恢复
+                    // （可选）点击 PlayerView 暂停/恢复
                     holder.playerView.setOnClickListener {
                         holder.exoPlayer?.let { player ->
-                            if (player.isPlaying) player.pause()
-                            else {
+                            if (player.isPlaying) {
+                                player.pause()
+                            } else {
                                 holder.tvVideoImage.visibility = View.GONE
                                 holder.playerView.visibility = View.VISIBLE
                                 player.play()
                             }
                         }
                     }
-                } else {
-                    holder.tvVideoText.visibility = View.VISIBLE
                 }
             }
         }

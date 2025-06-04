@@ -45,6 +45,12 @@
             android:layout_margin="8dp"
             android:scaleType="centerCrop"/>
 
+        <ImageView
+            android:id="@+id/ivPlayButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/play"
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 
