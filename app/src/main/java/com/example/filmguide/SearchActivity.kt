@@ -1,11 +1,14 @@
 package com.example.filmguide
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.filmguide.databinding.ActivitySearchBinding
 import com.example.filmguide.ui.SearchViewPagerAdapter
@@ -26,7 +29,14 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
+        // 1. 设置状态栏背景为纯白
+        window.statusBarColor = Color.WHITE
+
+        // 2. 把状态栏内文字和图标切成深色，以便在白底上能看清
+        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = true
         getIntentData()
 
     }
