@@ -101,8 +101,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topRow"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/black"
-        app:tabTextColor="@color/black" />
+
+        app:tabTextColor="@color/gray_darker"
+        app:tabSelectedTextColor="@color/DodgerBlue"
+        app:tabIndicatorColor="@color/DodgerBlue"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:background="@color/white"
