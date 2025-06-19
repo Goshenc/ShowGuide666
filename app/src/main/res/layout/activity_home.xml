@@ -9,7 +9,6 @@
     android:fitsSystemWindows="true"
     android:background="@color/white">
 
-    <!-- AppBarLayout 包裹整个折叠区域 -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -23,7 +22,6 @@
 
 
 
-        <!-- CollapsingToolbarLayout 控制 toprow 的折叠效果 -->
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -32,7 +30,8 @@
             android:fitsSystemWindows="true"
             app:contentScrim="@android:color/white">
 
-            <!-- Top row：ConstraintLayout + parallax -->
+
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/topRow"
                 android:layout_width="match_parent"
@@ -117,7 +116,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 主内容区 -->
 
     <com.google.android.material.tabs.TabLayout
         app:layout_anchor="@id/appbar"

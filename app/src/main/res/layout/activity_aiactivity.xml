@@ -1,0 +1,115 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@drawable/aibackground"
+    android:fitsSystemWindows="true"
+    >
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false" />
+
+    <LinearLayout
+        android:id="@+id/bottomChatBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:background="@drawable/bg_bottom_chat_box">
+        <LinearLayout
+            android:id="@+id/first"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="7dp"
+>
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="一周热抢"
+    android:background="@drawable/edittext_rounded"
+    android:paddingHorizontal="15dp"
+    android:textColor="@color/black"
+    />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最近热映"
+                android:background="@drawable/edittext_rounded"
+                android:paddingHorizontal="15dp"
+                android:textColor="@color/black"
+                android:layout_marginStart="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="高分推荐"
+                android:background="@drawable/edittext_rounded"
+                android:paddingHorizontal="15dp"
+                android:textColor="@color/black"
+                android:layout_marginStart="5dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <EditText
+            android:id="@+id/editTextMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="给ShowGuide发送消息…"
+            android:background="@drawable/edittext_rounded"
+            android:padding="10dp"
+            android:elevation="4dp"
+            android:layout_marginBottom="7dp"
+            />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="深度思考"
+                    android:textStyle="bold"
+                    android:drawableStart="@drawable/ds4"
+                    android:background="@drawable/edittext_rounded"
+                    android:paddingHorizontal="15dp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="联网搜索"
+                    android:textStyle="bold"
+                    android:drawableStart="@drawable/web"
+                    android:background="@drawable/edittext_rounded"
+                    android:paddingHorizontal="15dp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="5dp"/>
+<Space
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"/>
+
+                <ImageView
+            android:id="@+id/voice"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:src="@drawable/voice1"
+                    android:layout_marginEnd="10dp"/>
+
+        <ImageView
+            android:id="@+id/buttonSend"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:src="@drawable/send"
+            android:contentDescription="发送" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

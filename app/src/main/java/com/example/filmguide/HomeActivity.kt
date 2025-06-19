@@ -45,7 +45,10 @@ class HomeActivity : AppCompatActivity() {
 
 
 
-
+        binding.avatar.setOnClickListener(){
+            val intent=Intent(this,AIActivity::class.java)
+            startActivity(intent)
+        }
         binding.swipeRefresh.setColorSchemeResources(R.color.DodgerBlue)
         if (PrefsManager.isFirstSelection(this)) {
             startActivity(Intent(this, CityActivity::class.java))
