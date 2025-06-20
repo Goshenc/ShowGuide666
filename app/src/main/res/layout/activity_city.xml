@@ -39,7 +39,7 @@
             android:background="@drawable/searchbox_background"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
-            android:hint="搜索城市"
+            android:hint="搜索城市/剧院/景点"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColorHint="@color/gray_darker"
@@ -76,19 +76,33 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/img_location"
             app:layout_constraintTop_toTopOf="parent" />
-
+<LinearLayout
+    android:id="@+id/img_location"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/img_location"
+
             android:layout_width="30dp"
-            android:layout_height="35dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:scaleType="centerCrop"
-            android:src="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:src="@drawable/location"
+             />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text="跳转"
+        android:layout_marginStart="2.5dp"
+        />
+
+</LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

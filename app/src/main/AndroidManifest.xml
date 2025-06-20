@@ -122,5 +122,10 @@
                 android:resource="@xml/file_paths2" />
         </provider>
     </application>
-
+    <queries>
+        <package android:name="com.baidu.BaiduMap" />
+        <package android:name="com.autonavi.minimap" />
+        <package android:name="com.google.android.apps.maps" />
+        <package android:name="com.google.earth" />
+    </queries>
 </manifest>
