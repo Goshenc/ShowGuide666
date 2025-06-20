@@ -183,15 +183,58 @@ class CityActivity : AppCompatActivity() {
 
     // 构造高德地图查询 Intent
     private fun getAmapIntent(context: Context, query: String): Intent? {
-        if (!isPackageInstalled(context, "com.autonavi.minimap")) return null
-        // 高德地图关键字搜索
-        val uri = Uri.parse(
-            "androidamap://keyword?sourceApplication=${Uri.encode(context.packageName)}&keyword=${Uri.encode(query)}&dev=0"
+        val pkg = "com.autonavi.minimap"
+        val installed = isPackageInstalled(context, pkg)
+        Log.d("CityActivity", "高德地图包检测: $pkg installed? $installed")
+        if (!installed) return null
+
+        // 多种 URI 方案列表
+        val uriCandidates = listOf(
+            // 最简 keyword 形式
+            "androidamap://keyword?keywords=${Uri.encode(query)}",
+            // 加 sourceApplication 和 dev
+            "androidamap://keyword?sourceApplication=${Uri.encode(context.packageName)}&keywords=${Uri.encode(query)}&dev=0",
+            // 使用 amapuri:// 方案（尝试单数 keyword 参数）
+            "amapuri://keyword?sourceApplication=${Uri.encode(context.packageName)}&keyword=${Uri.encode(query)}",
+            // amapuri + keywords 复数
+            "amapuri://keyword?sourceApplication=${Uri.encode(context.packageName)}&keywords=${Uri.encode(query)}",
+            // 只用 amapuri://keyword?keywords=
+            "amapuri://keyword?keywords=${Uri.encode(query)}"
         )
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        intent.setPackage("com.autonavi.minimap")
-        return if (isIntentAvailable(context, intent)) intent else null
+        for (uriString in uriCandidates) {
+            Log.d("CityActivity", "测试高德 URI: $uriString")
+            val uri = Uri.parse(uriString)
+            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                setPackage(pkg)
+            }
+            // 检查能否处理
+            val resolveList = context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            Log.d("CityActivity", "  Intent 可处理数量: ${resolveList.size}")
+            resolveList.forEach {
+                Log.d("CityActivity", "    Resolve: ${it.activityInfo.packageName}/${it.activityInfo.name}")
+            }
+            if (resolveList.isNotEmpty()) {
+                Log.d("CityActivity", "选定有效高德 URI: $uriString")
+                return intent
+            }
+        }
+
+        // fallback: Web URL
+        val webUrl = "https://uri.amap.com/search?query=${Uri.encode(query)}"
+        Log.d("CityActivity", "高德原生 URI 均不可用，尝试 Web URL: $webUrl")
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webUrl))
+        val webResolve = context.packageManager.queryIntentActivities(webIntent, PackageManager.MATCH_DEFAULT_ONLY)
+        Log.d("CityActivity", "Web Intent 可处理数量: ${webResolve.size}")
+        return if (webResolve.isNotEmpty()) {
+            webIntent
+        } else {
+            Log.d("CityActivity", "Web Intent 也不可用，放弃高德搜索")
+            null
+        }
     }
+
+
+
 
     // 构造 Google 地图查询 Intent
     private fun getGoogleMapIntent(context: Context, query: String): Intent? {

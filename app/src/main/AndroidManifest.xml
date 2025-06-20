@@ -125,6 +125,7 @@
     <queries>
         <package android:name="com.baidu.BaiduMap" />
         <package android:name="com.autonavi.minimap" />
+
         <package android:name="com.google.android.apps.maps" />
         <package android:name="com.google.earth" />
     </queries>
