@@ -12,4 +12,6 @@
         <item name="android:textColorPrimary">@android:color/black</item>  <!-- 确保文字颜色为黑色 -->
     </style>
 
+
+
 </resources>
