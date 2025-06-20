@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filmguide.CityActivity
 import com.example.filmguide.Demonstration2Activity
 import com.example.filmguide.DemonstrationActivity
 import com.example.filmguide.ManageActivity
 import com.example.filmguide.R
+import com.example.filmguide.ReminderActivity
 import com.example.filmguide.databinding.ItemMessageReceivedBinding
 import com.example.filmguide.databinding.ItemMessageSentBinding
 import com.example.filmguide.logic.model.ChatMessage
@@ -70,6 +72,10 @@ class ChatAdapter(
                         R.drawable.aichatimage -> Intent(ctx, DemonstrationActivity::class.java)
                         R.drawable.aichatimage2 -> Intent(ctx, Demonstration2Activity::class.java)
                         R.drawable.aichatimage3 -> Intent(ctx,ManageActivity::class.java)
+                        R.drawable.aichatimage4 -> Intent(ctx,ReminderActivity::class.java)
+                        R.drawable.aichatimage5 -> Intent(ctx,CityActivity::class.java).apply {
+                            putExtra("EXTRA_PLACE_NAME", "福建大剧院")
+                        }
                         else -> null
                     }
                     intent?.let { ctx.startActivity(it) }

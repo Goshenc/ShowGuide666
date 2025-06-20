@@ -50,6 +50,7 @@ class CityActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val etPlaceName: EditText = findViewById(R.id.search_edit_text)
         val btnOpenMaps: View = findViewById(R.id.img_location)
         btnOpenMaps.setOnClickListener {
@@ -63,6 +64,7 @@ class CityActivity : AppCompatActivity() {
 
 
 
+
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
@@ -71,8 +73,19 @@ class CityActivity : AppCompatActivity() {
             try {
                 val response = CityClient.cityApi.getCities()
                 val cityList = response.cts
-                allCityList.addAll(cityList) // 保存所有城市数据
-                adapter.submitList(cityList)
+                allCityList.clear()
+                allCityList.addAll(cityList)
+
+                intent.getStringExtra("EXTRA_PLACE_NAME")?.let { place ->
+                    // 填充输入并筛选
+                    binding.searchEditText.setText(place)
+                    val filtered = cityList.filter { it.name.contains(place, ignoreCase = true) }
+                    adapter.submitList(filtered)
+                    binding.recyclerView.scrollToPosition(0)
+                } ?: run {
+                    // 无传入关键字，直接展示所有城市
+                    adapter.submitList(cityList)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 ToastUtil.show(this@CityActivity, "加载失败：${e.message}", R.drawable.icon)
