@@ -13,6 +13,37 @@
     <color name="pink">#F06292</color>
     <color name="skyblue">#87CEEB</color>
     <color name="DodgerBlue">#1E90FF</color>
+    
+    <!-- 现代化颜色定义 -->
+    <color name="primary_blue">#6366F1</color>
+    <color name="primary_blue_dark">#4F46E5</color>
+    <color name="primary_blue_light">#A5B4FC</color>
+    <color name="accent_purple">#8B5CF6</color>
+    <color name="accent_purple_light">#C4B5FD</color>
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="divider">#E5E7EB</color>
+    <color name="background_light">#F9FAFB</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="input_background">#FFFFFF</color>
+    <color name="success_green">#10B981</color>
+    <color name="warning_orange">#F59E0B</color>
+    <color name="error_red">#EF4444</color>
+    <color name="gradient_start">#667eea</color>
+    <color name="gradient_end">#764ba2</color>
+    <color name="shadow_color">#1A000000</color>
+    
+    <!-- 新的精美配色 -->
+    <color name="gradient_primary_start">#667eea</color>
+    <color name="gradient_primary_end">#764ba2</color>
+    <color name="gradient_secondary_start">#f093fb</color>
+    <color name="gradient_secondary_end">#f5576c</color>
+    <color name="gradient_tertiary_start">#4facfe</color>
+    <color name="gradient_tertiary_end">#00f2fe</color>
+    <color name="glass_white">#40FFFFFF</color>
+    <color name="glass_black">#40000000</color>
+    <color name="neon_blue">#00D4FF</color>
+    <color name="neon_purple">#B794F6</color>
 
 
 </resources>

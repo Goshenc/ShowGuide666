@@ -57,6 +57,15 @@ class RegisterActivity : AppCompatActivity() {
             viewModel.register(account, pwd, email)
         }
 
+        // 立即登录点击事件
+        binding.loginText.setOnClickListener {
+            // 清除当前Activity栈并跳转到登录页面
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        }
+
         // 观察注册结果
         viewModel.regResult.observe(this, Observer { success ->
             if (success) {
