@@ -5,7 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import com.google.android.material.button.MaterialButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -127,8 +127,8 @@ class ManagerAdapter(
     inner class PerformanceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTextView: TextView = view.findViewById(R.id.tvName)
         val imageView: ImageView = view.findViewById(R.id.ivPoster)
-        val deleteButton: Button = view.findViewById(R.id.delete_button)
-        val viewedButton: Button = view.findViewById(R.id.viewed_button)
+        val deleteButton: MaterialButton = view.findViewById(R.id.delete_button)
+        val viewedButton: MaterialButton = view.findViewById(R.id.viewed_button)
 
         fun bind(performance: PerformanceEntity) {
             nameTextView.text = performance.name
@@ -141,8 +141,8 @@ class ManagerAdapter(
     inner class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTextView: TextView = view.findViewById(R.id.tvName)
         val imageView: ImageView = view.findViewById(R.id.ivPoster)
-        val deleteButton: Button = view.findViewById(R.id.delete_button)
-        val viewedButton: Button = view.findViewById(R.id.viewed_button)
+        val deleteButton: MaterialButton = view.findViewById(R.id.delete_button)
+        val viewedButton: MaterialButton = view.findViewById(R.id.viewed_button)
 
         fun bind(movie: MovieEntity) {
             nameTextView.text = movie.name
