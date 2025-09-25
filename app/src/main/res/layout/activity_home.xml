@@ -40,7 +40,6 @@
         android:fitsSystemWindows="true"
         android:translationZ="2dp"
         android:outlineProvider="none"
-        android:alpha="0.95"
         >
 
 
@@ -154,11 +153,9 @@
         android:translationZ="1dp"
         android:outlineProvider="none"
         android:paddingTop="35dp"
-        android:alpha="0.95"
-        app:tabTextColor="@color/text_secondary"
-        app:tabSelectedTextColor="@color/primary_blue"
-        app:tabIndicatorColor="@color/primary_blue"
-        app:tabIndicatorHeight="3dp"
+        app:tabTextColor="@color/gray_darker"
+        app:tabSelectedTextColor="@color/DodgerBlue"
+        app:tabIndicatorColor="@color/DodgerBlue"
     >
 
     </com.google.android.material.tabs.TabLayout>
@@ -203,7 +200,6 @@
         android:layout_gravity="bottom"
         android:orientation="horizontal"
         android:elevation="8dp"
-        android:alpha="0.95"
         >
 
         <!-- 第1项：必须 Start_toStartOf parent, End_toStartOf 第2项，并声明 chainStyle -->
