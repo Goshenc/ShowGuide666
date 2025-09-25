@@ -6,7 +6,8 @@
     android:padding="12dp"
     android:layout_margin="8dp"
     android:elevation="4dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:alpha="0.95">
 
     <ImageView
         android:id="@+id/ivPoster"

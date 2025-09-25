@@ -36,7 +36,7 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:fitsSystemWindows="true"
         android:translationZ="2dp"
         android:outlineProvider="none"
@@ -67,7 +67,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/icon"
+                    android:src="@drawable/icon_transparent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/searchBox"
                     app:layout_constraintTop_toTopOf="parent"
@@ -145,7 +145,7 @@
     <com.google.android.material.tabs.TabLayout
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="57dp"
         android:id="@+id/tabLayout"
@@ -155,7 +155,7 @@
         android:paddingTop="35dp"
         app:tabTextColor="@color/gray_darker"
         app:tabSelectedTextColor="@color/DodgerBlue"
-        app:tabIndicatorColor="@color/DodgerBlue"
+        app:tabIndicatorColor="@color/DodgerBlue" 
     >
 
     </com.google.android.material.tabs.TabLayout>
@@ -163,7 +163,7 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:background="@android:color/transparent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -171,6 +171,7 @@
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             >
 
             <LinearLayout
@@ -185,7 +186,8 @@
                     android:id="@+id/viewPager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp"
+                    android:background="@android:color/transparent"/>
             </LinearLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.core.widget.NestedScrollView>
@@ -200,6 +202,7 @@
         android:layout_gravity="bottom"
         android:orientation="horizontal"
         android:elevation="8dp"
+        android:alpha="0.95"
         >
 
         <!-- 第1项：必须 Start_toStartOf parent, End_toStartOf 第2项，并声明 chainStyle -->
