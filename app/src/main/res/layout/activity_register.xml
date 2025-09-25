@@ -177,7 +177,8 @@
                     android:textColor="@color/white"
                     android:background="@drawable/purple_gradient_button"
                     android:elevation="8dp"
-                    app:cornerRadius="28dp" />
+                    app:cornerRadius="28dp"
+                    app:backgroundTint="@null" />
 
                 <!-- 返回登录提示 -->
                 <LinearLayout

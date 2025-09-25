@@ -88,7 +88,8 @@
                     android:textColor="@color/white"
                     android:background="@drawable/purple_gradient_button"
                     android:elevation="8dp"
-                    app:cornerRadius="28dp" />
+                    app:cornerRadius="28dp"
+                    app:backgroundTint="@null" />
 
                 <!-- 删除记录按钮 -->
                 <com.google.android.material.button.MaterialButton

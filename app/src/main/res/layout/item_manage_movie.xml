@@ -74,7 +74,8 @@
                     app:cornerRadius="24dp"
                     app:strokeWidth="0dp"
                     app:rippleColor="@color/primary_blue"
-                    app:elevation="4dp" />
+                    app:elevation="4dp"
+                    app:backgroundTint="@null" />
 
                 <!-- 删除按钮 -->
                 <com.google.android.material.button.MaterialButton
