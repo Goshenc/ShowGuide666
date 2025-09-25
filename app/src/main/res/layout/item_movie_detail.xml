@@ -7,7 +7,7 @@
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/glass_white">
+    app:cardBackgroundColor="@color/white">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -48,21 +48,16 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="电影名"
-                android:shadowColor="@color/shadow_color"
-                android:shadowDx="0"
-                android:shadowDy="1"
-                android:shadowRadius="2" />
+                android:textColor="@color/text_primary"
+                android:text="电影名" />
 
             <TextView
                 android:id="@+id/tvDirector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="导演"
-                android:textColor="@color/white"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp"
-                android:alpha="0.9"
                 android:layout_marginTop="4dp" />
 
             <TextView
@@ -70,9 +65,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="主演"
-                android:textColor="@color/white"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp"
-                android:alpha="0.9"
                 android:layout_marginTop="4dp" />
 
             <TextView
@@ -80,9 +74,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上映日期"
-                android:textColor="@color/white"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp"
-                android:alpha="0.9"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:layout_marginTop="4dp" />
@@ -92,9 +85,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="类型"
-                android:textColor="@color/white"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp"
-                android:alpha="0.9"
                 android:layout_marginTop="4dp"/>
 
         </LinearLayout>
@@ -116,7 +108,7 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:background="@drawable/glassmorphism_background"
+            android:background="@color/primary_blue"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:layout_marginEnd="8dp" />
@@ -129,7 +121,7 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:background="@drawable/glassmorphism_background"
+            android:background="@color/accent_purple"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp" />
 
@@ -141,9 +133,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="电影简介"
-        android:textColor="@color/white"
+        android:textColor="@color/text_secondary"
         android:textSize="14sp"
-        android:alpha="0.9"
         android:lineSpacingExtra="4dp" />
 
     <RelativeLayout

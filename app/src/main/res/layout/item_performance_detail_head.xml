@@ -7,7 +7,7 @@
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/glass_white">
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,11 +49,7 @@
                     android:text="演唱会名称"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/white"
-                    android:shadowColor="@color/shadow_color"
-                    android:shadowDx="0"
-                    android:shadowDy="1"
-                    android:shadowRadius="2" />
+                    android:textColor="@color/text_primary" />
 
                 <TextView
                     android:id="@+id/tvStarring"
@@ -61,8 +57,7 @@
                     android:layout_height="wrap_content"
                     android:text="艺人"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
-                    android:alpha="0.9"
+                    android:textColor="@color/text_secondary"
                     android:layout_marginTop="4dp"/>
 
                 <TextView
@@ -71,8 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="日期"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
-                    android:alpha="0.9"
+                    android:textColor="@color/text_secondary"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:layout_marginTop="4dp"/>
@@ -83,7 +77,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="bottom|start"
-                    android:textColor="@color/neon_blue"
+                    android:textColor="@color/error_red"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:text="价格"

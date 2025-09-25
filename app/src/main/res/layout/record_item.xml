@@ -8,7 +8,7 @@
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@color/glass_white">
+    app:cardBackgroundColor="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,24 +16,20 @@
         android:padding="16dp">
 
         <!-- 日记标题 -->
-        <TextView
-            android:id="@+id/diaryTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="日记标题"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:shadowColor="@color/shadow_color"
-            android:shadowDx="0"
-            android:shadowDy="1"
-            android:shadowRadius="2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/diaryImage"
-            app:layout_constraintHorizontal_bias="0" />
+            <TextView
+                android:id="@+id/diaryTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="日记标题"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/diaryImage"
+                app:layout_constraintHorizontal_bias="0" />
 
         <!-- 日记内容 -->
         <TextView
@@ -41,9 +37,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="日记内容"
-            android:textColor="@color/white"
+            android:textColor="@color/text_secondary"
             android:textSize="14sp"
-            android:alpha="0.9"
             android:maxLines="2"
             android:ellipsize="end"
             android:paddingTop="8dp"
@@ -70,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:hint="日期"
                 android:textSize="12sp"
-                android:textColor="@color/white"
-                android:background="@drawable/glassmorphism_background"
+                android:textColor="@color/text_secondary"
+                android:background="@color/background_light"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
                 android:layout_marginEnd="8dp"/>
@@ -83,8 +78,8 @@
                 android:layout_height="wrap_content"
                 android:hint="地点"
                 android:textSize="12sp"
-                android:textColor="@color/white"
-                android:background="@drawable/glassmorphism_background"
+                android:textColor="@color/text_secondary"
+                android:background="@color/background_light"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
                 android:layout_marginEnd="8dp"/>
@@ -96,8 +91,8 @@
                 android:layout_height="wrap_content"
                 android:hint="天气"
                 android:textSize="12sp"
-                android:textColor="@color/white"
-                android:background="@drawable/glassmorphism_background"
+                android:textColor="@color/text_secondary"
+                android:background="@color/background_light"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"/>
 
