@@ -159,7 +159,6 @@
         app:tabSelectedTextColor="@color/primary_blue"
         app:tabIndicatorColor="@color/primary_blue"
         app:tabIndicatorHeight="3dp"
-        app:tabTextAppearance="@style/TabTextAppearance"
     >
 
     </com.google.android.material.tabs.TabLayout>
