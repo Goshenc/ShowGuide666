@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/beautiful_gradient">
+
+    <!-- 背景装饰圆形 -->
+    <View
+        android:id="@+id/decorative_circle_1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="-100dp"
+        android:layout_marginEnd="-100dp" />
+
+    <View
+        android:id="@+id/decorative_circle_2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="-75dp"
+        android:layout_marginStart="-75dp" />
+
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:fillViewport="true"
     android:padding="16dp"
-    android:background="@color/light_gray">
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,14 +49,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/glass_white"
             app:layout_constraintTop_toBottomOf="@id/img_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="26dp"
-            android:layout_marginEnd="26dp"
-            >
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -67,85 +98,141 @@
         </androidx.cardview.widget.CardView>
 
         <!-- 日期 -->
-        <TextView
-            android:id="@+id/diaryDate"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/dateCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="日期"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/glass_white"
             app:layout_constraintTop_toBottomOf="@id/ratingCard"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/diaryPlace"
+            app:layout_constraintEnd_toStartOf="@+id/diaryPlace">
 
-            android:layout_marginTop="15dp"/>
+            <TextView
+                android:id="@+id/diaryDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="日期"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
 
         <!-- 地点 -->
-        <TextView
-            android:id="@+id/diaryPlace"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/placeCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="地点"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/glass_white"
             app:layout_constraintTop_toBottomOf="@id/ratingCard"
-            app:layout_constraintStart_toEndOf="@id/diaryDate"
-            app:layout_constraintEnd_toStartOf="@+id/diaryWeather"
+            app:layout_constraintStart_toEndOf="@id/dateCard"
+            app:layout_constraintEnd_toStartOf="@+id/weatherCard">
 
-            android:layout_marginTop="15dp"/>
+            <TextView
+                android:id="@+id/diaryPlace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="地点"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
 
         <!-- 天气 -->
-        <TextView
-            android:id="@+id/diaryWeather"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/weatherCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="天气"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/glass_white"
             app:layout_constraintTop_toBottomOf="@id/ratingCard"
-            app:layout_constraintStart_toEndOf="@id/diaryPlace"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/placeCard"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            android:layout_marginTop="15dp"/>
+            <TextView
+                android:id="@+id/diaryWeather"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="天气"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
 
         <!-- 标题 -->
-        <TextView
-            android:id="@+id/diaryTitle"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/titleCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/edittext_rounded"
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:textAlignment="center"
-            android:paddingTop="10dp"
-            android:paddingBottom="8dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
-            app:layout_constraintTop_toBottomOf="@id/diaryDate"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/glass_white"
+            app:layout_constraintTop_toBottomOf="@id/dateCard"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="15dp"/>
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/diaryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:padding="16dp"
+                android:shadowColor="@color/shadow_color"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+
+        </androidx.cardview.widget.CardView>
 
         <!-- 日记内容 -->
-        <TextView
-            android:id="@+id/diaryArticle"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/articleCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/edittext_rounded"
-            android:textColor="@android:color/black"
-            android:padding="12dp"
-            android:minHeight="450dp"
-            android:maxHeight="700dp"
-            android:gravity="top|start"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
-            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/glass_white"
+            app:layout_constraintTop_toBottomOf="@id/titleCard">
 
-            app:layout_constraintTop_toBottomOf="@id/diaryTitle"
+            <TextView
+                android:id="@+id/diaryArticle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:padding="20dp"
+                android:minHeight="450dp"
+                android:maxHeight="700dp"
+                android:gravity="top|start"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp" />
+
+        </androidx.cardview.widget.CardView>
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
@@ -200,3 +287,5 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

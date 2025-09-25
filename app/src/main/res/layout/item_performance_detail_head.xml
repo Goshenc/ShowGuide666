@@ -3,78 +3,93 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    app:cardCornerRadius="8dp"
-    android:padding="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/glass_white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:elevation="4dp"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/ivPoster"
-            android:layout_width="100dp"
-            android:layout_height="140dp"
-            android:scaleType="centerCrop" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="演唱会名称"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="140dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
+                <ImageView
+                    android:id="@+id/ivPoster"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
 
-            <TextView
-                android:id="@+id/tvStarring"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="艺人"
-                android:textSize="12sp"
-                android:layout_marginTop="4dp"/>
+            </androidx.cardview.widget.CardView>
 
-
-            <TextView
-                android:id="@+id/tvComingDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="日期"
-                android:textSize="12sp"
-                android:layout_marginTop="4dp"/>
-
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:gravity="bottom|start"
-                android:textColor="@color/red"
-                android:textSize="16sp"
-                android:text="价格"
-                android:layout_marginTop="4dp"/>
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="演唱会名称"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:shadowColor="@color/shadow_color"
+                    android:shadowDx="0"
+                    android:shadowDy="1"
+                    android:shadowRadius="2" />
 
+                <TextView
+                    android:id="@+id/tvStarring"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="艺人"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:alpha="0.9"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/tvComingDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="日期"
+                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:alpha="0.9"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="bottom|start"
+                    android:textColor="@color/neon_blue"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="价格"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
