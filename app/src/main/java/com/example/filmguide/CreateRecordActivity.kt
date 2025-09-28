@@ -199,12 +199,12 @@ class CreateRecordActivity : AppCompatActivity() {
     private fun showUrlInputDialog() {
         val input = EditText(this).apply { 
             hint = "请输入有效的图片链接"
-            background = getDrawable(R.drawable.search_box_modern)
-            setPadding(48, 32, 48, 32)
+            background = getDrawable(R.drawable.underline_input_field)
+            setPadding(0, 24, 0, 24)
             textSize = 16f
             setTextColor(getColor(R.color.text_primary))
             setHintTextColor(getColor(R.color.text_secondary))
-            elevation = 4f
+            elevation = 0f
         }
         
         val dialog = AlertDialog.Builder(this)
@@ -329,12 +329,12 @@ class CreateRecordActivity : AppCompatActivity() {
     private fun loadImageFromManage(url: String) {
         val input = EditText(this).apply { 
             hint = "请输入有效的图片链接"
-            background = getDrawable(R.drawable.search_box_modern)
-            setPadding(48, 32, 48, 32)
+            background = getDrawable(R.drawable.underline_input_field)
+            setPadding(0, 24, 0, 24)
             textSize = 16f
             setTextColor(getColor(R.color.text_primary))
             setHintTextColor(getColor(R.color.text_secondary))
-            elevation = 4f
+            elevation = 0f
         }
         input.setText(url)
         
