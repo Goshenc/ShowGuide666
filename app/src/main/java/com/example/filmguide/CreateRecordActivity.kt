@@ -197,9 +197,19 @@ class CreateRecordActivity : AppCompatActivity() {
     }
 
     private fun showUrlInputDialog() {
-        val input = EditText(this).apply { hint = "请输入有效的图片链接" }
-        AlertDialog.Builder(this)
-            .setTitle("输入图片URL")
+        val input = EditText(this).apply { 
+            hint = "请输入有效的图片链接"
+            background = getDrawable(R.drawable.search_box_modern)
+            setPadding(48, 32, 48, 32)
+            textSize = 16f
+            setTextColor(getColor(R.color.text_primary))
+            setHintTextColor(getColor(R.color.text_secondary))
+            elevation = 4f
+        }
+        
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("🌐 输入图片URL")
+            .setMessage("请输入网络图片的完整链接地址")
             .setView(input)
             .setPositiveButton("确定") { _, _ ->
                 val url = input.text.toString().trim()
@@ -215,7 +225,18 @@ class CreateRecordActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+            
+        dialog.show()
+        
+        // 美化对话框样式
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(getDrawable(R.drawable.glassmorphism_background))
+            window.attributes?.let { attributes ->
+                attributes.dimAmount = 0.3f
+                window.attributes = attributes
+            }
+        }
     }
 
     private fun getLocation() {
@@ -306,10 +327,20 @@ class CreateRecordActivity : AppCompatActivity() {
         ToastUtil.show(this, msg, R.drawable.icon)
     }
     private fun loadImageFromManage(url: String) {
-        val input = EditText(this).apply { hint = "请输入有效的图片链接" }
+        val input = EditText(this).apply { 
+            hint = "请输入有效的图片链接"
+            background = getDrawable(R.drawable.search_box_modern)
+            setPadding(48, 32, 48, 32)
+            textSize = 16f
+            setTextColor(getColor(R.color.text_primary))
+            setHintTextColor(getColor(R.color.text_secondary))
+            elevation = 4f
+        }
         input.setText(url)
-        AlertDialog.Builder(this)
-            .setTitle("输入图片URL")
+        
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("🌐 输入图片URL")
+            .setMessage("请输入网络图片的完整链接地址")
             .setView(input)
             .setPositiveButton("确定") { _, _ ->
                 val url = input.text.toString().trim()
@@ -325,7 +356,18 @@ class CreateRecordActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton("取消", null)
-            .show()
+            .create()
+            
+        dialog.show()
+        
+        // 美化对话框样式
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(getDrawable(R.drawable.glassmorphism_background))
+            window.attributes?.let { attributes ->
+                attributes.dimAmount = 0.3f
+                window.attributes = attributes
+            }
+        }
     }
     private fun loadTitleFromManage(title: String) {
         binding.titleEditText.setText(title + "观影日志")
