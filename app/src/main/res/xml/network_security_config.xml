@@ -4,7 +4,7 @@
         <domain includeSubdomains="true">192.168.80.9</domain>
         <domain includeSubdomains="true">m.maoyan.com</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">dashscope.aliyuncs.com</domain>
+    </domain-config>
 </network-security-config>
-
-
-

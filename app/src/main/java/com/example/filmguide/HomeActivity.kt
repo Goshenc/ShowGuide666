@@ -33,6 +33,7 @@ class HomeActivity : AppCompatActivity() {
     private val apiKey = "670ca929136a456992608cd2e794df24"
     private lateinit var locationUtils: Utils_Date_Location.LocationHelper
     lateinit var binding:ActivityHomeBinding
+    private lateinit var floatingIconManager: FloatingIconManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,9 +46,42 @@ class HomeActivity : AppCompatActivity() {
 
 
 
-        binding.avatar.setOnClickListener(){
-            val intent=Intent(this,AIActivity::class.java)
-            startActivity(intent)
+        // 初始化悬浮图标管理器
+        floatingIconManager = FloatingIconManager(this)
+        
+        // 启动悬浮图标（如果已启用）
+        if (floatingIconManager.isFloatingIconEnabled()) {
+            floatingIconManager.startFloatingIcon()
+        } else {
+            // 首次启动时提示用户如何开启悬浮图标
+            ToastUtil.show(this, "长按头像可开启悬浮图标", R.drawable.icon)
+        }
+        
+        // 长按avatar切换悬浮图标
+        binding.avatar.setOnLongClickListener {
+            floatingIconManager.toggleFloatingIcon()
+            val message = if (floatingIconManager.isFloatingIconEnabled()) {
+                "悬浮图标已开启"
+            } else {
+                "悬浮图标已关闭"
+            }
+            ToastUtil.show(this, message, R.drawable.icon)
+            true
+        }
+        
+        // 双击头像开启悬浮图标
+        var lastClickTime = 0L
+        binding.avatar.setOnClickListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime < 500) { // 双击检测
+                floatingIconManager.startFloatingIcon()
+                ToastUtil.show(this, "悬浮图标已启动", R.drawable.icon)
+            } else {
+                // 单击跳转AI界面
+                val intent = Intent(this, AIActivity::class.java)
+                startActivity(intent)
+            }
+            lastClickTime = currentTime
         }
         binding.swipeRefresh.setColorSchemeResources(R.color.DodgerBlue)
         if (PrefsManager.isFirstSelection(this)) {
@@ -216,6 +250,10 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        // 清理悬浮图标
+        floatingIconManager.stopFloatingIcon()
+    }
 
 }

@@ -15,33 +15,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.filmguide.ai.AIChatService
 import com.example.filmguide.databinding.ActivityAiactivityBinding
 import com.example.filmguide.logic.model.ChatMessage
 import com.example.filmguide.ui.ChatAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class AIActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAiactivityBinding
     private lateinit var adapter: ChatAdapter
     private val messages = mutableListOf<ChatMessage>()
-
-    // AI 回复集合
-    private val aiReplies = arrayOf(
-        ChatMessage("Hi，我是你的AI推荐官ShowGuide！无论你想看演唱会、话剧、音乐剧、电影，还是想找周末市集、艺术展览、亲子活动，" +
-                "我都能根据你的喜好帮你推荐最合适的去处。只要告诉我你感兴趣的类型、预算和日期，我就能为你筛选最新最热门的玩乐资讯，" +
-                "让你的休闲时光更精彩！快来和我聊聊你的需求吧~" +
-                "", false),
-        ChatMessage("以下是近期最火的电影推荐《酱园弄·悬案》，该部影片改编自民国四大奇案之一，讲述了一桩骇人听闻的杀父碎尸案引发的社会轰动。章子怡、" +
-                "王传君、易烊千玺等强大阵容加盟，让这部剧情犯罪片备受期待！影片不仅探讨了案件背后的真相，还揭示了旧社会女性命运的挣扎。", false, imageResId = R.drawable.aichatimage),
-        ChatMessage("《哆啦A梦：大雄的绘画奇遇记》是一部充满奇幻色彩的动画电影，作为哆啦A梦系列的第45部作品，它延续了经典的冒险精神和温馨感。" +
-                "影片讲述了大雄意外获得一幅价值连城的名画残片后，哆啦A梦与伙伴们进入画中世界展开冒险的故事。他们邂逅神秘少女可蕾雅，并一起踏上寻找传说中的宝石“雅托利亚蓝”的旅程，途中遭遇重重危机，甚至牵涉到“世界毁灭”的传说。\n" +
-                "\n" +
-                "这部电影不仅画面精美，情节也充满了想象力和情感张力，非常适合哆啦A梦的粉丝以及喜欢奇幻冒险题材的观众。淘票票评分高达9.6分，想看人数更是达到了9.2万，可见它的受欢迎程度✨。目前正值特惠购票阶段，最高还能减8.1元，非常值得一看哦～", false, imageResId = R.drawable.aichatimage2),
-        ChatMessage("好的，你的票务信息已经帮你添加到票务管理中了，你可以前往票务管理界面查看详细信息和进行更多操作。",false, imageResId = R.drawable.aichatimage3),
-        ChatMessage("闹钟已为你设置成功！提醒一下：6月21日晚上7点，天气多云、气温舒适，适合出行和观演～如需导航、路线或穿搭建议，也可以随时问我哦！",false, imageResId = R.drawable.aichatimage4),
-        ChatMessage("已经为你准备好路线啦！点击下方按钮，马上带你导航去福建大剧院～",false, imageResId = R.drawable.aichatimage5),
-        )
-    private var replyStage = 0
+    private lateinit var aiChatService: AIChatService
+    private val conversationHistory = mutableListOf<AIChatService.ChatMessage>()
+    private var isAiResponding = false
 
     companion object {
         private const val REQUEST_RECORD_AUDIO = 100
@@ -53,9 +42,32 @@ class AIActivity : AppCompatActivity() {
         binding = ActivityAiactivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
+        
+        // 隐藏悬浮按钮
+        hideFloatingIcon()
+
+        // 初始化AI聊天服务
+        aiChatService = AIChatService()
+
+        // 测试AI连接
+        CoroutineScope(Dispatchers.Main).launch {
+            val isConnected = aiChatService.testConnection()
+            if (isConnected) {
+                android.util.Log.d("AIActivity", "AI服务连接正常")
+            } else {
+                android.util.Log.e("AIActivity", "AI服务连接失败")
+                Toast.makeText(this@AIActivity, "AI服务连接失败，请检查网络", Toast.LENGTH_LONG).show()
+            }
+        }
 
         // 一进来显示欢迎语
-        messages.add(aiReplies[0])
+        val welcomeMessage = ChatMessage(
+            "Hi，我是你的AI推荐官ShowGuide！无论你想看演唱会、话剧、音乐剧、电影，还是想找周末市集、艺术展览、亲子活动，" +
+            "我都能根据你的喜好帮你推荐最合适的去处。只要告诉我你感兴趣的类型、预算和日期，我就能为你筛选最新最热门的玩乐资讯，" +
+            "让你的休闲时光更精彩！快来和我聊聊你的需求吧~", 
+            false
+        )
+        messages.add(welcomeMessage)
 
         adapter = ChatAdapter(messages)
         binding.recyclerViewMessages.layoutManager = LinearLayoutManager(this)
@@ -70,30 +82,104 @@ class AIActivity : AppCompatActivity() {
                 binding.editTextMessage.setText(recognizedText)
             }.show(supportFragmentManager, "record")
         }
-
     }
 
     private fun sendMessage() {
         val text = binding.editTextMessage.text.toString().trim()
-        if (text.isEmpty()) return
+        if (text.isEmpty() || isAiResponding) return
 
         // 添加用户消息
-        messages.add(ChatMessage(text, true))
+        val userMessage = ChatMessage(text, true)
+        messages.add(userMessage)
         adapter.notifyItemInserted(messages.lastIndex)
         binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
         binding.editTextMessage.text?.clear()
 
-        // 延迟 AI 回复
-        Handler(Looper.getMainLooper()).postDelayed({
-            val nextIndex = (replyStage + 1).coerceAtMost(aiReplies.lastIndex)
-            val aiReply = aiReplies[nextIndex]
-            replyStage = nextIndex
-            messages.add(aiReply)
-            adapter.notifyItemInserted(messages.lastIndex)
-            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
-        }, 1200)
-    }
+        // 添加到对话历史
+        conversationHistory.add(AIChatService.ChatMessage("user", text))
 
+        // 显示AI正在思考的提示
+        val thinkingMessage = ChatMessage("AI正在思考中...", false)
+        messages.add(thinkingMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+
+        // 调用AI服务
+        isAiResponding = true
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                aiChatService.sendMessage(
+                    userMessage = text,
+                    conversationHistory = conversationHistory,
+                    callback = object : AIChatService.StreamCallback {
+                        override fun onPartialResponse(content: String) {
+                            runOnUiThread {
+                                // 更新最后一条消息（思考中...）为AI的回复
+                                if (messages.isNotEmpty() && messages.last().content == "AI正在思考中...") {
+                                    messages[messages.lastIndex] = ChatMessage(content, false)
+                                } else {
+                                    // 如果已经有AI回复，则更新内容
+                                    if (messages.isNotEmpty() && !messages.last().isSentByUser) {
+                                        messages[messages.lastIndex] = ChatMessage(content, false)
+                                    } else {
+                                        // 添加新的AI回复
+                                        messages.add(ChatMessage(content, false))
+                                    }
+                                }
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                            }
+                        }
+
+                        override fun onCompleteResponse(content: String) {
+                            runOnUiThread {
+                                // 确保最终回复正确显示
+                                if (messages.isNotEmpty()) {
+                                    messages[messages.lastIndex] = ChatMessage(content, false)
+                                }
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                                
+                                // 添加到对话历史
+                                conversationHistory.add(AIChatService.ChatMessage("assistant", content))
+                                isAiResponding = false
+                            }
+                        }
+
+                        override fun onError(error: String) {
+                            runOnUiThread {
+                                // 移除思考中的消息，显示错误信息
+                                if (messages.isNotEmpty() && messages.last().content == "AI正在思考中...") {
+                                    messages.removeAt(messages.lastIndex)
+                                }
+                                messages.add(ChatMessage("抱歉，AI服务暂时不可用：$error", false))
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                                isAiResponding = false
+                                
+                                Toast.makeText(this@AIActivity, "AI服务错误：$error", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                )
+            } catch (e: Exception) {
+                runOnUiThread {
+                    // 移除思考中的消息，显示错误信息
+                    if (messages.isNotEmpty() && messages.last().content == "AI正在思考中...") {
+                        messages.removeAt(messages.lastIndex)
+                    }
+                    messages.add(ChatMessage("抱歉，发生了网络错误：${e.message}", false))
+                    adapter.notifyDataSetChanged()
+                    binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                    isAiResponding = false
+                    
+                    Toast.makeText(this@AIActivity, "网络错误：${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+    
+    
     // 以下权限和语音识别逻辑保持不变
     private fun ensureAudioPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -138,6 +224,47 @@ class AIActivity : AppCompatActivity() {
             val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val text = results?.firstOrNull().orEmpty()
             binding.editTextMessage.setText(text)
+        }
+    }
+    
+    private fun hideFloatingIcon() {
+        try {
+            val intent = Intent(this, FloatingIconService::class.java).apply {
+                action = "hide"
+            }
+            startService(intent)
+        } catch (e: Exception) {
+            android.util.Log.e("AIActivity", "隐藏悬浮按钮失败", e)
+        }
+    }
+    
+    override fun onPause() {
+        super.onPause()
+        // 暂停时显示悬浮按钮
+        showFloatingIcon()
+    }
+    
+    override fun onStop() {
+        super.onStop()
+        // 停止时显示悬浮按钮
+        showFloatingIcon()
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        // 退出AI界面时显示悬浮按钮
+        showFloatingIcon()
+    }
+    
+    private fun showFloatingIcon() {
+        try {
+            val intent = Intent(this, FloatingIconService::class.java).apply {
+                action = "show"
+            }
+            startService(intent)
+            android.util.Log.d("AIActivity", "显示悬浮按钮")
+        } catch (e: Exception) {
+            android.util.Log.e("AIActivity", "显示悬浮按钮失败", e)
         }
     }
 }
