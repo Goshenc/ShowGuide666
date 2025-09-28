@@ -93,9 +93,7 @@
         android:padding="16dp"
         android:layout_margin="16dp"
         android:background="@drawable/glassmorphism_background"
-        android:elevation="12dp"
-        app:layout_anchor="@id/bottomChatBox"
-        app:layout_anchorGravity="bottom">
+        android:elevation="12dp">
         <!-- 快速标签 -->
         <LinearLayout
             android:id="@+id/first"
