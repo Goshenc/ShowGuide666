@@ -9,10 +9,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -141,18 +144,73 @@ class CityActivity : AppCompatActivity() {
             }
             return
         }
-        val names = options.map { it.first }.toTypedArray()
-        AlertDialog.Builder(context)
-            .setTitle("请选择地图应用")
-            .setItems(names) { _, which ->
-                val intent = options[which].second
-                try {
-                    context.startActivity(intent)
-                } catch (e: Exception) {
-                    ToastUtil.show(context,"无法启动${options[which].first}",R.drawable.icon)
-                }
+        showCustomMapChooser(context, options)
+    }
+
+    private fun showCustomMapChooser(context: Context, options: List<Pair<String, Intent>>) {
+        val dialog = AlertDialog.Builder(context)
+            .setView(R.layout.dialog_map_chooser)
+            .create()
+        
+        dialog.show()
+        
+        // 获取容器并添加地图选项
+        val container = dialog.findViewById<LinearLayout>(R.id.mapOptionsContainer)
+        options.forEach { (name, intent) ->
+            val optionView = createMapOptionView(context, name, intent, dialog)
+            container?.addView(optionView)
+        }
+        
+        // 美化对话框样式
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(context.getDrawable(R.drawable.glassmorphism_background))
+            window.attributes?.let { attributes ->
+                attributes.dimAmount = 0.3f
+                window.attributes = attributes
             }
-            .show()
+        }
+    }
+    
+    private fun createMapOptionView(context: Context, name: String, intent: Intent, dialog: AlertDialog): View {
+        val view = LayoutInflater.from(context).inflate(R.layout.item_map_option, null)
+        
+        val iconView = view.findViewById<ImageView>(R.id.mapIcon)
+        val nameView = view.findViewById<TextView>(R.id.mapName)
+        val descView = view.findViewById<TextView>(R.id.mapDescription)
+        
+        // 设置图标和文本
+        when (name) {
+            "百度地图" -> {
+                iconView.setImageResource(R.drawable.ic_baidu_map)
+                descView.text = "使用百度地图查看位置"
+            }
+            "高德地图" -> {
+                iconView.setImageResource(R.drawable.ic_amap)
+                descView.text = "使用高德地图查看位置"
+            }
+            "Google 地图" -> {
+                iconView.setImageResource(R.drawable.ic_google_maps)
+                descView.text = "使用Google地图查看位置"
+            }
+            "Google Earth" -> {
+                iconView.setImageResource(R.drawable.ic_google_earth)
+                descView.text = "使用Google Earth查看位置"
+            }
+        }
+        
+        nameView.text = name
+        
+        // 设置点击事件
+        view.setOnClickListener {
+            dialog.dismiss()
+            try {
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                ToastUtil.show(context, "无法启动$name", R.drawable.icon)
+            }
+        }
+        
+        return view
     }
 
     private fun isIntentAvailable(context: Context, intent: Intent): Boolean {
