@@ -200,7 +200,7 @@ class CreateRecordActivity : AppCompatActivity() {
         val input = EditText(this).apply { 
             hint = "请输入有效的图片链接"
             background = getDrawable(R.drawable.underline_input_field)
-            setPadding(0, 24, 0, 24)
+            setPadding(16, 16, 16, 16)
             textSize = 16f
             setTextColor(getColor(R.color.text_primary))
             setHintTextColor(getColor(R.color.text_secondary))
@@ -228,6 +228,7 @@ class CreateRecordActivity : AppCompatActivity() {
             .create()
             
         dialog.show()
+        
         
         // 美化对话框样式
         dialog.window?.let { window ->
@@ -330,7 +331,7 @@ class CreateRecordActivity : AppCompatActivity() {
         val input = EditText(this).apply { 
             hint = "请输入有效的图片链接"
             background = getDrawable(R.drawable.underline_input_field)
-            setPadding(0, 24, 0, 24)
+            setPadding(16, 16, 16, 16)
             textSize = 16f
             setTextColor(getColor(R.color.text_primary))
             setHintTextColor(getColor(R.color.text_secondary))
@@ -359,6 +360,7 @@ class CreateRecordActivity : AppCompatActivity() {
             .create()
             
         dialog.show()
+        
         
         // 美化对话框样式
         dialog.window?.let { window ->
