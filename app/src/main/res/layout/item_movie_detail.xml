@@ -1,29 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:elevation="4dp"
-    android:background="@color/white">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp"
-        android:layout_margin="8dp"
-        android:elevation="4dp">
+        android:padding="8dp">
 
-        <ImageView
-            android:id="@+id/ivPoster"
+        <androidx.cardview.widget.CardView
             android:layout_width="100dp"
             android:layout_height="140dp"
-            android:scaleType="centerCrop" />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <ImageView
+                android:id="@+id/ivPoster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -31,101 +46,123 @@
                 android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:text="电影名" />
-
-
 
             <TextView
                 android:id="@+id/tvDirector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="导演" />
+                android:text="导演"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
 
             <TextView
                 android:id="@+id/tvStarring"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="主演" />
-
-
-
-
-
+                android:text="主演"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
 
             <TextView
                 android:id="@+id/tvComingDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="上映日期"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
                 android:maxLines="2"
-                android:ellipsize="end" />
-
+                android:ellipsize="end"
+                android:layout_marginTop="4dp" />
 
             <TextView
                 android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="类型"/>
-
+                android:text="类型"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
 
         </LinearLayout>
 
-
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvScore"
-        android:layout_margin="8dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="电影评分"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="center">
 
-    <TextView
-        android:layout_margin="8dp"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/tvWishCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="期待人数"/>
+        <TextView
+            android:id="@+id/tvScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="电影评分"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/primary_blue"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/tvWishCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="期待人数"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/accent_purple"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvIntroduce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="电影简介"/>
+        android:layout_marginTop="12dp"
+        android:text="电影简介"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp" />
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_marginTop="12dp">
 
         <VideoView
             android:id="@+id/tvVideo"
-            android:layout_margin="8dp"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="match_parent"
             android:clickable="true"
             android:focusable="true"/>
 
         <ImageView
             android:id="@+id/tvVideoImage"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:layout_margin="8dp"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/tvVideoText"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="暂无资源"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:layout_margin="8dp"
             android:scaleType="centerCrop"/>
 
         <ImageView
@@ -137,5 +174,6 @@
 
     </RelativeLayout>
 
-
 </LinearLayout>
+
+</androidx.cardview.widget.CardView>

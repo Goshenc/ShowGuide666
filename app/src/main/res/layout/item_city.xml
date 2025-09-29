@@ -1,24 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/card_background">
 
-    <TextView
-        android:id="@+id/tvCityName"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="城市名"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tvPinyin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="pinyin"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp"/>
-</LinearLayout>
+        <!-- 城市图标 -->
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/location"
+            android:background="@drawable/glassmorphism_background"
+            android:padding="8dp"
+            android:tint="@color/primary_blue"
+            android:scaleType="fitCenter" />
+
+        <!-- 城市信息 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvCityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="城市名"
+                android:textSize="18sp"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/tvPinyin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pinyin"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp" />
+
+        </LinearLayout>
+
+        <!-- 箭头图标 -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/baseline_search_24"
+            android:tint="@color/text_secondary"
+            android:rotation="90"
+            android:scaleType="fitCenter" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

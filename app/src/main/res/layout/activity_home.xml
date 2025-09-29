@@ -7,13 +7,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white">
+    android:background="@drawable/beautiful_gradient">
+
+    <!-- 背景装饰圆形 -->
+    <View
+        android:id="@+id/decorative_circle_1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.3"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="top|end"
+        android:layout_marginTop="-100dp"
+        android:layout_marginEnd="-100dp" />
+
+    <View
+        android:id="@+id/decorative_circle_2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.2"
+        app:layout_anchor="@id/bottomRow"
+        app:layout_anchorGravity="bottom|start"
+        android:layout_marginBottom="-75dp"
+        android:layout_marginStart="-75dp" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:fitsSystemWindows="true"
         android:translationZ="2dp"
         android:outlineProvider="none"
@@ -44,7 +67,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/icon"
+                    android:src="@drawable/icon_transparent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/searchBox"
                     app:layout_constraintTop_toTopOf="parent"
@@ -54,16 +77,18 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/searchBox"
                     android:layout_width="0dp"
-                    android:layout_height="35dp"
+                    android:layout_height="40dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/searchbox_background"
+                    android:background="@drawable/search_box_modern"
                     android:drawablePadding="10dp"
                     android:gravity="center_vertical"
                     android:hint="影视/音乐会/话剧"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:textColorHint="@color/gray_darker"
+                    android:textColorHint="@color/text_secondary"
+                    android:textColor="@color/text_primary"
                     android:textSize="15sp"
+                    android:elevation="4dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/text_location"
                     app:layout_constraintStart_toEndOf="@id/avatar"
@@ -120,7 +145,7 @@
     <com.google.android.material.tabs.TabLayout
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="57dp"
         android:id="@+id/tabLayout"
@@ -129,8 +154,8 @@
         android:outlineProvider="none"
         android:paddingTop="35dp"
         app:tabTextColor="@color/gray_darker"
-    app:tabSelectedTextColor="@color/DodgerBlue"
-        app:tabIndicatorColor="@color/DodgerBlue"
+        app:tabSelectedTextColor="@color/DodgerBlue"
+        app:tabIndicatorColor="@color/DodgerBlue" 
     >
 
     </com.google.android.material.tabs.TabLayout>
@@ -138,7 +163,7 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:background="@android:color/transparent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -146,6 +171,7 @@
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             >
 
             <LinearLayout
@@ -160,7 +186,8 @@
                     android:id="@+id/viewPager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp"
+                    android:background="@android:color/transparent"/>
             </LinearLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.core.widget.NestedScrollView>
@@ -174,6 +201,8 @@
         android:background="@color/white"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
+        android:elevation="8dp"
+        android:alpha="0.95"
         >
 
         <!-- 第1项：必须 Start_toStartOf parent, End_toStartOf 第2项，并声明 chainStyle -->
@@ -185,7 +214,7 @@
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             android:layout_weight="1"
-            android:background="@color/light_gray">
+            android:background="@drawable/nav_item_background_selected">
 
             <!-- 图标 -->
             <ImageView
@@ -218,7 +247,8 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/nav_item_background_normal">
 
             <ImageView
                 android:id="@+id/img_diary"
@@ -246,8 +276,9 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:focusable="true"
-
-            android:layout_weight="1">
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_weight="1"
+            android:background="@drawable/nav_item_background_normal">
 
             <ImageView
                 android:id="@+id/img_create"
@@ -276,7 +307,8 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/nav_item_background_normal">
 
             <ImageView
                 android:id="@+id/img_clock"
@@ -305,7 +337,8 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/nav_item_background_normal">
 
             <ImageView
                 android:id="@+id/img_manage"

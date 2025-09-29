@@ -1,28 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ManageActivity"
-    android:background="@color/white">
+    android:background="@drawable/beautiful_gradient"
+    tools:context=".ManageActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <!-- 背景装饰圆形 -->
+    <View
+        android:id="@+id/decorative_circle_1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="-100dp"
+        android:layout_marginEnd="-100dp" />
+
+    <View
+        android:id="@+id/decorative_circle_2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="-75dp"
+        android:layout_marginStart="-75dp" />
+
+    <!-- 顶部标题栏 -->
+    <LinearLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerView"/>
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:gravity="center"
+        android:background="@color/glass_white"
+        android:elevation="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <TextView
-        android:id="@+id/testView"
+        <!-- 标题 -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="票务管理"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-light"
+            android:shadowColor="@color/shadow_color"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
+
+    </LinearLayout>
+
+    <!-- 主要内容区域 -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/appbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+
+            <!-- 票务列表 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_manage_movie" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <!-- 空状态 -->
+    <LinearLayout
+        android:id="@+id/emptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="暂无任何票务内容"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
-        android:textSize="18sp"
-        android:textColor="@color/gray"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="24dp"
+            android:src="@drawable/baseline_search_24"
+            android:tint="@color/text_secondary"
+            android:alpha="0.6" />
+
+        <TextView
+            android:id="@+id/testView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="暂无任何票务内容"
+            android:textSize="18sp"
+            android:textColor="@color/text_secondary"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="点击右下角按钮添加新的票务"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:alpha="0.8" />
+
+    </LinearLayout>
+
+    <!-- 加载指示器 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/primary_blue"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

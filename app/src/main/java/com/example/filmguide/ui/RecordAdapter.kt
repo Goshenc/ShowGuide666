@@ -37,17 +37,20 @@ class RecordAdapter(
             diaryWeather.text = diary.weather
 
             // 处理图片加载
-            diaryImage.setImageDrawable(null) // 清空旧图片，防止 RecyclerView 复用导致错位
-
             val imageUrl = diary.localImagePath?.takeIf { it.isNotBlank() } ?: diary.networkImageLink
-            Glide.with(context)
-                .load(imageUrl?.let { Uri.parse(it) }) // 兼容 file:// 和 http://
-
-
-                .into(diaryImage)
-
-            // 显示或隐藏 ImageView（Glide 会自动处理）
+            
+            // 显示或隐藏图片容器
             diaryImage.visibility = if (imageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
+            
+            if (!imageUrl.isNullOrEmpty()) {
+                // 获取CardView内的ImageView
+                val imageView = diaryImage.getChildAt(0) as? android.widget.ImageView
+                imageView?.let { imgView ->
+                    Glide.with(context)
+                        .load(Uri.parse(imageUrl))
+                        .into(imgView)
+                }
+            }
 
             // 点击事件
             root.setOnClickListener {

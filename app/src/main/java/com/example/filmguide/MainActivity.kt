@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.registerImage.setOnClickListener {
+        binding.registerText.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 

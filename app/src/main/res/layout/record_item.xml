@@ -4,30 +4,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="8dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <!-- 日记标题 -->
-        <TextView
-            android:id="@+id/diaryTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="日记标题"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/diaryImage"
-            app:layout_constraintHorizontal_bias="0"
-            />
+            <TextView
+                android:id="@+id/diaryTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="日记标题"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/diaryImage"
+                app:layout_constraintHorizontal_bias="0" />
 
         <!-- 日记内容 -->
         <TextView
@@ -35,60 +37,84 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="日记内容"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
             android:maxLines="2"
             android:ellipsize="end"
-            android:paddingTop="4dp"
+            android:paddingTop="8dp"
+            android:lineSpacingExtra="2dp"
             app:layout_constraintTop_toBottomOf="@id/diaryTitle"
             app:layout_constraintStart_toStartOf="@id/diaryTitle"
             app:layout_constraintEnd_toEndOf="@id/diaryTitle"/>
 
-        <!-- 日期 -->
-        <TextView
-            android:id="@+id/diaryDate"
-            android:layout_width="wrap_content"
+        <!-- 信息标签容器 -->
+        <LinearLayout
+            android:id="@+id/infoContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="日期"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            android:paddingTop="8dp"
+            android:orientation="horizontal"
+            android:paddingTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/diaryArticle"
-            app:layout_constraintStart_toStartOf="@id/diaryArticle"/>
+            app:layout_constraintStart_toStartOf="@id/diaryArticle"
+            app:layout_constraintEnd_toEndOf="@id/diaryArticle">
 
-        <!-- 地点 -->
-        <TextView
-            android:id="@+id/diaryLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="地点"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            android:paddingTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/diaryArticle"
-            app:layout_constraintStart_toEndOf="@id/diaryDate"
-            android:layout_marginStart="8dp"/>
+            <!-- 日期标签 -->
+            <TextView
+                android:id="@+id/diaryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="日期"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:background="@color/background_light"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="8dp"/>
 
-        <!-- 天气 -->
-        <TextView
-            android:id="@+id/diaryWeather"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="天气"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            android:paddingTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/diaryArticle"
-            app:layout_constraintStart_toEndOf="@id/diaryLocation"
-            android:layout_marginStart="8dp"/>
+            <!-- 地点标签 -->
+            <TextView
+                android:id="@+id/diaryLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="地点"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:background="@color/background_light"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="8dp"/>
+
+            <!-- 天气标签 -->
+            <TextView
+                android:id="@+id/diaryWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="天气"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:background="@color/background_light"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"/>
+
+        </LinearLayout>
 
         <!-- 右侧图片 -->
-        <ImageView
+        <androidx.cardview.widget.CardView
             android:id="@+id/diaryImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"
             android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

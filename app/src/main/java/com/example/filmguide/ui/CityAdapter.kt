@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filmguide.R
 import com.example.filmguide.logic.network.city.City
 
 class CityAdapter(
@@ -14,9 +15,12 @@ class CityAdapter(
 ) : ListAdapter<City, CityAdapter.CityVH>(CityVH.DiffCallback()) {
 
     class CityVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvName: TextView = itemView.findViewById(android.R.id.text1)
+        private val tvCityName: TextView = itemView.findViewById(R.id.tvCityName)
+        private val tvPinyin: TextView = itemView.findViewById(R.id.tvPinyin)
+        
         fun bind(city: City, onItemClick: (City) -> Unit) {
-            tvName.text = city.name
+            tvCityName.text = city.name
+            tvPinyin.text = city.pinyin ?: ""
             itemView.setOnClickListener {
                 onItemClick(city)
             }
@@ -30,7 +34,7 @@ class CityAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityVH {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_city, parent, false)
         return CityVH(view)
     }
 

@@ -1,102 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@drawable/aibackground"
-    android:fitsSystemWindows="true"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/beautiful_gradient"
+    android:fitsSystemWindows="true">
+
+    <!-- 顶部导航栏 -->
     <LinearLayout
         android:id="@+id/topRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="3dp"
-        >
-<ImageView
-    android:id="@+id/back"
-    android:layout_width="23dp"
-    android:layout_height="23dp"
-    android:src="@drawable/back_black"
-    android:layout_marginStart="10dp"/>
-        <Space
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/glassmorphism_background"
+        android:layout_margin="16dp"
+        android:elevation="8dp">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/back_black"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:contentDescription="返回" />
+
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-<ImageView
-    android:id="@+id/newnew"
-    android:layout_width="25dp"
-    android:layout_height="25dp"
-    android:src="@drawable/newnew"
-    android:layout_marginEnd="10dp"/>
+            android:layout_weight="1"
+            android:text="AI推荐官"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:gravity="center"
+            android:layout_marginStart="16dp" />
+
+        <ImageView
+            android:id="@+id/newnew"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/newnew"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:contentDescription="新消息" />
     </LinearLayout>
 
-
+    <!-- 聊天消息区域 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMessages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
+        android:padding="16dp"
         android:clipToPadding="false" />
 
+    <!-- 底部输入区域 -->
     <LinearLayout
         android:id="@+id/bottomChatBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp"
-        android:background="@drawable/bg_bottom_chat_box">
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/glassmorphism_background"
+        android:elevation="12dp">
+        <!-- 快速标签 -->
         <LinearLayout
             android:id="@+id/first"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="7dp"
->
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="一周热抢"
-    android:background="@drawable/edittext_rounded"
-    android:paddingHorizontal="15dp"
-    android:textColor="@color/black"
-    />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="一周热抢"
+                android:background="@drawable/search_box_modern"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:elevation="2dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="最近热映"
-                android:background="@drawable/edittext_rounded"
-                android:paddingHorizontal="15dp"
-                android:textColor="@color/black"
-                android:layout_marginStart="5dp"/>
+                android:background="@drawable/search_box_modern"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"
+                android:elevation="2dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="高分推荐"
-                android:background="@drawable/edittext_rounded"
-                android:paddingHorizontal="15dp"
-                android:textColor="@color/black"
-                android:layout_marginStart="5dp"/>
+                android:background="@drawable/search_box_modern"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:layout_marginStart="8dp"
+                android:elevation="2dp" />
         </LinearLayout>
+        <!-- 输入区域 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <EditText
-            android:id="@+id/editTextMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="给ShowGuide发送消息…"
-            android:background="@drawable/edittext_rounded"
-            android:padding="10dp"
-            android:paddingStart="15dp"
-            android:elevation="4dp"
-            android:layout_marginBottom="7dp"
-            android:drawableStart="@drawable/camera"
-            android:drawablePadding="7dp"
-            />
+
+            <EditText
+                android:id="@+id/editTextMessage"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="给ShowGuide发送消息…"
+                android:background="@drawable/search_box_modern"
+                android:padding="12dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:elevation="4dp"
+                android:layout_marginBottom="12dp"
+                android:drawableStart="@drawable/camera"
+                android:drawablePadding="8dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="15sp"
+                android:gravity="center_vertical" />
+            <!-- 功能按钮区域 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                >
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -104,37 +147,50 @@
                     android:text="深度思考"
                     android:textStyle="bold"
                     android:drawableStart="@drawable/ds4"
-                    android:background="@drawable/edittext_rounded"
-                    android:paddingHorizontal="15dp"
-                    android:textColor="@color/black"/>
+                    android:background="@drawable/search_box_modern"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:elevation="2dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="联网搜索"
                     android:textStyle="bold"
                     android:drawableStart="@drawable/web"
-                    android:background="@drawable/edittext_rounded"
-                    android:paddingHorizontal="15dp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="5dp"/>
-<Space
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"/>
+                    android:background="@drawable/search_box_modern"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp"
+                    android:elevation="2dp" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <ImageView
-            android:id="@+id/voice"
-            android:layout_width="35dp"
-            android:layout_height="40dp"
-            android:src="@drawable/voice1"
-                    android:layout_marginEnd="10dp"/>
+                    android:id="@+id/voice"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/voice1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="语音输入" />
 
-        <ImageView
-            android:id="@+id/buttonSend"
-            android:layout_width="37dp"
-            android:layout_height="37dp"
-            android:src="@drawable/send"
-            android:contentDescription="发送" />
+                <ImageView
+                    android:id="@+id/buttonSend"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/send"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:contentDescription="发送" />
             </LinearLayout>
 
         </LinearLayout>

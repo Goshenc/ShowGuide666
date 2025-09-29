@@ -1,65 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:layout_margin="8dp"
-    android:elevation="4dp"
-    android:background="@color/white">
-
-    <ImageView
-        android:id="@+id/ivPoster"
-        android:layout_width="100dp"
-        android:layout_height="140dp"
-        android:scaleType="centerCrop" />
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/card_background">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="12dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
 
+        <!-- 电影海报 -->
+        <ImageView
+            android:id="@+id/ivPoster"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/card_background"
+            android:clipToOutline="true" />
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="电影名称"
-            android:gravity="start|top"
-            android:paddingTop="4dp"/>
-
-
+        <!-- 内容区域 -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/viewed_button"
-                android:layout_gravity="bottom"
-                android:layout_width="wrap_content"
+            <!-- 电影标题 -->
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="记录"
-                android:backgroundTint="@color/teal_200"
-                android:textColor="@color/white"/>
+                android:text="电影名称"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginBottom="8dp" />
 
-            <Button
-                android:id="@+id/delete_button"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="24dp"
-                android:layout_width="wrap_content"
+
+
+            <!-- 操作按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="删除"
-                android:backgroundTint="@color/pink"
-                android:textColor="@color/white"/>
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+
+                <!-- 记录按钮 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/viewed_button"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="记录"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/purple_gradient_button_small"
+                    android:paddingHorizontal="24dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    app:cornerRadius="24dp"
+                    app:strokeWidth="0dp"
+                    app:rippleColor="@color/primary_blue"
+                    app:elevation="4dp"
+                    app:backgroundTint="@null" />
+
+                <!-- 删除按钮 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/delete_button"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="删除"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/error_red"
+                    android:paddingHorizontal="24dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    app:cornerRadius="24dp"
+                    app:strokeWidth="0dp"
+                    app:rippleColor="@color/error_red"
+                    app:elevation="4dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-
-
     </LinearLayout>
-</LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

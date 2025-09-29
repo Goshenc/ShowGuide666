@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray">
+    android:background="@drawable/beautiful_gradient">
 
     <!-- 1. 可滚动的内容区域 -->
     <androidx.core.widget.NestedScrollView
@@ -14,7 +14,7 @@
         android:fillViewport="true"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="@color/light_gray"
+        android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottomRow"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,54 +24,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- 顶部 CardView（包含“评分：”文字和蓝色 RatingBar） -->
-            <androidx.cardview.widget.CardView
+            <!-- 顶部组件 包含“评分：”文字和蓝色 RatingBar） -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ratingCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+
                 android:layout_marginTop="5dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                android:background="@drawable/glassmorphism_background"
+                android:elevation="8dp"
+                android:padding="10dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <!-- 左边的“评分：”文字 -->
+                    <!-- 评分文字 -->
                     <TextView
                         android:id="@+id/ratingLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="评分："
-                        android:textSize="16sp"
-                        android:textColor="@android:color/darker_gray"
-                        android:paddingEnd="8dp"
+                        android:textSize="22sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/rating"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginStart="8dp"/>
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintHorizontal_bias="0.5"/>
 
-                    <!-- 蓝色星星的 RatingBar -->
+                    <!-- 星星 RatingBar -->
                     <RatingBar
                         android:id="@+id/rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:numStars="5"
                         android:stepSize="0.5"
-                        android:progressTint="@color/skyblue"
-                        android:secondaryProgressTint="@color/skyblue"
-
+                        android:progressTint="@color/primary_blue"
+                        android:secondaryProgressTint="@color/primary_blue"
+                        style="?android:attr/ratingBarStyle"
                         app:layout_constraintStart_toEndOf="@id/ratingLabel"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- 地点 & 天气：水平链，约束到 ratingCard 之下 -->
             <TextView
@@ -80,10 +77,13 @@
                 android:layout_height="wrap_content"
                 android:text="地点"
                 android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 android:gravity="center"
-                android:padding="8dp"
-                android:layout_marginTop="12dp"
+                android:background="@drawable/glassmorphism_background"
+                android:padding="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintTop_toBottomOf="@id/ratingCard"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/weatherTextView"
@@ -95,10 +95,13 @@
                 android:layout_height="wrap_content"
                 android:text="天气"
                 android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 android:gravity="center"
-                android:padding="8dp"
-                android:layout_marginTop="12dp"
+                android:background="@drawable/glassmorphism_background"
+                android:padding="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
                 app:layout_constraintTop_toBottomOf="@id/ratingCard"
                 app:layout_constraintStart_toEndOf="@id/locationTextView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -113,13 +116,13 @@
                 android:textAlignment="center"
                 android:inputType="textCapSentences"
                 android:maxLines="3"
-                android:padding="8dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittext_rounded"
-                android:textColor="@android:color/black"
+                android:background="@drawable/glass_input_field"
+                android:padding="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:textSize="18sp"
+                android:elevation="4dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/locationTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -134,13 +137,13 @@
                 android:minLines="22"
                 android:maxLines="30"
                 android:gravity="top"
-                android:padding="10dp"
+                android:background="@drawable/glass_input_field"
+                android:padding="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:textSize="16sp"
-                android:layout_marginTop="12dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittext_rounded"
-                android:textColor="@android:color/black"
+                android:elevation="4dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/titleEditText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -152,10 +155,12 @@
                 android:layout_height="wrap_content"
                 android:text="经纬度"
                 android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 android:gravity="center"
-                android:padding="8dp"
-                android:layout_marginTop="8dp"
+                android:background="@drawable/glassmorphism_background"
+                android:padding="16dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/articleEditText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -192,7 +197,8 @@
         android:id="@+id/bottomRow"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@drawable/glassmorphism_background"
+        android:elevation="8dp"
         android:fitsSystemWindows="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -307,7 +313,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- 闹钟 -->
