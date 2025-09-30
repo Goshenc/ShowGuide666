@@ -50,6 +50,18 @@
             android:name=".AIActivity"
             android:exported="false" />
         <activity
+            android:name=".RecommendationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PreferenceSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WishlistActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MovieDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ManageActivity"
             android:exported="false" />
         <activity

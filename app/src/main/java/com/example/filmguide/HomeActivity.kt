@@ -34,6 +34,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var locationUtils: Utils_Date_Location.LocationHelper
     lateinit var binding:ActivityHomeBinding
     private lateinit var floatingIconManager: FloatingIconManager
+    private var cityId: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,18 +55,13 @@ class HomeActivity : AppCompatActivity() {
             floatingIconManager.startFloatingIcon()
         } else {
             // 首次启动时提示用户如何开启悬浮图标
-            ToastUtil.show(this, "长按头像可开启悬浮图标", R.drawable.icon)
+            ToastUtil.show(this, "长按头像访问推荐功能，双击开启悬浮图标", R.drawable.icon)
         }
         
-        // 长按avatar切换悬浮图标
+        // 长按avatar访问推荐功能
         binding.avatar.setOnLongClickListener {
-            floatingIconManager.toggleFloatingIcon()
-            val message = if (floatingIconManager.isFloatingIconEnabled()) {
-                "悬浮图标已开启"
-            } else {
-                "悬浮图标已关闭"
-            }
-            ToastUtil.show(this, message, R.drawable.icon)
+            val intent = Intent(this, RecommendationsActivity::class.java)
+            startActivity(intent)
             true
         }
         
@@ -139,7 +135,7 @@ class HomeActivity : AppCompatActivity() {
 
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = true
-            val cityId = PrefsManager.getCityId(this)
+            cityId = PrefsManager.getCityId(this)
 
             currentPagePosition = binding.viewPager.currentItem
             Log.d("zxy", currentPagePosition.toString())
@@ -168,7 +164,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
 
-        val cityId = PrefsManager.getCityId(this)
+        cityId = PrefsManager.getCityId(this)
         val cityName = PrefsManager.getCityName(this)
 
         binding.viewPager.adapter = HomeViewPagerAdapter(this, cityId, cityName)
@@ -190,18 +186,37 @@ class HomeActivity : AppCompatActivity() {
         getLocation()
 
         binding.search.setOnClickListener {
-            val keyword = binding.searchBox.text.toString().trim()
-            if (keyword.isNotEmpty()) {
-                startActivity(Intent(this, SearchActivity::class.java).apply {
-                    putExtra("keyword", keyword)
-                    putExtra("cityId",cityId)
-                })
+            performSearch()
+        }
+        
+        // 添加搜索框的回车键监听
+        binding.searchBox.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH || 
+                actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                performSearch()
+                true
             } else {
-                ToastUtil.show(this, "请输入搜索内容", R.drawable.icon)
+                false
             }
         }
 
     }//onCreate end
+    
+    /**
+     * 执行搜索功能
+     */
+    private fun performSearch() {
+        val keyword = binding.searchBox.text.toString().trim()
+        if (keyword.isNotEmpty()) {
+            startActivity(Intent(this, SearchActivity::class.java).apply {
+                putExtra("keyword", keyword)
+                putExtra("cityId", cityId)
+            })
+        } else {
+            ToastUtil.show(this, "请输入搜索内容", R.drawable.icon)
+        }
+    }
+    
     private fun getLocation() {
         locationUtils.getLocation { location ->
             if (location != null) {

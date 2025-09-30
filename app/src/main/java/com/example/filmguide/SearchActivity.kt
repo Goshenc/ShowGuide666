@@ -29,14 +29,15 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        // 1. 设置状态栏背景为纯白
-        window.statusBarColor = Color.WHITE
+        // 1. 设置状态栏透明
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
 
-        // 2. 把状态栏内文字和图标切成深色，以便在白底上能看清
+        // 2. 把状态栏内文字和图标切成浅色，以便在渐变背景上能看清
         val insetsController = WindowInsetsControllerCompat(window, window.decorView)
-        insetsController.isAppearanceLightStatusBars = true
+        insetsController.isAppearanceLightStatusBars = false
         getIntentData()
 
     }

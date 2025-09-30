@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmguide.databinding.FragmentHotMovieBinding
 import com.example.filmguide.logic.network.hotmovie.HotMovieClient
 import com.example.filmguide.ui.HotMovieAdapter
-import com.example.filmguide.ui.MovieDetailActivity
+import com.example.filmguide.MovieDetailActivity
 import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.launch
 

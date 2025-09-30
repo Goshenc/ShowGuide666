@@ -3,8 +3,15 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.80.9</domain>
         <domain includeSubdomains="true">m.maoyan.com</domain>
-    </domain-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">dashscope.aliyuncs.com</domain>
-    </domain-config>
-</network-security-config>
+        <domain includeSubdomains="true">piaofang.maoyan.com</domain>
+        <domain includeSubdomains="true">h5.taopiaopiao.com</domain>
+        <domain includeSubdomains="true">m.mtime.cn</domain>
+        <domain includeSubdomains="true">frodo.douban.com</domain>
+        <domain includeSubdomains="true">movie.douban.com</domain>
+        <domain includeSubdomains="true">movie.baidu.com</domain>
+        <domain includeSubdomains="true">v.qq.com</domain>
+        <domain includeSubdomains="true">so.iqiyi.com</domain>
+            <domain includeSubdomains="true">dashscope.aliyuncs.com</domain>
+            <domain includeSubdomains="true">www.omdbapi.com</domain>
+        </domain-config>
+    </network-security-config>

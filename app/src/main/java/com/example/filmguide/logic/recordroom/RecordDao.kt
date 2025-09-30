@@ -31,4 +31,14 @@ interface RecordDao {
 
     @Query("SELECT * FROM records WHERE id = :recordId")
     suspend fun getRecordById(recordId: Int): RecordEntity
+    
+    // 心愿单相关方法
+    @Query("SELECT * FROM records WHERE isInWishlist = 1")
+    suspend fun getWishlistItems(): List<RecordEntity>
+    
+    @Query("UPDATE records SET isInWishlist = :isInWishlist WHERE id = :recordId")
+    suspend fun updateWishlistStatus(recordId: Int, isInWishlist: Boolean)
+    
+    @Query("UPDATE records SET isInWishlist = 0")
+    suspend fun clearWishlist()
 }

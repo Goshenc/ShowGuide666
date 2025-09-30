@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmguide.databinding.FragmentSearchMoviesBinding
 import com.example.filmguide.logic.network.searchmovies.SearchMovieClient
-import com.example.filmguide.ui.MovieDetailActivity
+import com.example.filmguide.MovieDetailActivity
 import com.example.filmguide.ui.SearchMoviesAdapter
 import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.launch

@@ -1,71 +1,70 @@
-package com.example.filmguide.ui
+package com.example.filmguide
 
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.example.filmguide.R
 import com.example.filmguide.databinding.ActivityMovieDetailBinding
-import com.example.filmguide.logic.AppDatabase
-import com.example.filmguide.logic.dao.MovieDao
 import com.example.filmguide.logic.network.moviedetail.MovieDetailClient
-import com.example.filmguide.utils.ToastUtil
-import kotlinx.coroutines.CoroutineScope
+import com.example.filmguide.ui.DetailMovieAdapter
 import kotlinx.coroutines.launch
-import kotlin.math.log
+import androidx.lifecycle.lifecycleScope
 
-
+/**
+ * 电影详情页面
+ */
 class MovieDetailActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMovieDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityMovieDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
-        val movieId = intent.getIntExtra("movieId", -1)
-        if (movieId == -1) {
-            ToastUtil.show(this, "无效的电影 ID", R.drawable.icon)
-            finish()
-            return
-        }
+        // 设置状态栏透明
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        
+        // 设置系统UI可见性
+        window.decorView.systemUiVisibility = 
+            android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+            android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
-        lifecycleScope.launch { // 使用 Activity 的 lifecycleScope
-            try {
-                val response = MovieDetailClient.movieDetailApi.getMovieDetail(movieId)
-                val movie = response.detailMovie
-
-                // 将 lifecycleScope 传递给 Adapter
-                showMovieDetail(movie, lifecycleScope)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                ToastUtil.show(this@MovieDetailActivity, "加载失败：${e.message}", R.drawable.icon)
-            }
-        }
+        loadMovieData()
     }
 
-    private fun showMovieDetail(
-        movie: com.example.filmguide.logic.network.moviedetail.DetailMovie,
-        scope: CoroutineScope // 接收协程作用域
-    ) {
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@MovieDetailActivity)
-            // 将 scope 传递给 Adapter 构造函数
-            adapter = DetailMovieAdapter(this@MovieDetailActivity, movie, scope)
+    private fun loadMovieData() {
+        // 从Intent获取电影数据
+        val movieId = intent.getIntExtra("movieId", -1)
+        
+        if (movieId != -1) {
+            // 通过movieId加载电影详情
+            loadMovieDetailById(movieId)
+        } else {
+            Toast.makeText(this, "电影数据加载失败", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
+    
+    private fun loadMovieDetailById(movieId: Int) {
+        lifecycleScope.launch {
+            try {
+                Log.d("MovieDetailActivity", "正在加载电影详情，movieId: $movieId")
+                val response = MovieDetailClient.movieDetailApi.getMovieDetail(movieId)
+                val detailMovie = response.detailMovie
+
+                // 设置RecyclerView
+                binding.recyclerView.layoutManager = LinearLayoutManager(this@MovieDetailActivity)
+                val adapter = DetailMovieAdapter(this@MovieDetailActivity, detailMovie, lifecycleScope)
+                binding.recyclerView.adapter = adapter
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@MovieDetailActivity, "加载失败：${e.message}", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 }

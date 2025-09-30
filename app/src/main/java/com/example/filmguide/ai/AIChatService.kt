@@ -2,6 +2,7 @@ package com.example.filmguide.ai
 
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,9 +31,13 @@ class AIChatService {
         .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES)) // 连接池优化
+        .retryOnConnectionFailure(true) // 连接失败重试
         .build()
     
-    private val gson = Gson()
+    private val gson = GsonBuilder()
+        .setLenient() // 提高JSON解析性能
+        .create()
     
     /**
      * 聊天消息数据类

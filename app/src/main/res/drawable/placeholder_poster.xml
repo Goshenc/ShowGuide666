@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="100dp"
+    android:viewportWidth="80"
+    android:viewportHeight="100">
+    
+    <!-- 背景 -->
+    <path
+        android:fillColor="#F0F0F0"
+        android:pathData="M0,0 L80,0 L80,100 L0,100 Z" />
+    
+    <!-- 电影图标 -->
+    <path
+        android:fillColor="#CCCCCC"
+        android:pathData="M25,30 L55,30 L55,70 L25,70 Z" />
+    
+    <!-- 播放按钮 -->
+    <path
+        android:fillColor="#999999"
+        android:pathData="M35,40 L35,60 L50,50 Z" />
+    
+    <!-- 文字 -->
+    <path
+        android:fillColor="#CCCCCC"
+        android:pathData="M20,75 L60,75 L60,85 L20,85 Z" />
+    
+</vector>

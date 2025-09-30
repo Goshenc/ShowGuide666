@@ -44,6 +44,15 @@
     <color name="glass_black">#40000000</color>
     <color name="neon_blue">#00D4FF</color>
     <color name="neon_purple">#B794F6</color>
+    
+    <!-- 心愿单相关颜色 -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F8F9FA</color>
+    <color name="accent">#6366F1</color>
+    <color name="error">#EF4444</color>
+    
+    <!-- 电影详情页颜色 -->
+    <color name="primary">#2196F3</color>
 
 
 </resources>

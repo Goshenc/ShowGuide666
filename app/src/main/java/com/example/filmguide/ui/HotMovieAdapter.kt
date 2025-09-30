@@ -29,12 +29,14 @@ class HotMovieAdapter : RecyclerView.Adapter<HotMovieAdapter.ViewHolder>() {
         val tvName: TextView = itemView.findViewById(R.id.tvName)
         val tvStar: TextView = itemView.findViewById(R.id.tvStar)
         val tvScore: TextView = itemView.findViewById(R.id.tvScore)
+        val tvCategory: TextView = itemView.findViewById(R.id.tvCategory)
         val tvComment: TextView = itemView.findViewById(R.id.tvComment)
 
         fun bind(movie: HotMovie) {
             tvName.text = movie.name
             tvStar.text = "主演：${movie.stars}"
             tvScore.text = "评分：${movie.score}"
+            tvCategory.text = "类型：${movie.category}"
             tvComment.text = movie.scoreComment
             Glide.with(ivPoster.context)
                 .load(movie.imageUrl)

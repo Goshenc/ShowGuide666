@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmguide.databinding.FragmentExpectedMovieBinding
 import com.example.filmguide.logic.network.expectedmovies.ExpectedMoviesClient
 import com.example.filmguide.ui.ExpectedMovieAdapter
-import com.example.filmguide.ui.MovieDetailActivity
+import com.example.filmguide.MovieDetailActivity
 import com.example.filmguide.utils.ToastUtil
 import kotlinx.coroutines.launch
 

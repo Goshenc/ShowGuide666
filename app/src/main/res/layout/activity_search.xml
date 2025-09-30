@@ -5,14 +5,37 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/beautiful_gradient"
     tools:context=".SearchActivity">
 
+    <!-- 背景装饰圆形 -->
+    <View
+        android:id="@+id/decorative_circle_1"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="-100dp"
+        android:layout_marginEnd="-100dp" />
+
+    <View
+        android:id="@+id/decorative_circle_2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/glassmorphism_background"
+        android:alpha="0.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="-75dp"
+        android:layout_marginStart="-75dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:id="@+id/topRow"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
         app:layout_collapseMode="parallax"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +50,7 @@
             android:layout_height="40dp"
             android:layout_marginEnd="5dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/icon"
+            android:src="@drawable/icon_transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/searchBox"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,15 +59,20 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/searchBox"
             android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@drawable/searchbox_background"
+            android:layout_height="40dp"
+            android:background="@drawable/search_box_modern"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:hint="影视/音乐会/话剧"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:textColorHint="@color/gray_darker"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
             android:textSize="15sp"
+            android:elevation="4dp"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/text_location"
             app:layout_constraintStart_toEndOf="@id/avatar"
@@ -97,18 +125,21 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/white"
+        android:background="@android:color/transparent"
+        android:paddingBottom="0dp"
+        android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topRow"
         app:tabGravity="fill"
-
-        app:tabTextColor="@color/gray_darker"
-        app:tabSelectedTextColor="@color/DodgerBlue"
-        app:tabIndicatorColor="@color/DodgerBlue"/>
+        app:tabIndicatorGravity="bottom"
+        app:tabIndicatorHeight="3dp"
+        app:tabTextColor="@color/white"
+        app:tabSelectedTextColor="@color/white"
+        app:tabIndicatorColor="@color/white"/>
 
     <androidx.viewpager2.widget.ViewPager2
-        android:background="@color/white"
+        android:background="@android:color/transparent"
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -14,5 +14,7 @@ data class RecordEntity(
     val weather: String,
     val location: String,
     val rating: Float,
-
+    val type: String = "movie",
+    val posterUrl: String = "",
+    val isInWishlist: Boolean = false
     )
