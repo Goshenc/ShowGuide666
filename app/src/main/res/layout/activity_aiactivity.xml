@@ -142,31 +142,37 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:id="@+id/deepThinkingButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="深度思考"
                     android:textStyle="bold"
                     android:drawableStart="@drawable/ds4"
-                    android:background="@drawable/search_box_modern"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    android:elevation="2dp" />
+                    android:background="@drawable/button_unselected_background"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <TextView
+                    android:id="@+id/webSearchButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="联网搜索"
                     android:textStyle="bold"
                     android:drawableStart="@drawable/web"
-                    android:background="@drawable/search_box_modern"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="8dp"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
+                    android:background="@drawable/button_unselected_background"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
                     android:layout_marginStart="8dp"
-                    android:elevation="2dp" />
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true" />
 
                 <Space
                     android:layout_width="0dp"
@@ -180,7 +186,7 @@
                     android:src="@drawable/voice1"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="8dp"
                     android:contentDescription="语音输入" />
 
                 <ImageView

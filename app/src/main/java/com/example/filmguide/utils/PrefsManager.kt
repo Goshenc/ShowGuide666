@@ -1,3 +1,5 @@
+package com.example.filmguide.utils
+
 import android.content.Context
 
 // PrefsManager.kt

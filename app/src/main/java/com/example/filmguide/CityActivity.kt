@@ -28,6 +28,7 @@ import com.example.filmguide.logic.network.city.City
 import com.example.filmguide.logic.network.city.CityClient
 import com.example.filmguide.ui.CityAdapter
 import com.example.filmguide.utils.ToastUtil
+import com.example.filmguide.utils.PrefsManager
 
 import kotlinx.coroutines.launch
 import kotlin.math.log

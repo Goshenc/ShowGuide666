@@ -21,10 +21,16 @@ class WishlistAdapter(
 ) : RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder>() {
     
     private var items = mutableListOf<RecordEntity>()
+    private var currentLocation: String? = null
     
     fun updateItems(newItems: List<RecordEntity>) {
         items.clear()
         items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+    
+    fun setCurrentLocation(location: String?) {
+        currentLocation = location
         notifyDataSetChanged()
     }
     
@@ -41,42 +47,20 @@ class WishlistAdapter(
     override fun getItemCount(): Int = items.size
     
     inner class WishlistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val posterImage: ImageView = itemView.findViewById(R.id.posterImage)
         private val titleText: TextView = itemView.findViewById(R.id.titleText)
-        private val typeText: TextView = itemView.findViewById(R.id.typeText)
         private val dateText: TextView = itemView.findViewById(R.id.dateText)
         private val locationText: TextView = itemView.findViewById(R.id.locationText)
         private val removeButton: TextView = itemView.findViewById(R.id.removeButton)
         
         fun bind(item: RecordEntity) {
-            // 设置海报
-            if (item.posterUrl.isNotEmpty()) {
-                Glide.with(itemView.context)
-                    .load(item.posterUrl)
-                    .placeholder(R.drawable.placeholder_poster)
-                    .error(R.drawable.placeholder_poster)
-                    .into(posterImage)
-            } else {
-                posterImage.setImageResource(R.drawable.placeholder_poster)
-            }
-            
             // 设置标题
             titleText.text = item.title
-            
-            // 设置类型
-            typeText.text = when (item.type) {
-                "movie" -> "电影"
-                "concert" -> "演出"
-                "exhibition" -> "展览"
-                "activity" -> "活动"
-                else -> "其他"
-            }
             
             // 设置日期
             dateText.text = item.date
             
-            // 设置地点
-            locationText.text = item.location ?: "地点待定"
+            // 设置地点 - 使用传入的位置信息
+            locationText.text = currentLocation ?: (item.location ?: "地点待定")
             
             // 设置点击事件
             itemView.setOnClickListener {

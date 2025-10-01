@@ -82,6 +82,23 @@ class AIChatService {
     suspend fun sendMessage(
         userMessage: String,
         conversationHistory: List<ChatMessage> = emptyList(),
+        enableDeepThinking: Boolean = false,
+        enableWebSearch: Boolean = true,
+        callback: StreamCallback
+    ) = withContext(Dispatchers.IO) {
+        sendMessageWithLocation(userMessage, conversationHistory, enableDeepThinking, enableWebSearch, null, null, callback)
+    }
+    
+    /**
+     * 发送聊天消息并获取流式响应（带城市和天气信息）
+     */
+    suspend fun sendMessageWithLocation(
+        userMessage: String,
+        conversationHistory: List<ChatMessage> = emptyList(),
+        enableDeepThinking: Boolean = false,
+        enableWebSearch: Boolean = true,
+        cityName: String? = null,
+        weatherInfo: String? = null,
         callback: StreamCallback
     ) = withContext(Dispatchers.IO) {
         
@@ -96,7 +113,12 @@ class AIChatService {
             // 构建消息列表
             val messages = mutableListOf<ChatMessage>().apply {
                 // 添加系统提示词
-                add(ChatMessage("system", getSystemPrompt()))
+                val systemPrompt = if (cityName != null && weatherInfo != null) {
+                    getSystemPromptWithLocation(cityName, weatherInfo)
+                } else {
+                    getSystemPrompt()
+                }
+                add(ChatMessage("system", systemPrompt))
                 // 添加对话历史
                 addAll(conversationHistory)
                 // 添加用户消息
@@ -107,8 +129,10 @@ class AIChatService {
             val requestBody = ChatRequest(
                 input = InputData(messages = messages),
                 parameters = Parameters(
-                    enableSearch = true,
-                    searchResultCount = 5
+                    enableSearch = enableWebSearch,
+                    searchResultCount = if (enableWebSearch) 5 else 0,
+                    temperature = if (enableDeepThinking) 0.7 else 0.1,
+                    maxTokens = if (enableDeepThinking) 6000 else 4000
                 )
             )
             
@@ -261,6 +285,7 @@ class AIChatService {
         }
     }
     
+    
     /**
      * 获取系统提示词
      */
@@ -286,6 +311,47 @@ class AIChatService {
 - 如果用户询问具体电影信息，请搜索最新的上映状态和评价
 - 提供今日$currentTime 天气
 - 所有推荐的信息必须基于当前时间 $currentTime 的最新数据
+
+输出格式要求：
+- 严禁使用markdown格式（如#、**、*、```等符号）
+- 严禁使用任何markdown语法
+- 只使用纯文本格式回复
+- 可以使用简单的换行和空格来组织内容
+- 保持内容清晰易读，但必须是纯文本
+
+请保持友好、专业的语调，提供准确、有用的信息。"""
+    }
+    
+    /**
+     * 获取带城市和天气信息的系统提示词
+     */
+    fun getSystemPromptWithLocation(cityName: String, weatherInfo: String): String {
+        val currentTime = java.text.SimpleDateFormat("yyyy年MM月dd日 HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
+        
+        return """你是ShowGuide的AI推荐官，专门帮助用户发现和推荐各种娱乐活动。
+
+用户当前所在城市：$cityName
+当前城市天气：$weatherInfo
+当前时间：$currentTime
+
+你的主要职责：
+1. 你可以推荐演唱会、话剧、音乐剧、电影等演出，还可以推荐旅游景点名胜古迹、告知今日$currentTime 天气、告诉用户怎么去某一个地方等等等智能AI助手
+2. 推荐周末市集、艺术展览、亲子活动等休闲活动
+3. 根据用户的喜好、预算和日期提供个性化推荐
+4. 提供活动相关的实用信息（时间、地点、票价等）
+5. 提供的信息一定一定要最新的，这极度重要，你是有联网搜索能力的，可以获取截止$currentTime 的最新数据
+
+重要提醒：
+- 你具备联网搜索功能，可以获取最新的信息
+- 当前时间是：$currentTime，请基于这个时间点搜索最新的信息
+- 用户当前在$cityName，天气情况是$weatherInfo，请结合当地情况提供推荐
+- 当用户询问电影、演出、活动等信息时，请主动使用联网搜索获取最新数据
+- 电影推荐需要时效性，请搜索并推荐正在热映或即将上映的电影
+- 演唱会、演出活动请搜索最新的档期信息
+- 提供准确的票价、时间、地点等实用信息
+- 如果用户询问具体电影信息，请搜索最新的上映状态和评价
+- 所有推荐的信息必须基于当前时间 $currentTime 的最新数据
+- 推荐活动时请考虑${cityName}的当地情况和天气条件
 
 输出格式要求：
 - 严禁使用markdown格式（如#、**、*、```等符号）
