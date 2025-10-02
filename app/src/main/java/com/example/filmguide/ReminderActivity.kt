@@ -91,13 +91,15 @@ class ReminderActivity : AppCompatActivity() {
         val currentDay = now.get(Calendar.DAY_OF_MONTH)
 
         // 1. 弹出日期选择框
-        DatePickerDialog(
+        val datePickerDialog = DatePickerDialog(
             this,
+            R.style.CustomDatePickerTheme,
             { _, pickYear, pickMonth, pickDayOfMonth ->
-                // 选好“年/月/日”之后，再弹出“时间选择框”
+                // 选好"年/月/日"之后，再弹出"时间选择框"
                 val c = Calendar.getInstance()
-                TimePickerDialog(
+                val timePickerDialog = TimePickerDialog(
                     this,
+                    R.style.CustomTimePickerTheme,
                     { _, pickHour, pickMinute ->
                         // 检查是否已存在相同的日期+时间：
                         if (list.any {
@@ -127,12 +129,16 @@ class ReminderActivity : AppCompatActivity() {
                     c.get(Calendar.HOUR_OF_DAY),
                     c.get(Calendar.MINUTE),
                     true
-                ).show()
+                )
+                
+                timePickerDialog.show()
             },
             currentYear,
             currentMonth,
             currentDay
-        ).show()
+        )
+        
+        datePickerDialog.show()
     }
 
 
