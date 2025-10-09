@@ -2,7 +2,12 @@ package com.example.filmguide
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -13,10 +18,18 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.speech.RecognizerIntent
+import android.text.TextUtils
 import android.util.Base64
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,6 +39,7 @@ import java.io.InputStream
 import com.example.filmguide.ai.AIChatService
 import com.example.filmguide.databinding.ActivityAiactivityBinding
 import com.example.filmguide.logic.model.ChatMessage
+import com.example.filmguide.logic.model.Reminder
 import com.example.filmguide.ui.ChatAdapter
 import com.example.filmguide.logic.network.weather.RetrofitBuilder
 import com.example.filmguide.logic.network.weather.WeatherService
@@ -37,6 +51,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.Calendar
+import java.util.UUID
+import java.util.regex.Pattern
 
 class AIActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAiactivityBinding
@@ -126,10 +142,32 @@ class AIActivity : AppCompatActivity() {
             sendMessage()
         }
 
+        // 原来的语音识别功能 - 只识别语音，不处理命令
         binding.voice.setOnClickListener {
             RecordDialogFragment { recognizedText ->
+                // 直接设置到输入框，不处理命令
                 binding.editTextMessage.setText(recognizedText)
             }.show(supportFragmentManager, "record")
+        }
+        
+        // 新的语音对话功能 - 支持语音命令处理
+        binding.voiceChat.setOnClickListener {
+            RecordDialogFragment { recognizedText ->
+                // 显示语音识别结果
+                val voiceMessage = ChatMessage("🎤 语音识别：$recognizedText", false)
+                messages.add(voiceMessage)
+                adapter.notifyItemInserted(messages.lastIndex)
+                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                
+                // 处理语音命令
+                if (handleVoiceCommand(recognizedText)) {
+                    // 如果是语音命令，不设置到输入框
+                    return@RecordDialogFragment
+                }
+                
+                // 普通语音输入，设置到输入框
+                binding.editTextMessage.setText(recognizedText)
+            }.show(supportFragmentManager, "voiceChat")
         }
 
         // 深度思考按钮
@@ -175,6 +213,13 @@ class AIActivity : AppCompatActivity() {
         if (selectedImageUri != null) {
             Toast.makeText(this, "图片分析功能暂时不可用，请发送纯文本消息", Toast.LENGTH_SHORT).show()
             selectedImageUri = null // 清除已选择的图片
+            return
+        }
+
+        // 检查是否是语音命令（文本输入也支持）
+        if (handleVoiceCommand(text)) {
+            // 如果是语音命令，不发送给AI
+            binding.editTextMessage.text?.clear()
             return
         }
 
@@ -321,7 +366,9 @@ class AIActivity : AppCompatActivity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话…")
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "请说话，支持语音控制：打开搜索、查看记录、设置提醒、推荐电影、导航等")
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3) // 获取多个识别结果
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true) // 支持部分结果
         }
         try {
             startActivityForResult(intent, REQ_SPEECH)
@@ -332,10 +379,39 @@ class AIActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_SPEECH && resultCode == Activity.RESULT_OK) {
-            val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val text = results?.firstOrNull().orEmpty()
-            binding.editTextMessage.setText(text)
+        if (requestCode == REQ_SPEECH) {
+            if (resultCode == Activity.RESULT_OK) {
+                val results = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                val text = results?.firstOrNull().orEmpty()
+                
+                if (text.isNotEmpty()) {
+                    // 显示语音识别结果
+                    val voiceMessage = ChatMessage("🎤 语音识别：$text", false)
+                    messages.add(voiceMessage)
+                    adapter.notifyItemInserted(messages.lastIndex)
+                    binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                    
+                    // 处理语音命令
+                    if (handleVoiceCommand(text)) {
+                        // 如果是语音命令，不设置到输入框
+                        return
+                    }
+                    
+                    // 普通语音输入，设置到输入框
+                    binding.editTextMessage.setText(text)
+                } else {
+                    val errorMessage = ChatMessage("🎤 语音识别失败，请重试", false)
+                    messages.add(errorMessage)
+                    adapter.notifyItemInserted(messages.lastIndex)
+                    binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                }
+            } else {
+                // 语音识别被取消或失败
+                val cancelMessage = ChatMessage("🎤 语音识别已取消", false)
+                messages.add(cancelMessage)
+                adapter.notifyItemInserted(messages.lastIndex)
+                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+            }
         }
     }
     
@@ -605,5 +681,663 @@ class AIActivity : AppCompatActivity() {
                 currentWeatherInfo = "天气信息获取失败"
             }
         }
+    }
+    
+    /**
+     * 处理语音命令
+     * @param text 语音识别的文本
+     * @return true 如果是语音命令并已处理，false 如果是普通对话
+     */
+    private fun handleVoiceCommand(text: String): Boolean {
+        if (text.isEmpty()) return false
+        
+        val lowerText = text.lowercase()
+        Log.d("AIActivity", "处理语音命令: $text")
+        
+        // 1. 打开搜索页面 - 扩展关键词
+        if (lowerText.contains("打开搜索") || lowerText.contains("搜索页面") || lowerText.contains("搜索功能") ||
+            lowerText.contains("搜索") || lowerText.contains("查找") || lowerText.contains("找电影") ||
+            lowerText.contains("找演出") || lowerText.contains("搜索电影") || lowerText.contains("搜索演出")) {
+            openSearchPage()
+            return true
+        }
+        
+        // 2. 查看观影记录 - 扩展关键词
+        if (lowerText.contains("观影记录") || lowerText.contains("我的记录") || lowerText.contains("查看记录") ||
+            lowerText.contains("记录") || lowerText.contains("日记") || lowerText.contains("我的日记") ||
+            lowerText.contains("观影日记") || lowerText.contains("看过的电影") || lowerText.contains("历史记录")) {
+            openRecordsPage()
+            return true
+        }
+        
+        // 3. 设置提醒 - 扩展关键词
+        if (lowerText.contains("设置提醒") || lowerText.contains("设置闹钟") || lowerText.contains("提醒") ||
+            lowerText.contains("闹钟") || lowerText.contains("定时") || lowerText.contains("提醒我") ||
+            lowerText.contains("叫我") || lowerText.contains("提醒功能")) {
+            if (lowerText.contains("明天") || lowerText.contains("下周") || lowerText.contains("点") || 
+                lowerText.contains("时") || lowerText.contains("早上") || lowerText.contains("晚上") ||
+                lowerText.contains("上午") || lowerText.contains("下午") || lowerText.contains("凌晨")) {
+                // 智能解析时间并设置提醒
+                parseAndSetReminder(text)
+            } else {
+                // 打开提醒设置页面
+                openReminderPage()
+            }
+            return true
+        }
+        
+        // 4. 推荐电影 - 扩展关键词
+        if (lowerText.contains("推荐电影") || lowerText.contains("推荐") || lowerText.contains("电影推荐") ||
+            lowerText.contains("推荐一些") || lowerText.contains("有什么好看的") || lowerText.contains("好看的电影") ||
+            lowerText.contains("电影推荐") || lowerText.contains("推荐影片") || lowerText.contains("推荐几部")) {
+            requestMovieRecommendation()
+            return true
+        }
+        
+        // 5. 导航设置 - 扩展关键词
+        if (lowerText.contains("导航") || lowerText.contains("地图") || lowerText.contains("想去") || 
+            lowerText.contains("导航到") || lowerText.contains("怎么去") || lowerText.contains("路线") ||
+            lowerText.contains("导航功能") || lowerText.contains("地图导航") || lowerText.contains("导航到") ||
+            lowerText.contains("我要去") || lowerText.contains("去") || lowerText.contains("到") ||
+            lowerText.contains("怎么走") || lowerText.contains("路线") || lowerText.contains("导航") ||
+            lowerText.contains("地图") || lowerText.contains("位置") || lowerText.contains("地址")) {
+            handleNavigationCommand(text)
+            return true
+        }
+        
+        // 6. 帮助命令
+        if (lowerText.contains("帮助") || lowerText.contains("语音命令") || lowerText.contains("能做什么") ||
+            lowerText.contains("功能") || lowerText.contains("命令") || lowerText.contains("语音控制")) {
+            showVoiceHelp()
+            return true
+        }
+        
+        return false
+    }
+    
+    /**
+     * 显示语音帮助信息
+     */
+    private fun showVoiceHelp() {
+        val helpText = """
+            🎤 语音功能说明：
+            
+            📱 两个语音按钮：
+            • 左侧按钮：纯语音识别，识别后填入输入框
+            • 右侧按钮：语音对话，支持语音命令处理
+            
+            🔍 语音命令功能：
+            • "打开搜索" / "搜索电影" / "查找演出"
+            • "查看记录" / "我的日记" / "观影记录"  
+            • "设置提醒" / "提醒我明天8点" / "设置闹钟"
+            • "推荐电影" / "有什么好看的" / "推荐一些电影"
+            • "我要去南京" / "想去故宫" / "导航到天安门"
+            • "南京怎么去" / "故宫路线" / "怎么去北京"
+            
+            💡 提示：文本输入也支持所有语音命令功能
+        """.trimIndent()
+        
+        val helpMessage = ChatMessage(helpText, false)
+        messages.add(helpMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+    }
+    
+    /**
+     * 打开搜索页面
+     */
+    private fun openSearchPage() {
+        val intent = Intent(this, SearchActivity::class.java)
+        intent.putExtra("cityId", PrefsManager.getCityId(this))
+        intent.putExtra("keyword", "")
+        startActivity(intent)
+        
+        // 显示确认消息
+        val confirmMessage = ChatMessage("🔍 已为您打开搜索页面", false)
+        messages.add(confirmMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+    }
+    
+    /**
+     * 打开观影记录页面
+     */
+    private fun openRecordsPage() {
+        val intent = Intent(this, RecordsActivity::class.java)
+        startActivity(intent)
+        
+        // 显示确认消息
+        val confirmMessage = ChatMessage("📝 已为您打开观影记录页面", false)
+        messages.add(confirmMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+    }
+    
+    /**
+     * 打开提醒设置页面
+     */
+    private fun openReminderPage() {
+        val intent = Intent(this, ReminderActivity::class.java)
+        startActivity(intent)
+        
+        // 显示确认消息
+        val confirmMessage = ChatMessage("⏰ 已为您打开提醒设置页面", false)
+        messages.add(confirmMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+    }
+    
+    /**
+     * 请求电影推荐
+     */
+    private fun requestMovieRecommendation() {
+        val recommendMessage = ChatMessage("🎬 正在为您推荐电影...", false)
+        messages.add(recommendMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+        
+        // 调用AI推荐功能
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val userMessage = "请推荐一些好看的电影，考虑当前天气：$currentWeatherInfo，位置：$currentCityName"
+                
+                // 使用sendMessageWithLocation方法
+                aiChatService.sendMessageWithLocation(
+                    userMessage = userMessage,
+                    cityName = currentCityName,
+                    weatherInfo = currentWeatherInfo,
+                    enableDeepThinking = false,
+                    enableWebSearch = true,
+                    callback = object : AIChatService.StreamCallback {
+                        override fun onPartialResponse(content: String) {
+                            // 部分响应，可以实时更新
+                        }
+                        
+                        override fun onCompleteResponse(content: String) {
+                            runOnUiThread {
+                                // 移除"正在推荐"消息
+                                if (messages.isNotEmpty() && messages.last().content == "🎬 正在为您推荐电影...") {
+                                    messages.removeAt(messages.lastIndex)
+                                }
+                                
+                                val aiResponse = ChatMessage(content, false)
+                                messages.add(aiResponse)
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                            }
+                        }
+                        
+                        override fun onError(error: String) {
+                            runOnUiThread {
+                                // 移除"正在推荐"消息
+                                if (messages.isNotEmpty() && messages.last().content == "🎬 正在为您推荐电影...") {
+                                    messages.removeAt(messages.lastIndex)
+                                }
+                                
+                                val errorMessage = ChatMessage("抱歉，推荐服务暂时不可用：$error", false)
+                                messages.add(errorMessage)
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                            }
+                        }
+                    }
+                )
+            } catch (e: Exception) {
+                runOnUiThread {
+                    // 移除"正在推荐"消息
+                    if (messages.isNotEmpty() && messages.last().content == "🎬 正在为您推荐电影...") {
+                        messages.removeAt(messages.lastIndex)
+                    }
+                    
+                    val errorMessage = ChatMessage("抱歉，推荐服务暂时不可用，请稍后再试", false)
+                    messages.add(errorMessage)
+                    adapter.notifyDataSetChanged()
+                    binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                }
+            }
+        }
+    }
+    
+    /**
+     * 解析时间并设置提醒
+     */
+    private fun parseAndSetReminder(text: String) {
+        try {
+            val calendar = Calendar.getInstance()
+            val now = Calendar.getInstance()
+            
+            // 解析时间表达式 - 支持多种格式
+            val timePatterns = listOf(
+                Pattern.compile("(\\d{1,2})[点:]?(\\d{0,2})"), // 8点30, 8:30
+                Pattern.compile("(\\d{1,2})点(\\d{0,2})"), // 8点30
+                Pattern.compile("(\\d{1,2}):(\\d{0,2})"), // 8:30
+                Pattern.compile("(\\d{1,2})时(\\d{0,2})"), // 8时30
+                Pattern.compile("(\\d{1,2})点"), // 8点
+                Pattern.compile("(\\d{1,2})时") // 8时
+            )
+            
+            var hour = -1
+            var minute = 0
+            
+            // 尝试匹配各种时间格式
+            for (pattern in timePatterns) {
+                val matcher = pattern.matcher(text)
+                if (matcher.find()) {
+                    hour = matcher.group(1)?.toIntOrNull() ?: -1
+                    minute = matcher.group(2)?.toIntOrNull() ?: 0
+                    if (hour != -1) break
+                }
+            }
+            
+            // 处理中文时间表达
+            if (hour == -1) {
+                hour = parseChineseTime(text)
+            }
+            
+            if (hour == -1) {
+                // 无法解析时间，打开提醒设置页面
+                openReminderPage()
+                return
+            }
+            
+            // 处理日期
+            if (text.contains("明天")) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1)
+            } else if (text.contains("下周")) {
+                calendar.add(Calendar.WEEK_OF_YEAR, 1)
+            } else if (text.contains("后天")) {
+                calendar.add(Calendar.DAY_OF_MONTH, 2)
+            } else if (text.contains("大后天")) {
+                calendar.add(Calendar.DAY_OF_MONTH, 3)
+            }
+            
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+            calendar.set(Calendar.MINUTE, minute)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            
+            // 检查时间是否已过
+            if (calendar.timeInMillis <= now.timeInMillis) {
+                val errorMessage = ChatMessage("⏰ 设置的时间已过，请重新设置", false)
+                messages.add(errorMessage)
+                adapter.notifyItemInserted(messages.lastIndex)
+                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                return
+            }
+            
+            // 创建提醒
+            val reminder = Reminder(
+                year = calendar.get(Calendar.YEAR),
+                month = calendar.get(Calendar.MONTH),
+                dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH),
+                hourOfDay = calendar.get(Calendar.HOUR_OF_DAY),
+                minute = calendar.get(Calendar.MINUTE)
+            ).apply {
+                id = UUID.randomUUID().hashCode()
+            }
+            
+            // 设置闹钟
+            scheduleReminder(reminder)
+            
+            val timeStr = String.format("%02d:%02d", hour, minute)
+            val dateStr = when {
+                text.contains("明天") -> "明天"
+                text.contains("下周") -> "下周"
+                text.contains("后天") -> "后天"
+                text.contains("大后天") -> "大后天"
+                else -> "今天"
+            }
+            val confirmMessage = ChatMessage("⏰ 已为您设置${dateStr}${timeStr}的提醒", false)
+            messages.add(confirmMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+            
+        } catch (e: Exception) {
+            Log.e("AIActivity", "解析提醒时间失败", e)
+            val errorMessage = ChatMessage("⏰ 时间解析失败，已为您打开提醒设置页面", false)
+            messages.add(errorMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+            openReminderPage()
+        }
+    }
+    
+    /**
+     * 解析中文时间表达
+     */
+    private fun parseChineseTime(text: String): Int {
+        val timeMap = mapOf(
+            "凌晨" to 0, "早上" to 6, "上午" to 9, "中午" to 12,
+            "下午" to 14, "傍晚" to 18, "晚上" to 20, "深夜" to 23
+        )
+        
+        for ((keyword, hour) in timeMap) {
+            if (text.contains(keyword)) {
+                return hour
+            }
+        }
+        
+        return -1
+    }
+    
+    /**
+     * 设置提醒闹钟
+     */
+    private fun scheduleReminder(reminder: Reminder) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, reminder.year)
+            set(Calendar.MONTH, reminder.month)
+            set(Calendar.DAY_OF_MONTH, reminder.dayOfMonth)
+            set(Calendar.HOUR_OF_DAY, reminder.hourOfDay)
+            set(Calendar.MINUTE, reminder.minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, ReminderReceiver::class.java).apply {
+            putExtra("reminderId", reminder.id)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            reminder.id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+    
+    /**
+     * 处理导航命令
+     */
+    private fun handleNavigationCommand(text: String) {
+        Log.d("AIActivity", "处理导航命令: $text")
+        
+        // 提取地点名称 - 支持多种表达方式
+        val placePatterns = listOf(
+            Pattern.compile("想去(.+?)(?:$|，|。|！|！|\\s)"), // 想去故宫
+            Pattern.compile("导航到(.+?)(?:$|，|。|！|！|\\s)"), // 导航到故宫
+            Pattern.compile("怎么去(.+?)(?:$|，|。|！|！|\\s)"), // 怎么去故宫
+            Pattern.compile("去(.+?)(?:$|，|。|！|！|\\s)"), // 去故宫
+            Pattern.compile("我要去(.+?)(?:$|，|。|！|！|\\s)"), // 我要去南京
+            Pattern.compile("到(.+?)(?:$|，|。|！|！|\\s)"), // 到南京
+            Pattern.compile("(.+?)怎么去"), // 故宫怎么去
+            Pattern.compile("(.+?)路线"), // 故宫路线
+            Pattern.compile("(.+?)导航"), // 故宫导航
+            Pattern.compile("(.+?)怎么走"), // 故宫怎么走
+            Pattern.compile("(.+?)位置"), // 故宫位置
+            Pattern.compile("(.+?)地址") // 故宫地址
+        )
+        
+        var placeName = ""
+        for (pattern in placePatterns) {
+            val matcher = pattern.matcher(text)
+            if (matcher.find()) {
+                placeName = matcher.group(1)?.trim() ?: ""
+                if (placeName.isNotEmpty()) {
+                    Log.d("AIActivity", "提取到地点: $placeName")
+                    break
+                }
+            }
+        }
+        
+        Log.d("AIActivity", "最终地点名称: '$placeName'")
+        
+        if (placeName.isEmpty()) {
+            // 如果没有提取到地点，显示地图选择器让用户输入
+            Log.d("AIActivity", "未提取到地点，显示输入对话框")
+            showMapChooserDialog()
+        } else {
+            // 直接显示地图选择器
+            Log.d("AIActivity", "开始显示地图选择器，地点: $placeName")
+            showMapChooser(this, placeName)
+        }
+        
+        val confirmMessage = ChatMessage("🗺️ 正在为您打开地图导航", false)
+        messages.add(confirmMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+    }
+    
+    /**
+     * 显示地图选择对话框
+     */
+    private fun showMapChooserDialog() {
+        val input = android.widget.EditText(this)
+        input.hint = "请输入目的地"
+        
+        AlertDialog.Builder(this)
+            .setTitle("选择导航应用")
+            .setMessage("请先输入目的地")
+            .setView(input)
+            .setPositiveButton("确定") { _, _ ->
+                val placeName = input.text.toString().trim()
+                if (placeName.isNotEmpty()) {
+                    showMapChooser(this, placeName)
+                } else {
+                    Toast.makeText(this, "请输入目的地", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+    
+    /**
+     * 显示地图选择器（复用CityActivity的逻辑）
+     */
+    private fun showMapChooser(context: Context, placeName: String) {
+        Log.d("AIActivity", "开始检测地图应用，地点: $placeName")
+        val options = mutableListOf<Pair<String, Intent>>()
+        
+        // 百度地图
+        val baiduIntent = getBaiduMapIntent(context, placeName)
+        if (baiduIntent != null) {
+            options.add("百度地图" to baiduIntent)
+            Log.d("AIActivity", "百度地图可用")
+        } else {
+            Log.d("AIActivity", "百度地图不可用")
+        }
+        
+        // 高德地图
+        val amapIntent = getAmapIntent(context, placeName)
+        if (amapIntent != null) {
+            options.add("高德地图" to amapIntent)
+            Log.d("AIActivity", "高德地图可用")
+        } else {
+            Log.d("AIActivity", "高德地图不可用")
+        }
+        
+        // Google地图
+        val googleIntent = getGoogleMapIntent(context, placeName)
+        if (googleIntent != null) {
+            options.add("Google 地图" to googleIntent)
+            Log.d("AIActivity", "Google地图可用")
+        } else {
+            Log.d("AIActivity", "Google地图不可用")
+        }
+        
+        // Google Earth
+        val earthIntent = getGoogleEarthIntent(context, placeName)
+        if (earthIntent != null) {
+            options.add("Google Earth" to earthIntent)
+            Log.d("AIActivity", "Google Earth可用")
+        } else {
+            Log.d("AIActivity", "Google Earth不可用")
+        }
+        
+        Log.d("AIActivity", "检测到 ${options.size} 个可用地图应用")
+        
+        if (options.isEmpty()) {
+            Log.d("AIActivity", "未检测到任何地图应用")
+            Toast.makeText(context, "未检测到已安装的地图应用", Toast.LENGTH_SHORT).show()
+            
+            // 显示错误消息
+            val errorMessage = ChatMessage("❌ 未检测到已安装的地图应用，请先安装百度地图、高德地图或Google地图", false)
+            messages.add(errorMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+            return
+        }
+        
+        // 如果只有一个应用，直接启动
+        if (options.size == 1) {
+            Log.d("AIActivity", "只有一个地图应用，直接启动: ${options[0].first}")
+            try {
+                context.startActivity(options[0].second)
+                Log.d("AIActivity", "成功启动地图应用")
+            } catch (e: Exception) {
+                Log.e("AIActivity", "启动地图应用失败", e)
+                Toast.makeText(context, "无法启动${options[0].first}", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+        
+        // 显示选择对话框 - 使用CityActivity的美观样式
+        Log.d("AIActivity", "显示地图应用选择对话框")
+        showCustomMapChooser(context, options)
+    }
+    
+    /**
+     * 显示自定义地图选择器（复用CityActivity的美观样式）
+     */
+    private fun showCustomMapChooser(context: Context, options: List<Pair<String, Intent>>) {
+        val dialog = AlertDialog.Builder(context)
+            .setView(R.layout.dialog_map_chooser)
+            .create()
+        
+        dialog.show()
+        
+        // 获取容器并添加地图选项
+        val container = dialog.findViewById<LinearLayout>(R.id.mapOptionsContainer)
+        options.forEach { (name, intent) ->
+            val optionView = createMapOptionView(context, name, intent, dialog)
+            container?.addView(optionView)
+        }
+        
+        // 美化对话框样式
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(context.getDrawable(R.drawable.card_background))
+            window.attributes?.let { attributes ->
+                attributes.dimAmount = 0.3f
+                window.attributes = attributes
+            }
+        }
+    }
+    
+    /**
+     * 创建地图选项视图（复用CityActivity的样式）
+     */
+    private fun createMapOptionView(context: Context, name: String, intent: Intent, dialog: AlertDialog): View {
+        val view = LayoutInflater.from(context).inflate(R.layout.item_map_option, null)
+        
+        val iconView = view.findViewById<ImageView>(R.id.mapIcon)
+        val nameView = view.findViewById<TextView>(R.id.mapName)
+        val descView = view.findViewById<TextView>(R.id.mapDescription)
+        
+        // 设置图标和文本
+        when (name) {
+            "百度地图" -> {
+                iconView.setImageResource(R.drawable.ic_baidu_map)
+                descView.text = "使用百度地图查看位置"
+            }
+            "高德地图" -> {
+                iconView.setImageResource(R.drawable.ic_amap)
+                descView.text = "使用高德地图查看位置"
+            }
+            "Google 地图" -> {
+                iconView.setImageResource(R.drawable.ic_google_maps)
+                descView.text = "使用Google地图查看位置"
+            }
+            "Google Earth" -> {
+                iconView.setImageResource(R.drawable.ic_google_earth)
+                descView.text = "使用Google Earth查看位置"
+            }
+        }
+        
+        nameView.text = name
+        
+        // 设置点击事件
+        view.setOnClickListener {
+            dialog.dismiss()
+            try {
+                Log.d("AIActivity", "用户选择: $name")
+                context.startActivity(intent)
+                Log.d("AIActivity", "成功启动选择的地图应用")
+            } catch (e: Exception) {
+                Log.e("AIActivity", "启动选择的地图应用失败", e)
+                Toast.makeText(context, "无法启动$name", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
+        return view
+    }
+    
+    // 以下是从CityActivity复用的地图相关方法
+    private fun isIntentAvailable(context: Context, intent: Intent): Boolean {
+        val resolveInfoList = context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        return resolveInfoList.isNotEmpty()
+    }
+    
+    private fun isPackageInstalled(context: Context, packageName: String): Boolean {
+        return try {
+            context.packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+    
+    private fun getBaiduMapIntent(context: Context, query: String): Intent? {
+        if (!isPackageInstalled(context, "com.baidu.BaiduMap")) return null
+        val uri = Uri.parse(
+            "baidumap://map/place/search?query=${Uri.encode(query)}&src=${Uri.encode(context.packageName)}"
+        )
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.setPackage("com.baidu.BaiduMap")
+        return if (isIntentAvailable(context, intent)) intent else null
+    }
+    
+    private fun getAmapIntent(context: Context, query: String): Intent? {
+        val pkg = "com.autonavi.minimap"
+        if (!isPackageInstalled(context, pkg)) return null
+        
+        val uriCandidates = listOf(
+            "androidamap://keyword?keywords=${Uri.encode(query)}",
+            "androidamap://keyword?sourceApplication=${Uri.encode(context.packageName)}&keywords=${Uri.encode(query)}&dev=0",
+            "amapuri://keyword?sourceApplication=${Uri.encode(context.packageName)}&keyword=${Uri.encode(query)}",
+            "amapuri://keyword?sourceApplication=${Uri.encode(context.packageName)}&keywords=${Uri.encode(query)}",
+            "amapuri://keyword?keywords=${Uri.encode(query)}"
+        )
+        
+        for (uriString in uriCandidates) {
+            val uri = Uri.parse(uriString)
+            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                setPackage(pkg)
+            }
+            if (isIntentAvailable(context, intent)) {
+                return intent
+            }
+        }
+        
+        // fallback: Web URL
+        val webUrl = "https://uri.amap.com/search?query=${Uri.encode(query)}"
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webUrl))
+        return if (isIntentAvailable(context, webIntent)) webIntent else null
+    }
+    
+    private fun getGoogleMapIntent(context: Context, query: String): Intent? {
+        if (!isPackageInstalled(context, "com.google.android.apps.maps")) return null
+        val uri = Uri.parse("geo:0,0?q=${Uri.encode(query)}")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.setPackage("com.google.android.apps.maps")
+        return if (isIntentAvailable(context, intent)) intent else null
+    }
+    
+    private fun getGoogleEarthIntent(context: Context, query: String): Intent? {
+        if (!isPackageInstalled(context, "com.google.earth")) return null
+        val uri = Uri.parse("geo:0,0?q=${Uri.encode(query)}")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.setPackage("com.google.earth")
+        return if (isIntentAvailable(context, intent)) intent else null
     }
 }

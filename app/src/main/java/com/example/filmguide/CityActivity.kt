@@ -164,7 +164,7 @@ class CityActivity : AppCompatActivity() {
         
         // 美化对话框样式
         dialog.window?.let { window ->
-            window.setBackgroundDrawable(context.getDrawable(R.drawable.glassmorphism_background))
+            window.setBackgroundDrawable(context.getDrawable(R.drawable.card_background))
             window.attributes?.let { attributes ->
                 attributes.dimAmount = 0.3f
                 window.attributes = attributes
