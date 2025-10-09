@@ -145,6 +145,11 @@ class AIActivity : AppCompatActivity() {
         // 原来的语音识别功能 - 只识别语音，不处理命令
         binding.voice.setOnClickListener {
             RecordDialogFragment { recognizedText ->
+                // 如果用户主动结束录音（空字符串），不处理
+                if (recognizedText.isEmpty()) {
+                    return@RecordDialogFragment
+                }
+                
                 // 直接设置到输入框，不处理命令
                 binding.editTextMessage.setText(recognizedText)
             }.show(supportFragmentManager, "record")
@@ -153,20 +158,25 @@ class AIActivity : AppCompatActivity() {
         // 新的语音对话功能 - 支持语音命令处理
         binding.voiceChat.setOnClickListener {
             RecordDialogFragment { recognizedText ->
-                // 显示语音识别结果
-                val voiceMessage = ChatMessage("🎤 语音识别：$recognizedText", false)
+                // 如果用户主动结束录音（空字符串），不处理
+                if (recognizedText.isEmpty()) {
+                    return@RecordDialogFragment
+                }
+                
+                // 直接显示用户语音内容，不加前缀
+                val voiceMessage = ChatMessage(recognizedText, true)
                 messages.add(voiceMessage)
                 adapter.notifyItemInserted(messages.lastIndex)
                 binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
                 
                 // 处理语音命令
                 if (handleVoiceCommand(recognizedText)) {
-                    // 如果是语音命令，不设置到输入框
+                    // 如果是语音命令，不发送给AI
                     return@RecordDialogFragment
                 }
                 
-                // 普通语音输入，设置到输入框
-                binding.editTextMessage.setText(recognizedText)
+                // 普通语音输入，直接发送给AI处理
+                sendVoiceMessageToAI(recognizedText)
             }.show(supportFragmentManager, "voiceChat")
         }
 
@@ -323,6 +333,105 @@ class AIActivity : AppCompatActivity() {
         }
     }
     
+    /**
+     * 发送语音消息给AI处理
+     */
+    private fun sendVoiceMessageToAI(text: String) {
+        if (text.isEmpty() || isAiResponding) return
+
+        // 添加深度思考提示
+        var finalText = text
+        if (isDeepThinkingEnabled) {
+            finalText = "请深度思考并详细分析：$finalText"
+        }
+
+        // 添加到对话历史
+        conversationHistory.add(AIChatService.ChatMessage("user", finalText))
+
+        // 显示AI正在思考的提示
+        val thinkingMessage = ChatMessage("AI正在思考中...", false)
+        messages.add(thinkingMessage)
+        adapter.notifyItemInserted(messages.lastIndex)
+        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+
+        // 调用AI服务
+        isAiResponding = true
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                aiChatService.sendMessageWithLocation(
+                    userMessage = finalText,
+                    conversationHistory = conversationHistory,
+                    enableDeepThinking = isDeepThinkingEnabled,
+                    enableWebSearch = isWebSearchEnabled,
+                    cityName = currentCityName,
+                    weatherInfo = currentWeatherInfo,
+                    callback = object : AIChatService.StreamCallback {
+                        override fun onPartialResponse(content: String) {
+                            runOnUiThread {
+                                // 更新最后一条消息（思考中...）为AI的回复
+                                if (messages.isNotEmpty() && messages.last().content == "AI正在思考中...") {
+                                    messages[messages.lastIndex] = ChatMessage(content, false)
+                                } else {
+                                    // 如果已经有AI回复，则更新内容
+                                    if (messages.isNotEmpty() && !messages.last().isSentByUser) {
+                                        messages[messages.lastIndex] = ChatMessage(content, false)
+                                    } else {
+                                        // 添加新的AI回复
+                                        messages.add(ChatMessage(content, false))
+                                    }
+                                }
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                            }
+                        }
+
+                        override fun onCompleteResponse(content: String) {
+                            runOnUiThread {
+                                // 确保最终回复正确显示
+                                if (messages.isNotEmpty()) {
+                                    messages[messages.lastIndex] = ChatMessage(content, false)
+                                }
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                                
+                                // 添加到对话历史
+                                conversationHistory.add(AIChatService.ChatMessage("assistant", content))
+                                isAiResponding = false
+                            }
+                        }
+
+                        override fun onError(error: String) {
+                            runOnUiThread {
+                                // 移除思考中的消息，显示错误信息
+                                if (messages.isNotEmpty() && messages.last().content == "AI正在思考中...") {
+                                    messages.removeAt(messages.lastIndex)
+                                }
+                                messages.add(ChatMessage("抱歉，AI服务暂时不可用：$error", false))
+                                adapter.notifyDataSetChanged()
+                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                                isAiResponding = false
+                                
+                                Toast.makeText(this@AIActivity, "AI服务错误：$error", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                )
+            } catch (e: Exception) {
+                runOnUiThread {
+                    // 移除思考中的消息，显示错误信息
+                    if (messages.isNotEmpty() && messages.last().content == "AI正在思考中...") {
+                        messages.removeAt(messages.lastIndex)
+                    }
+                    messages.add(ChatMessage("抱歉，发生了网络错误：${e.message}", false))
+                    adapter.notifyDataSetChanged()
+                    binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+                    isAiResponding = false
+                    
+                    Toast.makeText(this@AIActivity, "网络错误：${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
     
     // 以下权限和语音识别逻辑保持不变
     private fun ensureAudioPermission() {
@@ -385,29 +494,29 @@ class AIActivity : AppCompatActivity() {
                 val text = results?.firstOrNull().orEmpty()
                 
                 if (text.isNotEmpty()) {
-                    // 显示语音识别结果
-                    val voiceMessage = ChatMessage("🎤 语音识别：$text", false)
+                    // 直接显示用户语音内容，不加前缀
+                    val voiceMessage = ChatMessage(text, true)
                     messages.add(voiceMessage)
                     adapter.notifyItemInserted(messages.lastIndex)
                     binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
                     
                     // 处理语音命令
                     if (handleVoiceCommand(text)) {
-                        // 如果是语音命令，不设置到输入框
+                        // 如果是语音命令，不发送给AI
                         return
                     }
                     
-                    // 普通语音输入，设置到输入框
-                    binding.editTextMessage.setText(text)
+                    // 普通语音输入，直接发送给AI处理
+                    sendVoiceMessageToAI(text)
                 } else {
-                    val errorMessage = ChatMessage("🎤 语音识别失败，请重试", false)
+                    val errorMessage = ChatMessage("语音识别失败，请重试", true)
                     messages.add(errorMessage)
                     adapter.notifyItemInserted(messages.lastIndex)
                     binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
                 }
             } else {
                 // 语音识别被取消或失败
-                val cancelMessage = ChatMessage("🎤 语音识别已取消", false)
+                val cancelMessage = ChatMessage("语音识别已取消", true)
                 messages.add(cancelMessage)
                 adapter.notifyItemInserted(messages.lastIndex)
                 binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
@@ -903,17 +1012,23 @@ class AIActivity : AppCompatActivity() {
      */
     private fun parseAndSetReminder(text: String) {
         try {
+            Log.d("AIActivity", "开始解析时间: $text")
             val calendar = Calendar.getInstance()
             val now = Calendar.getInstance()
             
-            // 解析时间表达式 - 支持多种格式
+            // 解析时间表达式 - 支持多种格式，避免匹配日期
             val timePatterns = listOf(
-                Pattern.compile("(\\d{1,2})[点:]?(\\d{0,2})"), // 8点30, 8:30
-                Pattern.compile("(\\d{1,2})点(\\d{0,2})"), // 8点30
+                Pattern.compile("(\\d{1,2})点(\\d{1,2})分"), // 6点30分
+                Pattern.compile("(\\d{1,2})点(\\d{1,2})"), // 6点30
                 Pattern.compile("(\\d{1,2}):(\\d{0,2})"), // 8:30
                 Pattern.compile("(\\d{1,2})时(\\d{0,2})"), // 8时30
                 Pattern.compile("(\\d{1,2})点"), // 8点
-                Pattern.compile("(\\d{1,2})时") // 8时
+                Pattern.compile("(\\d{1,2})时"), // 8时
+                // 更精确的匹配，避免匹配日期
+                Pattern.compile("(\\d{1,2})点(?!月)"), // 8点（后面不是"月"）
+                Pattern.compile("(\\d{1,2})时(?!月)"), // 8时（后面不是"月"）
+                Pattern.compile("(\\d{1,2})点(\\d{0,2})(?!月)"), // 8点30（后面不是"月"）
+                Pattern.compile("(\\d{1,2})时(\\d{0,2})(?!月)") // 8时30（后面不是"月"）
             )
             
             var hour = -1
@@ -924,7 +1039,13 @@ class AIActivity : AppCompatActivity() {
                 val matcher = pattern.matcher(text)
                 if (matcher.find()) {
                     hour = matcher.group(1)?.toIntOrNull() ?: -1
-                    minute = matcher.group(2)?.toIntOrNull() ?: 0
+                    // 安全地获取第二个捕获组，如果不存在则默认为0
+                    minute = try {
+                        matcher.group(2)?.toIntOrNull() ?: 0
+                    } catch (e: IndexOutOfBoundsException) {
+                        0
+                    }
+                    Log.d("AIActivity", "匹配到时间: 小时=$hour, 分钟=$minute")
                     if (hour != -1) break
                 }
             }
@@ -934,11 +1055,28 @@ class AIActivity : AppCompatActivity() {
                 hour = parseChineseTime(text)
             }
             
+            // 处理下午时间
+            if (text.contains("下午") || text.contains("下午")) {
+                if (hour in 1..11) {
+                    hour += 12
+                    Log.d("AIActivity", "下午时间转换: $hour 点")
+                }
+            }
+            
+            // 处理"半"字，表示30分钟
+            if (text.contains("半")) {
+                minute = 30
+                Log.d("AIActivity", "半字解析: 分钟=30")
+            }
+            
             if (hour == -1) {
+                Log.d("AIActivity", "无法解析时间，打开提醒设置页面")
                 // 无法解析时间，打开提醒设置页面
                 openReminderPage()
                 return
             }
+            
+            Log.d("AIActivity", "解析到时间: 小时=$hour, 分钟=$minute")
             
             // 处理日期
             if (text.contains("明天")) {
@@ -949,6 +1087,21 @@ class AIActivity : AppCompatActivity() {
                 calendar.add(Calendar.DAY_OF_MONTH, 2)
             } else if (text.contains("大后天")) {
                 calendar.add(Calendar.DAY_OF_MONTH, 3)
+            } else {
+                // 处理具体日期，如"10月15日"
+                val datePattern = Pattern.compile("(\\d{1,2})月(\\d{1,2})日")
+                val dateMatcher = datePattern.matcher(text)
+                if (dateMatcher.find()) {
+                    val month = dateMatcher.group(1)?.toIntOrNull() ?: -1
+                    val day = dateMatcher.group(2)?.toIntOrNull() ?: -1
+                    if (month != -1 && day != -1) {
+                        val currentYear = calendar.get(Calendar.YEAR)
+                        calendar.set(Calendar.YEAR, currentYear)
+                        calendar.set(Calendar.MONTH, month - 1) // Calendar月份从0开始
+                        calendar.set(Calendar.DAY_OF_MONTH, day)
+                        Log.d("AIActivity", "解析到具体日期: ${month}月${day}日")
+                    }
+                }
             }
             
             calendar.set(Calendar.HOUR_OF_DAY, hour)
@@ -976,15 +1129,24 @@ class AIActivity : AppCompatActivity() {
                 id = UUID.randomUUID().hashCode()
             }
             
-            // 设置闹钟
+            // 设置闹钟并保存到SharedPreferences
             scheduleReminder(reminder)
+            saveReminderToPrefs(reminder)
             
-            val timeStr = String.format("%02d:%02d", hour, minute)
+            // 使用calendar对象中的正确时间，而不是原始解析的hour和minute
+            val finalHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val finalMinute = calendar.get(Calendar.MINUTE)
+            val timeStr = String.format("%02d:%02d", finalHour, finalMinute)
             val dateStr = when {
                 text.contains("明天") -> "明天"
                 text.contains("下周") -> "下周"
                 text.contains("后天") -> "后天"
                 text.contains("大后天") -> "大后天"
+                text.contains("月") && text.contains("日") -> {
+                    val month = calendar.get(Calendar.MONTH) + 1
+                    val day = calendar.get(Calendar.DAY_OF_MONTH)
+                    "${month}月${day}日"
+                }
                 else -> "今天"
             }
             val confirmMessage = ChatMessage("⏰ 已为您设置${dateStr}${timeStr}的提醒", false)
@@ -1045,6 +1207,52 @@ class AIActivity : AppCompatActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+    
+    /**
+     * 保存提醒到SharedPreferences
+     */
+    private fun saveReminderToPrefs(reminder: Reminder) {
+        try {
+            val prefs = getSharedPreferences("ReminderPrefs", Context.MODE_PRIVATE)
+            val existingJson = prefs.getString("reminders", null)
+            val type = object : com.google.gson.reflect.TypeToken<List<Reminder>>() {}.type
+            val existingList = if (existingJson != null) {
+                com.google.gson.Gson().fromJson<MutableList<Reminder>>(existingJson, type) ?: mutableListOf()
+            } else {
+                mutableListOf<Reminder>()
+            }
+            
+            // 添加到现有列表
+            existingList.add(reminder)
+            
+            // 按时间排序
+            existingList.sortWith { a: Reminder, b: Reminder ->
+                val aTime = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, a.year)
+                    set(Calendar.MONTH, a.month)
+                    set(Calendar.DAY_OF_MONTH, a.dayOfMonth)
+                    set(Calendar.HOUR_OF_DAY, a.hourOfDay)
+                    set(Calendar.MINUTE, a.minute)
+                }.timeInMillis
+                val bTime = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, b.year)
+                    set(Calendar.MONTH, b.month)
+                    set(Calendar.DAY_OF_MONTH, b.dayOfMonth)
+                    set(Calendar.HOUR_OF_DAY, b.hourOfDay)
+                    set(Calendar.MINUTE, b.minute)
+                }.timeInMillis
+                aTime.compareTo(bTime)
+            }
+            
+            // 保存到SharedPreferences
+            val json = com.google.gson.Gson().toJson(existingList)
+            prefs.edit().putString("reminders", json).apply()
+            
+            Log.d("AIActivity", "提醒已保存到SharedPreferences: ${reminder.hourOfDay}:${reminder.minute}")
+        } catch (e: Exception) {
+            Log.e("AIActivity", "保存提醒失败", e)
+        }
     }
     
     /**

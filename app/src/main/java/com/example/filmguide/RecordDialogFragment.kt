@@ -37,20 +37,17 @@ class RecordDialogFragment(
     private lateinit var ivMic: ImageView
     private lateinit var volumeBar: ProgressBar
     private lateinit var tvHint: TextView
-    private lateinit var animation:ImageView
+    private lateinit var animation: ImageView
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val view = LayoutInflater.from(context).inflate(R.layout.dialog_record, null)
         ivMic = view.findViewById(R.id.ivMic)
         volumeBar = view.findViewById(R.id.volumeBar)
         tvHint = view.findViewById(R.id.tvHint)
-        animation=view.findViewById(R.id.animation)
+        animation = view.findViewById(R.id.animation)
         recognizer = SpeechRecognizer.createSpeechRecognizer(requireContext()).apply {
             setRecognitionListener(this@RecordDialogFragment)
         }
-
-
-
 
         val density = requireContext().resources.displayMetrics.density
         val newWidthPx = (150 * density).toInt()
@@ -65,15 +62,20 @@ class RecordDialogFragment(
             .load(R.drawable.voiceanimation)
             .into(animation)
 
-
         val dialog = AlertDialog.Builder(requireContext())
             .setView(view)
-            .setCancelable(false)
+            .setCancelable(true) // 允许点击外部取消
             .create()
 
         dialog.setOnShowListener {
             startListening()
         }
+        
+        // 点击外部区域取消
+        dialog.setOnCancelListener {
+            onResult("") // 传递空字符串表示用户取消
+        }
+        
         return dialog
     }
 
@@ -83,6 +85,9 @@ class RecordDialogFragment(
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN")
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            // 延长静音时间，但保持识别准确度
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 5000) // 5秒
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 8000) // 8秒
         }
         recognizer.startListening(intent)
     }
