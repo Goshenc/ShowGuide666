@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@drawable/glassmorphism_background">
+    android:background="@drawable/card_background">
 
     <!-- 标题 -->
     <TextView
