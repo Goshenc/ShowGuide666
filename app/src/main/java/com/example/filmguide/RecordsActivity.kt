@@ -2,6 +2,14 @@ package com.example.filmguide
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -87,19 +95,94 @@ class RecordsActivity : AppCompatActivity() {
             return
         }
 
-        val diaryTitles = diaries.map { it.title }.toTypedArray()
+        showBeautifulDeleteDialog(diaries)
+    }
+    
+    private fun showBeautifulDeleteDialog(diaries: List<RecordEntity>) {
+        val dialog = AlertDialog.Builder(this)
+            .setView(R.layout.dialog_delete_record)
+            .create()
+        
+        dialog.show()
+        
+        // 获取容器并添加记录选项
+        val container = dialog.findViewById<LinearLayout>(R.id.recordsList)
+        val btnDelete = dialog.findViewById<TextView>(R.id.btnDelete)
         var selectedIndex = 0
-
-        AlertDialog.Builder(this)
-            .setTitle("选择要删除的日记")
-            .setSingleChoiceItems(diaryTitles, 0) { _, which ->
-                selectedIndex = which
+        
+        // 创建记录选择项
+        diaries.forEachIndexed { index, diary ->
+            val optionView = createRecordOptionView(diary, index, dialog, container) { selectedIdx ->
+                selectedIndex = selectedIdx
             }
-            .setPositiveButton("删除") { _, _ ->
-                val diaryToDelete: RecordEntity = diaries[selectedIndex]
-                viewModel.deleteDiary(diaryToDelete) // 通过 ViewModel 删除
+            container?.addView(optionView)
+        }
+        
+        // 设置删除按钮点击事件
+        btnDelete?.setOnClickListener {
+            if (selectedIndex >= 0 && selectedIndex < diaries.size) {
+                val diaryToDelete = diaries[selectedIndex]
+                dialog.dismiss()
+                viewModel.deleteDiary(diaryToDelete)
+                ToastUtil.show(this, "已删除：${diaryToDelete.title}", R.drawable.icon)
+            } else {
+                ToastUtil.show(this, "请先选择要删除的记录", R.drawable.icon)
             }
-            .setNegativeButton("取消", null)
-            .show()
+        }
+        
+        // 美化对话框样式
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(getDrawable(R.drawable.card_background))
+            window.attributes?.let { attributes ->
+                attributes.dimAmount = 0.3f
+                window.attributes = attributes
+            }
+        }
+    }
+    
+    /**
+     * 创建记录选项视图（完全按照地图选项的样式）
+     */
+    private fun createRecordOptionView(diary: RecordEntity, index: Int, dialog: AlertDialog, container: LinearLayout?, onSelected: (Int) -> Unit): View {
+        val view = LayoutInflater.from(this).inflate(R.layout.item_record_selection, null)
+        
+        val iconView = view.findViewById<ImageView>(R.id.recordIcon)
+        val titleView = view.findViewById<TextView>(R.id.titleText)
+        val dateView = view.findViewById<TextView>(R.id.dateText)
+        val radioButton = view.findViewById<RadioButton>(R.id.radioButton)
+        
+        // 设置图标和文本
+        iconView.setImageResource(R.drawable.ic_delete_red)
+        titleView.text = diary.title
+        dateView.text = diary.date
+        radioButton.isChecked = index == 0
+        
+        // 设置点击事件 - 选择记录
+        view.setOnClickListener {
+            // 如果点击的是当前选中的项，则取消选中
+            if (radioButton.isChecked) {
+                // 取消所有选中状态
+                for (i in 0 until (container?.childCount ?: 0)) {
+                    val child = container?.getChildAt(i)
+                    if (child is View) {
+                        val rb = child.findViewById<RadioButton>(R.id.radioButton)
+                        rb?.isChecked = false
+                    }
+                }
+                onSelected(-1) // 传递-1表示取消选中
+            } else {
+                onSelected(index)
+                // 更新所有单选按钮状态
+                for (i in 0 until (container?.childCount ?: 0)) {
+                    val child = container?.getChildAt(i)
+                    if (child is View) {
+                        val rb = child.findViewById<RadioButton>(R.id.radioButton)
+                        rb?.isChecked = (i == index)
+                    }
+                }
+            }
+        }
+        
+        return view
     }
 }

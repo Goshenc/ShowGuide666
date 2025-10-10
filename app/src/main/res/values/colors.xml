@@ -53,6 +53,11 @@
     
     <!-- 电影详情页颜色 -->
     <color name="primary">#2196F3</color>
+    
+    <!-- 删除对话框颜色 -->
+    <color name="gray_200">#E5E7EB</color>
+    <color name="gray_300">#D1D5DB</color>
+    <color name="gray_600">#6B7280</color>
 
 
 </resources>
