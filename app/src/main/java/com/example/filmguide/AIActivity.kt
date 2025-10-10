@@ -1026,7 +1026,7 @@ class AIActivity : AppCompatActivity() {
             Log.d("AIActivity", "解析到时间: 小时=$hour, 分钟=$minute")
             
             // 处理日期
-            if (text.contains("明天")) {
+            if (text.contains("明天") || text.contains("明早")) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             } else if (text.contains("下周")) {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1)
@@ -1085,7 +1085,7 @@ class AIActivity : AppCompatActivity() {
             val finalMinute = calendar.get(Calendar.MINUTE)
             val timeStr = String.format("%02d:%02d", finalHour, finalMinute)
             val dateStr = when {
-                text.contains("明天") -> "明天"
+                text.contains("明天") || text.contains("明早") -> "明天"
                 text.contains("下周") -> "下周"
                 text.contains("后天") -> "后天"
                 text.contains("大后天") -> "大后天"
