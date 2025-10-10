@@ -228,7 +228,7 @@ class AIActivity : AppCompatActivity() {
 
         // 检查是否是语音命令（文本输入也支持）
         if (handleVoiceCommand(text)) {
-            // 如果是语音命令，不发送给AI
+            // 如果是语音命令，不发送给AI，但用户输入已经显示在聊天记录中
             binding.editTextMessage.text?.clear()
             return
         }
@@ -807,6 +807,11 @@ class AIActivity : AppCompatActivity() {
         if (lowerText.contains("打开搜索") || lowerText.contains("搜索页面") || lowerText.contains("搜索功能") ||
             lowerText.contains("搜索") || lowerText.contains("查找") || lowerText.contains("找电影") ||
             lowerText.contains("找演出") || lowerText.contains("搜索电影") || lowerText.contains("搜索演出")) {
+            // 显示用户输入到聊天记录
+            val userMessage = ChatMessage(text, true)
+            messages.add(userMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
             openSearchPage()
             return true
         }
@@ -815,6 +820,11 @@ class AIActivity : AppCompatActivity() {
         if (lowerText.contains("观影记录") || lowerText.contains("我的记录") || lowerText.contains("查看记录") ||
             lowerText.contains("记录") || lowerText.contains("日记") || lowerText.contains("我的日记") ||
             lowerText.contains("观影日记") || lowerText.contains("看过的电影") || lowerText.contains("历史记录")) {
+            // 显示用户输入到聊天记录
+            val userMessage = ChatMessage(text, true)
+            messages.add(userMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
             openRecordsPage()
             return true
         }
@@ -823,6 +833,12 @@ class AIActivity : AppCompatActivity() {
         if (lowerText.contains("设置提醒") || lowerText.contains("设置闹钟") || lowerText.contains("提醒") ||
             lowerText.contains("闹钟") || lowerText.contains("定时") || lowerText.contains("提醒我") ||
             lowerText.contains("叫我") || lowerText.contains("提醒功能")) {
+            // 显示用户输入到聊天记录
+            val userMessage = ChatMessage(text, true)
+            messages.add(userMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
+            
             if (lowerText.contains("明天") || lowerText.contains("下周") || lowerText.contains("点") || 
                 lowerText.contains("时") || lowerText.contains("早上") || lowerText.contains("晚上") ||
                 lowerText.contains("上午") || lowerText.contains("下午") || lowerText.contains("凌晨")) {
@@ -835,13 +851,6 @@ class AIActivity : AppCompatActivity() {
             return true
         }
         
-        // 4. 推荐电影 - 扩展关键词
-        if (lowerText.contains("推荐电影") || lowerText.contains("推荐") || lowerText.contains("电影推荐") ||
-            lowerText.contains("推荐一些") || lowerText.contains("有什么好看的") || lowerText.contains("好看的电影") ||
-            lowerText.contains("电影推荐") || lowerText.contains("推荐影片") || lowerText.contains("推荐几部")) {
-            requestMovieRecommendation()
-            return true
-        }
         
         // 5. 导航设置 - 扩展关键词
         if (lowerText.contains("导航") || lowerText.contains("地图") || lowerText.contains("想去") || 
@@ -850,6 +859,11 @@ class AIActivity : AppCompatActivity() {
             lowerText.contains("我要去") || lowerText.contains("去") || lowerText.contains("到") ||
             lowerText.contains("怎么走") || lowerText.contains("路线") || lowerText.contains("导航") ||
             lowerText.contains("地图") || lowerText.contains("位置") || lowerText.contains("地址")) {
+            // 显示用户输入到聊天记录
+            val userMessage = ChatMessage(text, true)
+            messages.add(userMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
             handleNavigationCommand(text)
             return true
         }
@@ -857,6 +871,11 @@ class AIActivity : AppCompatActivity() {
         // 6. 帮助命令
         if (lowerText.contains("帮助") || lowerText.contains("语音命令") || lowerText.contains("能做什么") ||
             lowerText.contains("功能") || lowerText.contains("命令") || lowerText.contains("语音控制")) {
+            // 显示用户输入到聊天记录
+            val userMessage = ChatMessage(text, true)
+            messages.add(userMessage)
+            adapter.notifyItemInserted(messages.lastIndex)
+            binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
             showVoiceHelp()
             return true
         }
@@ -879,7 +898,6 @@ class AIActivity : AppCompatActivity() {
             • "打开搜索" / "搜索电影" / "查找演出"
             • "查看记录" / "我的日记" / "观影记录"  
             • "设置提醒" / "提醒我明天8点" / "设置闹钟"
-            • "推荐电影" / "有什么好看的" / "推荐一些电影"
             • "我要去南京" / "想去故宫" / "导航到天安门"
             • "南京怎么去" / "故宫路线" / "怎么去北京"
             
@@ -937,77 +955,6 @@ class AIActivity : AppCompatActivity() {
     }
     
     /**
-     * 请求电影推荐
-     */
-    private fun requestMovieRecommendation() {
-        val recommendMessage = ChatMessage("🎬 正在为您推荐电影...", false)
-        messages.add(recommendMessage)
-        adapter.notifyItemInserted(messages.lastIndex)
-        binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
-        
-        // 调用AI推荐功能
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val userMessage = "请推荐一些好看的电影，考虑当前天气：$currentWeatherInfo，位置：$currentCityName"
-                
-                // 使用sendMessageWithLocation方法
-                aiChatService.sendMessageWithLocation(
-                    userMessage = userMessage,
-                    cityName = currentCityName,
-                    weatherInfo = currentWeatherInfo,
-                    enableDeepThinking = false,
-                    enableWebSearch = true,
-                    callback = object : AIChatService.StreamCallback {
-                        override fun onPartialResponse(content: String) {
-                            // 部分响应，可以实时更新
-                        }
-                        
-                        override fun onCompleteResponse(content: String) {
-                            runOnUiThread {
-                                // 移除"正在推荐"消息
-                                if (messages.isNotEmpty() && messages.last().content == "🎬 正在为您推荐电影...") {
-                                    messages.removeAt(messages.lastIndex)
-                                }
-                                
-                                val aiResponse = ChatMessage(content, false)
-                                messages.add(aiResponse)
-                                adapter.notifyDataSetChanged()
-                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
-                            }
-                        }
-                        
-                        override fun onError(error: String) {
-                            runOnUiThread {
-                                // 移除"正在推荐"消息
-                                if (messages.isNotEmpty() && messages.last().content == "🎬 正在为您推荐电影...") {
-                                    messages.removeAt(messages.lastIndex)
-                                }
-                                
-                                val errorMessage = ChatMessage("抱歉，推荐服务暂时不可用：$error", false)
-                                messages.add(errorMessage)
-                                adapter.notifyDataSetChanged()
-                                binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
-                            }
-                        }
-                    }
-                )
-            } catch (e: Exception) {
-                runOnUiThread {
-                    // 移除"正在推荐"消息
-                    if (messages.isNotEmpty() && messages.last().content == "🎬 正在为您推荐电影...") {
-                        messages.removeAt(messages.lastIndex)
-                    }
-                    
-                    val errorMessage = ChatMessage("抱歉，推荐服务暂时不可用，请稍后再试", false)
-                    messages.add(errorMessage)
-                    adapter.notifyDataSetChanged()
-                    binding.recyclerViewMessages.scrollToPosition(messages.lastIndex)
-                }
-            }
-        }
-    }
-    
-    /**
      * 解析时间并设置提醒
      */
     private fun parseAndSetReminder(text: String) {
@@ -1050,7 +997,7 @@ class AIActivity : AppCompatActivity() {
                 }
             }
             
-            // 处理中文时间表达
+            // 处理中文时间表达 - 只有在没有明确数字时间时才使用
             if (hour == -1) {
                 hour = parseChineseTime(text)
             }

@@ -43,6 +43,8 @@ class SearchMovieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        Log.d("SearchMovieFragment", "onViewCreated called with keyword: ${arguments?.getString("keyword")}")
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -55,6 +57,8 @@ class SearchMovieFragment : Fragment() {
         val cityId = arguments?.getInt("cityId", -1) ?: -1
         val rawKeyword = arguments?.getString("keyword") ?: ""
         val keyword = URLEncoder.encode(rawKeyword, "UTF-8")
+
+        Log.d("SearchMovieFragment", "Loading movies for cityId: $cityId, keyword: $rawKeyword")
 
         if (cityId == -1 || keyword.isEmpty()) {
             ToastUtil.show(requireContext(), "无效城市 ID 或关键词", R.drawable.icon)

@@ -26,13 +26,16 @@ class SearchViewPagerAdapter(
     }
 
     fun updateKeyword(newKeyword: String) {
+        android.util.Log.d("SearchViewPagerAdapter", "updateKeyword called with: $newKeyword")
         keyword = newKeyword
         updateVersions[0]++
         updateVersions[1]++
+        android.util.Log.d("SearchViewPagerAdapter", "updateVersions: ${updateVersions.contentToString()}")
         notifyDataSetChanged()
     }
 
     override fun createFragment(position: Int): Fragment {
+        android.util.Log.d("SearchViewPagerAdapter", "createFragment called for position: $position with keyword: $keyword")
         return when (position) {
             0 -> SearchMovieFragment.newInstance(cityId, keyword)
             1 -> SearchPerformanceFragment.newInstance(keyword)

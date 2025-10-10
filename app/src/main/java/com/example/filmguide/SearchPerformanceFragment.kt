@@ -46,6 +46,8 @@ class SearchPerformanceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        android.util.Log.d("SearchPerformanceFragment", "onViewCreated called with keyword: ${arguments?.getString("keyword")}")
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
@@ -58,6 +60,8 @@ class SearchPerformanceFragment : Fragment() {
 
         val rawKeyword = arguments?.getString("keyword") ?: ""
         val keyword = URLEncoder.encode(rawKeyword, "UTF-8")
+
+        android.util.Log.d("SearchPerformanceFragment", "Loading performances for keyword: $rawKeyword")
 
         if (keyword.isEmpty()) {
             ToastUtil.show(requireContext(), "无效关键词", R.drawable.icon)
