@@ -22,6 +22,8 @@ import java.util.*
  */
 class ShareManager(private val context: Context) {
     
+    private val prefs = context.getSharedPreferences("share_stats", Context.MODE_PRIVATE)
+    
     /**
      * 分享观影记录到微信
      */
@@ -36,6 +38,7 @@ class ShareManager(private val context: Context) {
         
         if (intent.resolveActivity(context.packageManager) != null) {
             context.startActivity(intent)
+            recordShareStats("wechat")
         }
     }
     
@@ -54,6 +57,7 @@ class ShareManager(private val context: Context) {
         
         if (intent.resolveActivity(context.packageManager) != null) {
             context.startActivity(intent)
+            recordShareStats("moments")
         }
     }
     
@@ -71,6 +75,7 @@ class ShareManager(private val context: Context) {
         
         if (intent.resolveActivity(context.packageManager) != null) {
             context.startActivity(intent)
+            recordShareStats("weibo")
         }
     }
     
@@ -184,6 +189,96 @@ class ShareManager(private val context: Context) {
     }
     
     /**
+     * 分享到QQ
+     */
+    fun shareToQQ(record: RecordEntity) {
+        val shareText = generateShareText(record)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            setPackage("com.tencent.mobileqq")
+        }
+        
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+            recordShareStats("qq")
+        }
+    }
+    
+    /**
+     * 分享到抖音
+     */
+    fun shareToDouyin(record: RecordEntity) {
+        val shareText = generateShareText(record)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            setPackage("com.ss.android.ugc.aweme")
+        }
+        
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+            recordShareStats("douyin")
+        }
+    }
+    
+    /**
+     * 分享到小红书
+     */
+    fun shareToXiaohongshu(record: RecordEntity) {
+        val shareText = generateShareText(record)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            setPackage("com.xingin.xhs")
+        }
+        
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+            recordShareStats("xiaohongshu")
+        }
+    }
+    
+    /**
+     * 分享到钉钉
+     */
+    fun shareToDingTalk(record: RecordEntity) {
+        val shareText = generateShareText(record)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            setPackage("com.alibaba.android.rimet")
+        }
+        
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+            recordShareStats("dingtalk")
+        }
+    }
+    
+    /**
+     * 分享到企业微信
+     */
+    fun shareToWorkWeChat(record: RecordEntity) {
+        val shareText = generateShareText(record)
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            setPackage("com.tencent.wework")
+        }
+        
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+            recordShareStats("work_wechat")
+        }
+    }
+    
+    /**
      * 获取分享选项
      */
     fun getShareOptions(): List<ShareOption> {
@@ -192,7 +287,40 @@ class ShareManager(private val context: Context) {
             ShareOption("朋友圈", "com.tencent.mm", com.example.filmguide.R.drawable.ic_moments),
             ShareOption("微博", "com.sina.weibo", com.example.filmguide.R.drawable.ic_weibo),
             ShareOption("QQ", "com.tencent.mobileqq", com.example.filmguide.R.drawable.ic_qq),
+            ShareOption("抖音", "com.ss.android.ugc.aweme", com.example.filmguide.R.drawable.ic_douyin),
+            ShareOption("小红书", "com.xingin.xhs", com.example.filmguide.R.drawable.ic_xiaohongshu),
+            ShareOption("钉钉", "com.alibaba.android.rimet", com.example.filmguide.R.drawable.ic_dingtalk),
+            ShareOption("企业微信", "com.tencent.wework", com.example.filmguide.R.drawable.ic_work_wechat),
             ShareOption("更多", "", com.example.filmguide.R.drawable.ic_more)
+        )
+    }
+    
+    /**
+     * 记录分享统计
+     */
+    private fun recordShareStats(platform: String) {
+        val currentCount = prefs.getInt("share_$platform", 0)
+        prefs.edit().putInt("share_$platform", currentCount + 1).apply()
+        
+        // 记录总分享次数
+        val totalCount = prefs.getInt("total_shares", 0)
+        prefs.edit().putInt("total_shares", totalCount + 1).apply()
+    }
+    
+    /**
+     * 获取分享统计
+     */
+    fun getShareStats(): Map<String, Int> {
+        return mapOf(
+            "微信" to prefs.getInt("share_wechat", 0),
+            "朋友圈" to prefs.getInt("share_moments", 0),
+            "微博" to prefs.getInt("share_weibo", 0),
+            "QQ" to prefs.getInt("share_qq", 0),
+            "抖音" to prefs.getInt("share_douyin", 0),
+            "小红书" to prefs.getInt("share_xiaohongshu", 0),
+            "钉钉" to prefs.getInt("share_dingtalk", 0),
+            "企业微信" to prefs.getInt("share_work_wechat", 0),
+            "总计" to prefs.getInt("total_shares", 0)
         )
     }
     

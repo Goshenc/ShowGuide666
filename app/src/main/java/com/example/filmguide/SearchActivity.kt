@@ -15,12 +15,14 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.filmguide.databinding.ActivitySearchBinding
 import com.example.filmguide.ui.SearchViewPagerAdapter
+import com.example.filmguide.utils.SearchHistoryManager
 import com.google.android.material.tabs.TabLayoutMediator
 
 class SearchActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySearchBinding
     private lateinit var keyword: String
+    private lateinit var searchHistoryManager: SearchHistoryManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +43,10 @@ class SearchActivity : AppCompatActivity() {
         // 2. 把状态栏内文字和图标切成浅色，以便在渐变背景上能看清
         val insetsController = WindowInsetsControllerCompat(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = false
+        
+        // 初始化搜索历史管理器
+        searchHistoryManager = SearchHistoryManager(this)
+        
         getIntentData()
 
     }
@@ -115,6 +121,9 @@ class SearchActivity : AppCompatActivity() {
         Log.d("zxy","执行搜索，关键词: $currentKeyword")
         
         if (currentKeyword.isNotEmpty()) {
+            // 保存搜索历史
+            searchHistoryManager.saveSearchHistory(currentKeyword, "all")
+            
             val adapter = binding.viewPager.adapter as? SearchViewPagerAdapter
             if (adapter != null) {
                 Log.d("zxy","调用updateKeyword")
@@ -181,5 +190,26 @@ class SearchActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("zxy","空搜索界面-设置键盘确定键事件失败: ${e.message}")
         }
+    }
+    
+    /**
+     * 显示搜索历史
+     */
+    fun showSearchHistory() {
+        val historyList = searchHistoryManager.getSearchHistory()
+        if (historyList.isNotEmpty()) {
+            val historyText = historyList.take(10).joinToString("\n") { "• ${it.keyword}" }
+            android.widget.Toast.makeText(this, "最近搜索：\n$historyText", android.widget.Toast.LENGTH_LONG).show()
+        } else {
+            android.widget.Toast.makeText(this, "暂无搜索历史", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    /**
+     * 清空搜索历史
+     */
+    fun clearSearchHistory() {
+        searchHistoryManager.clearAllHistory()
+        android.widget.Toast.makeText(this, "搜索历史已清空", android.widget.Toast.LENGTH_SHORT).show()
     }
 }
