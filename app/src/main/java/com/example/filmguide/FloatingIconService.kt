@@ -471,7 +471,13 @@ class FloatingIconService : Service() {
             showFloatingIcon()
         }
     }
-    
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        // 当 App 在任务管理器中被划掉时，直接移除悬浮窗
+        hideFloatingIcon()
+        // 停止服务本身
+        stopSelf()
+    }
     override fun onDestroy() {
         super.onDestroy()
         stopActivityCheck()

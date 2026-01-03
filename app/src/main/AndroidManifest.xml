@@ -28,8 +28,6 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
 
 
     <application
@@ -142,9 +140,9 @@
         </provider>
         <service
             android:name=".FloatingIconService"
-            android:foregroundServiceType="specialUse"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="specialUse|specialUse" />
     </application>
     <queries>
         <package android:name="com.baidu.BaiduMap" />
